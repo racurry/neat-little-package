@@ -1,0 +1,15 @@
+{
+  "name": "neat-little-package",
+  "owner": {
+    "name": "racurry",
+    "url": "https://github.com/racurry/neat-little-package"
+  },
+  "description": "Claude Code plugins that help me do things",
+  "plugins": [
+    {
+      "name": "hello-world",
+      "source": "./plugins/hello-world",
+      "description": "A simple hello world plugin demonstrating commands and skills"
+    }
+  ]
+}
