@@ -1,104 +1,227 @@
 # Forge
 
-A comprehensive toolkit for creating and managing all Claude Code components: agents, commands, plugins, skills, and hooks. Forge provides powerful commands and expert guidance to streamline your development workflow, whether you're building a complete plugin or adding individual components to existing ones.
+A comprehensive toolkit for creating and managing Claude Code components. Forge provides specialized agents, slash commands, and design skills to streamline plugin development with production-ready quality and best practices built in.
+
+## Overview
+
+Forge is both a plugin creation toolkit and a living example of Claude Code best practices. Every component in Forge follows the patterns it teaches, creating a self-documenting, self-consistent ecosystem for building high-quality Claude Code plugins.
+
+**Core capabilities:**
+
+- Create plugins, agents, commands, skills, and hooks with proper structure
+- Validate components against official specifications and Forge design patterns
+- Review existing components for quality and compliance
+- Access expert design guidance through comprehensive skills
+- Update plugin documentation automatically
 
 ## Features
 
 ### Commands
 
-Forge provides commands for creating, validating, and reviewing all Claude Code component types:
+#### `/forge:add-plugin`
 
-#### `/add-plugin`
+Create a new Claude Code plugin with complete scaffolding.
 
-Create a new Claude Code plugin with complete scaffolding. Delegates to the plugin-writer agent.
+**What it does:**
 
-**Usage:** `/add-plugin`
+- Creates proper directory structure (components at root, not in `.claude-plugin/`)
+- Generates `plugin.json` with comprehensive metadata
+- Writes detailed README and CLAUDE.md documentation
+- Delegates component creation to specialized writer agents
+- Validates Forge compliance before completing
 
-#### `/add-agent`
+**Usage:** `/forge:add-plugin`
 
-Add a new agent to a plugin. Delegates to the agent-writer agent.
+#### `/forge:add-agent`
 
-**Usage:** `/add-agent`
+Add a new agent to a plugin.
 
-#### `/add-command`
+**What it does:**
 
-Add a new slash command to a plugin. Delegates to the slash-command-writer agent.
+- Loads agent-design and forge-architecture skills for guidance
+- Fetches current official agent documentation
+- Creates agent with proper frontmatter and structure
+- Validates tool selection matches responsibilities
+- Ensures no user interaction language in prompt
 
-**Usage:** `/add-command`
+**Usage:** `/forge:add-agent`
 
-#### `/add-skill`
+#### `/forge:add-command`
 
-Add a new skill to a plugin. Delegates to the skill-writer agent.
+Add a new slash command to a plugin.
 
-**Usage:** `/add-skill`
+**What it does:**
 
-#### `/add-hook`
+- Loads slash-command-design and forge-architecture skills
+- Creates command following thin wrapper delegation pattern
+- Includes proper frontmatter with description
+- Validates against command design best practices
 
-Add a new hook to a plugin. Delegates to the hooks-writer agent.
+**Usage:** `/forge:add-command`
 
-**Usage:** `/add-hook`
+#### `/forge:add-skill`
 
-#### `/validate-plugin`
+Add a new skill to a plugin.
 
-Validate a plugin's structure and components against official specs and best practices. Delegates to the validation-agent.
+**What it does:**
 
-**Usage:** `/validate-plugin [plugin-path]`
+- Loads skill-design and forge-architecture skills
+- Creates skill with fetch-first, two-layer structure
+- Applies knowledge delta filter (only documents what Claude doesn't know)
+- Validates progressive disclosure and proper subdirectory structure
 
-#### `/review-component`
+**Usage:** `/forge:add-skill`
 
-Review a component (agent, command, skill, hook) for quality and best practices. Delegates to the component-reviewer agent.
+#### `/forge:add-hook`
 
-**Usage:** `/review-component [component-path]`
+Add a new hook configuration to a plugin.
+
+**What it does:**
+
+- Loads hook-design and forge-architecture skills
+- Creates hooks.json or updates existing configuration
+- Provides bash or Python+UV hook implementation
+- Validates security, performance, and exit code patterns
+
+**Usage:** `/forge:add-hook`
+
+#### `/forge:validate-plugin [plugin-path]`
+
+Validate a plugin's structure and components against official specs and Forge best practices.
+
+**What it does:**
+
+- Checks directory structure and file locations
+- Validates JSON/YAML syntax in all components
+- Detects forbidden patterns (user interaction, weak delegation)
+- Verifies tool permissions match responsibilities
+- Generates detailed report with file:line references
+
+**Usage:** `/forge:validate-plugin [plugin-path]`
+
+**Arguments:**
+
+- `plugin-path` (optional): Path to plugin directory. Defaults to current directory.
+
+#### `/forge:review-component [component-path]`
+
+Review a component for quality, best practices, and design pattern compliance.
+
+**What it does:**
+
+- Identifies component type and loads relevant design skills
+- Fetches current official documentation
+- Analyzes against Forge design patterns
+- Provides prioritized feedback (critical, important, minor)
+- Suggests specific improvements with examples
+
+**Usage:** `/forge:review-component [component-path]`
+
+**Arguments:**
+
+- `component-path`: Path to agent, command, skill, hook, or plugin to review
+
+#### `/forge:update-docs [plugin-path]`
+
+Update or regenerate README.md and CLAUDE.md documentation for a plugin.
+
+**What it does:**
+
+- Reads all plugin components and metadata
+- Analyzes plugin purpose, features, and architecture
+- Generates comprehensive README with usage examples
+- Creates CLAUDE.md with development guidelines
+- Follows Forge documentation patterns
+
+**Usage:** `/forge:update-docs [plugin-path]`
+
+**Arguments:**
+
+- `plugin-path` (optional): Path to plugin directory. Defaults to current directory.
 
 ### Agents
 
-Forge includes specialized agents that handle component creation and quality assurance:
+Forge includes seven specialized agents that handle component creation and quality assurance:
 
 #### Writer Agents
 
-**plugin-writer** - Creates complete plugins with scaffolding, delegates to other writers
-**agent-writer** - Creates agents following agent-design patterns
-**slash-command-writer** - Creates commands following slash-command-design patterns
-**skill-writer** - Creates skills following skill-design patterns
-**hooks-writer** - Creates hooks following hooks-design patterns
+**forge:plugin-writer** - Creates complete plugins with scaffolding, delegates to component writers
+
+- Tools: Bash, Read, Write, WebFetch, Glob, Grep, Task, Skill
+- Loads: forge-architecture, plugin-design skills
+- Validates: Directory structure, marketplace registration, Forge compliance
+
+**forge:agent-writer** - Creates agents following agent-design patterns
+
+- Tools: Bash, Read, Write, WebFetch, WebSearch, Skill
+- Loads: forge-architecture, agent-design skills
+- Validates: Tool selection, delegation description, no user interaction
+
+**forge:slash-command-writer** - Creates commands following slash-command-design patterns
+
+- Tools: Bash, Read, Write, WebFetch, Grep, Glob, Skill
+- Loads: forge-architecture, slash-command-design skills
+- Validates: Thin wrapper pattern, proper frontmatter, delegation to agents
+
+**forge:skill-writer** - Creates skills following skill-design patterns
+
+- Tools: Bash, Read, Write, WebFetch, Glob, Grep, Skill
+- Loads: forge-architecture, skill-design skills
+- Validates: Fetch-first approach, two-layer structure, knowledge delta filter
+
+**forge:hooks-writer** - Creates hooks following hooks-design patterns
+
+- Tools: Bash, Read, Write, WebFetch, Glob, Grep, Skill
+- Loads: forge-architecture, hook-design skills (optionally uv-scripts for Python hooks)
+- Validates: Security, performance, exit codes, matcher patterns
 
 #### Quality Agents
 
-**validation-agent** - Validates plugins and components (read-only)
-**component-reviewer** - Reviews components for quality (read-only)
+**forge:validation-agent** - Validates plugins and components (read-only)
+
+- Tools: Bash, Read, Grep, Glob, WebFetch, Skill
+- Loads: forge-architecture and relevant design skills
+- Validates: Structure, syntax, specifications, anti-patterns, MCP configuration
+
+**forge:component-reviewer** - Reviews components for quality (read-only)
+
+- Tools: Read, Grep, Glob, WebFetch, Skill
+- Loads: forge-architecture and relevant design skills
+- Provides: Prioritized feedback, specific recommendations, examples
 
 ### Skills
 
-Forge includes comprehensive design guidance skills that help you create high-quality Claude Code components:
+Forge includes comprehensive design guidance skills that provide interpretive guidance for creating high-quality Claude Code components:
 
-#### `agent-design`
+#### `forge:agent-design`
 
 Interpretive guidance for designing Claude Code agents and subagents.
 
 **What it provides:**
 
-- Agent architecture understanding (isolated context, no user interaction)
-- Critical gotchas and common mistakes
-- Tool selection philosophy
+- Agent architecture understanding (isolated context, return-based model)
+- Critical gotchas: no user interaction, autonomous operation
+- Tool selection philosophy (match tools to responsibilities)
 - Description field design for autonomous delegation
-- Validation workflow
+- Quality checklist and common anti-patterns
 
 **When to use:**
 
 - Creating or reviewing agents
-- Understanding when to use agents vs other patterns
+- Understanding isolated context model
 - Ensuring agents follow best practices
+- Debugging delegation failures
 
-#### `slash-command-design`
+#### `forge:slash-command-design`
 
 Interpretive guidance for designing Claude Code slash commands.
 
 **What it provides:**
 
 - Command vs agent vs skill decision framework
+- Thin wrapper delegation pattern (command → agent)
 - Argument syntax and best practices
-- Advanced features (bash execution, file references, namespacing)
-- Delegation patterns (commands that invoke agents)
+- Tool restrictions and model selection
 - Common pitfalls and how to avoid them
 
 **When to use:**
@@ -106,50 +229,56 @@ Interpretive guidance for designing Claude Code slash commands.
 - Creating or reviewing slash commands
 - Deciding between command and other patterns
 - Understanding command-specific features
+- Learning delegation patterns
 
-#### `plugin-design`
+#### `forge:plugin-design`
 
 Interpretive guidance for designing Claude Code plugins.
 
 **What it provides:**
 
 - Plugin architecture understanding (packaging, not functionality)
-- Critical directory structure rules
+- Critical directory structure rules (components at root!)
 - Marketplace distribution strategies
 - Development workflow best practices
 - Version management and semantic versioning
+- MCP server configuration patterns
 
 **When to use:**
 
 - Creating or reviewing plugins
 - Understanding marketplace distribution
 - Planning multi-component packages
+- Configuring MCP servers
 
-#### `hooks-design`
+#### `forge:hook-design`
 
 Interpretive guidance for designing Claude Code hooks.
 
 **What it provides:**
 
 - Hook lifecycle and architecture
-- Exit code communication patterns
-- Security considerations
+- Exit code communication patterns (0, 2, other)
+- Security considerations (quoting, validation, sanitization)
 - Event-specific usage patterns
 - stdin/stdout handling
+- Bash vs Python+UV decision framework
 
 **When to use:**
 
 - Creating or reviewing hooks
 - Understanding deterministic control flow
 - Implementing guaranteed execution patterns
+- Securing hook implementations
 
-#### `skill-design`
+#### `forge:skill-design`
 
 Meta-skill that teaches how to design skills following Forge philosophy.
 
 **What it provides:**
 
 - Forge philosophy (low-maintenance, fetch-first, two-layer approach)
+- Knowledge delta filter (only document what Claude doesn't know)
 - When to create skills vs agents vs commands
 - Structure for progressive disclosure
 - Evidence-based recommendations
@@ -160,16 +289,56 @@ Meta-skill that teaches how to design skills following Forge philosophy.
 - Creating or reviewing skills
 - Understanding skill architecture
 - Learning Forge design principles
+- Applying knowledge delta filter
+
+#### `forge:forge-architecture`
+
+Meta-skill for understanding Claude Code component architecture and interaction patterns.
+
+**What it provides:**
+
+- Isolation model (agents operate in isolated contexts)
+- Return-based delegation (one-way communication)
+- Progressive disclosure philosophy (token efficiency)
+- Component comparison (agents, commands, skills, hooks)
+- Interaction patterns (command→agent, agent→skill, agent→sub-agent)
+- Cross-component design patterns
+- Delegation chains and debugging
+
+**When to use:**
+
+- Choosing between component types
+- Designing plugins with multiple components
+- Understanding delegation patterns
+- Debugging cross-component issues
+- Creating Forge-compliant components
+
+#### `forge:uv-scripts`
+
+UV-specific patterns for single-file Python scripts using inline metadata (PEP 723).
+
+**What it provides:**
+
+- UV script shebang patterns
+- Inline dependency declaration
+- When to use UV vs bash for hooks
+- Security and performance considerations
+
+**When to use:**
+
+- Creating Python hooks with dependencies
+- Building standalone Python utilities
+- Working in UV-managed projects
 
 ## Design Philosophy
 
-Forge follows a specific philosophy for creating maintainable, high-quality Claude Code components:
+Forge follows specific design principles that make components maintainable, high-quality, and resilient to change:
 
 ### Low-Maintenance by Design
 
-**Skills should:**
+**Skills and agents:**
 
-- Defer all specific syntax and requirements to official documentation via WebFetch
+- Defer all specific syntax to official documentation via WebFetch
 - Focus on interpretation and best practices, not duplication
 - Avoid hardcoding version-specific details (model names, tool lists)
 - Remain valid as Claude Code evolves
@@ -183,19 +352,46 @@ Forge follows a specific philosophy for creating maintainable, high-quality Clau
 1. **Official Specification** - Always fetch current docs, cite them clearly
 2. **Best Practices** - Add interpretive guidance the docs don't emphasize
 
-**Example:** Docs say "description field for commands." Best practice says "always include description even though it's optional - improves discoverability."
+**Example:** Docs say "description field for commands is optional." Best practice says "always include description - improves discoverability."
+
+### Knowledge Delta Filter
+
+**Skills should only document what Claude doesn't already know:**
+
+- ✅ Include: User-specific preferences, edge cases, decision frameworks, new technology
+- ❌ Exclude: Basic commands, standard workflows, general best practices for well-known tools
+
+**Result:** Focused skills (~50-150 lines) that add real value, not comprehensive documentation that duplicates Claude's training.
 
 ### Evidence-Based Recommendations
 
 **All claims should be:**
 
-- Grounded in official documentation, or
-- Clearly marked as opinionated best practices, or
+- Grounded in official documentation, OR
+- Clearly marked as opinionated best practices, OR
 - Based on common pitfalls and real-world experience
 
 **Avoid:** Presenting opinions as official requirements or making unsupported claims.
 
-## When to Create What
+### Delegation Pattern
+
+**Commands are thin wrappers that delegate to specialized agents:**
+
+```
+User → /forge:add-agent → agent-writer agent
+                           ├── Loads: agent-design skill
+                           ├── Fetches: Official docs
+                           └── Creates: agent.md file
+```
+
+**Why this works:**
+
+- Commands stay simple (argument handling)
+- Agents handle complexity in isolation
+- Skills provide interpretive guidance
+- Clear separation of concerns
+
+## When to Use Each Component Type
 
 Understanding when to use each component type is critical for good architecture.
 
@@ -207,13 +403,8 @@ Understanding when to use each component type is critical for good architecture.
 - Substantial procedural expertise that's reusable
 - Progressive disclosure would save tokens
 - Providing interpretive guidance
-- You want to teach "how to think about" something
-
-**Examples:**
-
-- `agent-design` - Teaches how to design agents
-- `api-documentation-standards` - Reusable formatting rules
-- `testing-strategy` - Methodologies applicable across projects
+- Teaching "how to think about" something
+- Documenting what Claude doesn't already know (knowledge delta)
 
 **Use an Agent when:**
 
@@ -222,12 +413,7 @@ Understanding when to use each component type is critical for good architecture.
 - Complex decision-making or analysis involved
 - Task runs as part of larger workflows
 - Require specific tool restrictions
-
-**Examples:**
-
-- `test-runner` - Execute tests and analyze failures
-- `code-reviewer` - Security and quality analysis
-- `doc-generator` - Generate API documentation
+- Doing actual work (writing files, running tests)
 
 **Use a Command when:**
 
@@ -235,13 +421,7 @@ Understanding when to use each component type is critical for good architecture.
 - Simple, deterministic operation
 - Wrapping a bash script or tool sequence
 - One-off operations triggered by user
-- "I want to type `/something` to make X happen"
-
-**Examples:**
-
-- `/deploy` - Explicit deployment trigger
-- `/create-component` - User-initiated file generation
-- `/git-commit` - Controlled git operations
+- Thin wrapper that delegates to specialized agent
 
 **Use a Hook when:**
 
@@ -251,43 +431,22 @@ Understanding when to use each component type is critical for good architecture.
 - Performance/safety enforcement
 - Must happen at specific lifecycle event
 
-**Examples:**
+### Decision Trees
 
-- PostToolUse formatter - Always format after writes
-- PreToolUse security check - Always validate bash commands
-- SessionStart context loader - Always inject project guidelines
-
-### Detailed Decision Trees
-
-#### "I want to enforce something always happens"
-
+**"I want to enforce something always happens"**
 → **Hook** (deterministic, guaranteed execution)
 
-**Example:** Always run prettier after file edits
-
-#### "I want Claude to intelligently handle something"
-
+**"I want Claude to intelligently handle something"**
 → **Agent** (isolated context, autonomous delegation)
 
-**Example:** Analyze test failures and suggest fixes
-
-#### "I want reusable knowledge/guidelines"
-
+**"I want reusable knowledge/guidelines"**
 → **Skill** (knowledge that loads when relevant)
 
-**Example:** API documentation standards
-
-#### "I want the user to trigger something"
-
+**"I want the user to trigger something"**
 → **Command** (explicit user control)
 
-**Example:** Deploy to production
-
-#### "I need to package multiple related components"
-
+**"I need to package multiple related components"**
 → **Plugin** (distribution mechanism)
-
-**Example:** Complete testing suite with runner agent, test command, and testing skill
 
 ## Installation
 
@@ -296,22 +455,38 @@ Understanding when to use each component type is critical for good architecture.
 1. Add the marketplace (if not already added):
 
    ```
-   /plugin marketplace add /Users/aaron/workspace/infra/claude-marketplace
+   /plugin marketplace add /path/to/neat-little-package
    ```
 
 2. Install the plugin:
 
    ```
-   /plugin install forge@my-claude-plugins
+   /plugin install forge@neat-little-package
    ```
 
 3. Start creating components!
+
+### Manual Installation
+
+1. Clone or copy the `forge` directory to your plugins location
+2. Ensure proper structure:
+   ```
+   plugins/forge/
+   ├── .claude-plugin/
+   │   └── plugin.json
+   ├── agents/
+   ├── commands/
+   ├── skills/
+   ├── README.md
+   └── CLAUDE.md
+   ```
+3. Use the `/plugin install` command or restart Claude Code
 
 ## Quick Start Guide
 
 ### Creating Your First Plugin
 
-1. Run `/add-plugin`
+1. Run `/forge:add-plugin`
 2. The plugin-writer agent will guide you through:
    - Plugin name and metadata
    - Initial components to include
@@ -324,28 +499,45 @@ Understanding when to use each component type is critical for good architecture.
 **Add a command:**
 
 ```
-/add-command
+/forge:add-command
 ```
 
-Then follow the prompts.
+Then provide context about what the command should do.
 
 **Add a skill:**
 
 ```
-/add-skill
+/forge:add-skill
 ```
 
-Then follow the prompts.
+Then provide context about what knowledge the skill should provide.
+
+**Add an agent:**
+
+```
+/forge:add-agent
+```
+
+Then provide context about what work the agent should perform.
+
+**Add a hook:**
+
+```
+/forge:add-hook
+```
+
+Then provide context about what event and validation the hook should handle.
 
 ### Getting Design Guidance
 
-Use the design skills for expert guidance:
+Load design skills for expert guidance:
 
-- **agent-design** - Creating agents and subagents
-- **slash-command-design** - Creating slash commands
-- **plugin-design** - Creating and distributing plugins
-- **hooks-design** - Creating lifecycle hooks
-- **skill-design** - Creating skills with Forge philosophy
+- `forge:agent-design` - Creating agents and subagents
+- `forge:slash-command-design` - Creating slash commands
+- `forge:plugin-design` - Creating and distributing plugins
+- `forge:hook-design` - Creating lifecycle hooks
+- `forge:skill-design` - Creating skills with Forge philosophy
+- `forge:forge-architecture` - Understanding component interaction patterns
 
 These skills will:
 
@@ -354,12 +546,29 @@ These skills will:
 3. Identify common pitfalls
 4. Suggest best practices
 
+### Validating and Reviewing Components
+
+**Validate entire plugin:**
+
+```
+/forge:validate-plugin path/to/plugin
+```
+
+**Review specific component:**
+
+```
+/forge:review-component path/to/component.md
+```
+
+Both commands provide detailed reports with file:line references and specific recommendations.
+
 ## Component Design Best Practices
 
 ### Skills
 
 **Do:**
 
+- Apply knowledge delta filter (only document what Claude doesn't know)
 - Fetch official docs with WebFetch every time
 - Focus on interpretation, not duplication
 - Distinguish official specs from best practices
@@ -370,13 +579,13 @@ These skills will:
 **Don't:**
 
 - Duplicate official documentation
+- Document basic commands Claude already knows
 - Hardcode model names, tool lists, or syntax
 - Present opinions as official requirements
 - Make unsupported claims
 - Create overlapping skills
 
-**Philosophy:**
-Skills should be a lens for reading official docs effectively, not a replacement for them.
+**Philosophy:** Skills should document the delta between Claude's base knowledge and what's needed for this context.
 
 ### Agents
 
@@ -387,7 +596,7 @@ Skills should be a lens for reading official docs effectively, not a replacement
 - Use directive description language for delegation
 - Define single, focused responsibility
 - Include clear constraints
-- Test that delegation triggers work
+- Load relevant design skills
 
 **Don't:**
 
@@ -395,9 +604,9 @@ Skills should be a lens for reading official docs effectively, not a replacement
 - Over-restrict tools (agent can't do its job)
 - Create overly broad scope (one agent, many jobs)
 - Hardcode version-specific details
+- Forget to include Skill tool when loading skills
 
-**Key insight:**
-Agents can't ask questions but should do actual work autonomously.
+**Key insight:** Agents can't ask questions but should do actual work autonomously.
 
 ### Commands
 
@@ -407,7 +616,7 @@ Agents can't ask questions but should do actual work autonomously.
 - Delegate to agents for complex logic
 - Use simple arguments or let agents handle complexity
 - Include description for discoverability
-- Leverage advanced features (bash `!`, file `@`)
+- Follow thin wrapper pattern
 
 **Don't:**
 
@@ -416,8 +625,7 @@ Agents can't ask questions but should do actual work autonomously.
 - Create overly complex arguments
 - Skip the description field
 
-**Key insight:**
-Most robust commands delegate to specialized agents.
+**Key insight:** Most robust commands delegate to specialized agents.
 
 ### Hooks
 
@@ -438,8 +646,7 @@ Most robust commands delegate to specialized agents.
 - Ignore security (path traversal, etc.)
 - Forget to handle errors gracefully
 
-**Key insight:**
-Hooks execute automatically on every event - they must be fast, safe, and reliable.
+**Key insight:** Hooks execute automatically on every event - they must be fast, safe, and reliable.
 
 ### General
 
@@ -468,13 +675,13 @@ Hooks execute automatically on every event - they must be fast, safe, and reliab
 2. Uninstall the plugin:
 
    ```
-   /plugin uninstall [plugin-name]@my-claude-plugins
+   /plugin uninstall [plugin-name]@marketplace-name
    ```
 
 3. Reinstall the plugin:
 
    ```
-   /plugin install [plugin-name]@my-claude-plugins
+   /plugin install [plugin-name]@marketplace-name
    ```
 
 4. Test the changes
@@ -485,17 +692,14 @@ Hooks execute automatically on every event - they must be fast, safe, and reliab
 **Commands:**
 
 ```
-/[command-name]
+/command-name
 ```
 
 Verify it behaves as expected.
 
 **Skills:**
 
-1. Use the Skill tool
-2. Select your skill
-3. Test it in various scenarios
-4. Refine SKILL.md as needed
+Use the Skill tool to load the skill, then test it in various scenarios.
 
 **Agents:**
 
@@ -504,6 +708,17 @@ Reference the agent in prompts or let delegation trigger it, then verify behavio
 **Hooks:**
 
 Make a change that triggers the hook event, press CTRL-R to view execution.
+
+### Validation Workflow
+
+Before publishing or sharing a plugin:
+
+1. Run `/forge:validate-plugin` to check structure and compliance
+2. Review each component with `/forge:review-component`
+3. Fix any issues identified in validation reports
+4. Update documentation with `/forge:update-docs`
+5. Test all components end-to-end
+6. Version bump in plugin.json
 
 ## File Structure Reference
 
@@ -523,8 +738,10 @@ plugin-name/
 │   ├── agent1.md
 │   └── agent2.md
 ├── hooks/                   # Optional: Event handlers
-│   └── hooks.json
-└── README.md               # Recommended: Documentation
+│   ├── hooks.json
+│   └── script.sh
+├── README.md               # Recommended: User documentation
+└── CLAUDE.md              # Recommended: Development guidelines
 ```
 
 **Critical:** All component directories must be at plugin root, NOT inside `.claude-plugin/`.
@@ -551,20 +768,22 @@ plugin-name/
 - Verify SKILL.md exists in `skills/[skill-name]/` directory
 - Check YAML frontmatter formatting
 - Ensure skill directory name is lowercase, hyphenated
+- Filename must be `SKILL.md` (uppercase)
 - Reinstall the plugin
 - Use Skill tool to verify it appears in list
 
 ### Agent not being invoked
 
-- Check description field uses directive language
+- Check description field uses directive language ("ALWAYS use when...")
 - Verify agent file is in `agents/` directory
 - Ensure tools list matches agent's responsibilities
 - Look for user interaction language (forbidden)
 - Test by explicitly requesting the agent
+- Verify Skill tool is included if agent loads skills
 
 ### Hook not firing
 
-- Verify hooks configuration in settings.json
+- Verify hooks configuration in settings.json or hooks.json
 - Review and approve hooks via `/hooks` menu
 - Check matcher syntax (case-sensitive)
 - Press CTRL-R to view hook execution logs
@@ -577,150 +796,9 @@ plugin-name/
 - Verify file paths are correct
 - Restart Claude Code if needed
 
-## Examples
+### Validation failures
 
-### Example plugin.json
-
-```json
-{
-  "name": "my-plugin",
-  "description": "A helpful plugin for my workflow",
-  "version": "1.0.0",
-  "author": {
-    "name": "Your Name",
-    "email": "you@example.com"
-  },
-  "keywords": ["productivity", "automation"]
-}
-```
-
-### Example Command File
-
-`commands/deploy.md`:
-
-```markdown
----
-description: Deploy the application to production
-argument-hint: environment
----
-
-Deploy to the $1 environment.
-
-Use the deployment agent to handle:
-- Pre-deployment validation
-- Build process
-- Deployment execution
-- Post-deployment verification
-- Rollback strategy if needed
-```
-
-### Example Skill File
-
-`skills/api-standards/SKILL.md`:
-
-```markdown
----
-name: api-standards
-description: Guidelines for designing and documenting REST APIs following team standards
----
-
-# API Standards Skill
-
-When designing or documenting APIs, follow these team standards:
-
-## Endpoint Naming
-
-- Use plural nouns: `/users`, `/products`
-- Use kebab-case for multi-word resources: `/user-profiles`
-- Avoid verbs in URLs (use HTTP methods)
-
-## Response Format
-
-All responses should follow:
-
-```json
-{
-  "data": { ... },
-  "meta": {
-    "timestamp": "ISO8601",
-    "version": "v1"
-  }
-}
-```
-
-## Documentation Requirements
-
-Each endpoint must document:
-
-- Purpose and use case
-- Request parameters with types
-- Response schema with examples
-- Error codes and meanings
-- Authentication requirements
-
-```
-
-### Example Agent File
-
-`agents/test-runner.md`:
-
-```markdown
----
-name: test-runner
-description: ALWAYS use when test suites need execution and failures require analysis. Use proactively when encountering test-related errors.
-tools: Bash, Read, Grep
-model: haiku
----
-
-# Test Runner Agent
-
-You execute and analyze test results.
-
-## Process
-
-1. Run the requested test suite using Bash
-2. Parse output for failures using Grep
-3. Read relevant source/test files
-4. Provide concise failure summary with file:line references
-
-## Constraints
-
-- Never modify code; only analyze and report findings
-- Only run tests, never build or deploy commands
-- Keep summaries focused on actionable items
-```
-
-### Example Hook Configuration
-
-`hooks/hooks.json`:
-
-```json
-{
-  "PostToolUse": [
-    {
-      "matcher": "Write|Edit",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "prettier --write \"$CLAUDE_FILE_PATHS\" 2>/dev/null || true",
-          "timeout": 30
-        }
-      ]
-    }
-  ],
-  "PreToolUse": [
-    {
-      "matcher": "Bash",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/scripts/security-check.sh"
-        }
-      ]
-    }
-  ]
-}
-```
+Run `/forge:validate-plugin` to see specific issues with file:line references and recommendations for fixes.
 
 ## Resources
 
@@ -732,25 +810,35 @@ Always fetch current documentation:
 - **Slash Commands**: <https://code.claude.com/docs/en/slash-commands>
 - **Agents**: <https://code.claude.com/docs/en/sub-agents>
 - **Hooks**: <https://code.claude.com/docs/en/hooks>
-- **Skills**: Part of agent documentation
 
 ### Design Skills (Included in Forge)
 
 Use these skills for expert guidance:
 
-- `agent-design` - Agent and subagent design
-- `slash-command-design` - Command design and best practices
-- `plugin-design` - Plugin architecture and distribution
-- `hooks-design` - Hook lifecycle and patterns
-- `skill-design` - Skill creation following Forge philosophy
+- `forge:agent-design` - Agent and subagent design
+- `forge:slash-command-design` - Command design and best practices
+- `forge:plugin-design` - Plugin architecture and distribution
+- `forge:hook-design` - Hook lifecycle and patterns
+- `forge:skill-design` - Skill creation following Forge philosophy
+- `forge:forge-architecture` - Component interaction and ecosystem patterns
+- `forge:uv-scripts` - Python scripts with inline dependencies
 
-**Design Philosophy:**
+### Design Philosophy Summary
 
-- Low-maintenance: Defer to official docs via WebFetch, avoid hardcoding
-- Two-layer approach: Official specs + opinionated guidance
-- Evidence-based: All recommendations grounded in docs or clearly marked as opinions
-- Delegation pattern: Commands delegate to specialized agents that follow design skills
+- **Low-maintenance:** Defer to official docs via WebFetch, avoid hardcoding
+- **Two-layer approach:** Official specs + opinionated guidance
+- **Knowledge delta:** Only document what Claude doesn't know
+- **Evidence-based:** All recommendations grounded in docs or clearly marked as opinions
+- **Delegation pattern:** Commands delegate to specialized agents that follow design skills
 
-## TODO
+## Examples
 
-- [ ] Add a command to update docs.  README, CLAUDE.md
+See the component files in this plugin for examples:
+
+- **Agents**: `agents/plugin-writer.md`, `agents/agent-writer.md`
+- **Commands**: `commands/add-plugin.md`, `commands/add-agent.md`
+- **Skills**: `skills/agent-design/SKILL.md`, `skills/skill-design/SKILL.md`
+- **README**: This file follows Forge documentation patterns
+- **CLAUDE.md**: Development guidelines following Forge patterns
+
+Every component in Forge is a working example of the patterns it teaches.
