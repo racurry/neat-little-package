@@ -53,6 +53,7 @@ Use Skill tool: skill="forge:plugin-design"
 **Do NOT use Read tool** - The Skill tool ensures proper loading and context integration.
 
 **Why both skills:**
+
 - `forge-architecture` - Understanding component interaction and ecosystem patterns
 - `plugin-design` - Plugin-specific structure and best practices
 
@@ -134,40 +135,29 @@ Create comprehensive documentation at plugin root:
 
 [Brief description of what the plugin does]
 
-## Installation
-
-[Installation instructions]
 
 ## Components
 
 ### Commands
 
 - `/command-name` - What it does
+- `/another-command` - What it does
 
 ### Agents
 
 - `agent-name` - When it's used
+- `another-agent` - When it's used
 
 ### Skills
 
 - `skill-name` - What knowledge it provides
+- `another-skill` - What knowledge it provides
 
 ### Hooks
 
 - `HookType:ToolName` - What it prevents/enables
 
-## Requirements
-
-[Required dependencies, environment variables, etc.]
-
-## Usage Examples
-
-[Concrete examples showing how to use components]
-
-
 ```
-
-**Make documentation comprehensive** - users need clear guidance on what's included and how to use it.
 
 ### 7. Delegate Component Creation (MANDATORY)
 
@@ -248,21 +238,25 @@ Use Grep to verify critical structure:
 For each component created, verify:
 
 **Skills:**
+
 - ✓ Contains "Required Reading Before..." section with WebFetch URLs
 - ✓ Uses two-layer approach: "(Official Specification)" and "(Best Practices)" headings
 - ✓ Defers to official docs (no hardcoded version-specific details)
 - ✓ Includes decision frameworks and common pitfalls
 
 **Agents:**
+
 - ✓ No user interaction language ("ask the user" forbidden)
 - ✓ Tools match autonomous responsibilities
 - ✓ Strong delegation in description ("ALWAYS use when...")
 
 **Commands:**
+
 - ✓ Delegates to specialized agents (thin wrapper pattern)
 - ✓ Includes description field
 
 **Hooks:**
+
 - ✓ Quotes all variables
 - ✓ Exit codes appropriate (2 = blocking, only for security)
 

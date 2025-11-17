@@ -26,18 +26,25 @@ Create high-quality hook configurations that execute at specific lifecycle event
 
 ### 1. Load Design Skills (REQUIRED)
 
-**CRITICAL:** Load both ecosystem architecture and hook-specific design skills BEFORE proceeding:
+**CRITICAL:** Load ecosystem architecture and hook-specific design skills BEFORE proceeding:
 
 ```
 Use Skill tool: skill="forge:forge-architecture"
 Use Skill tool: skill="forge:hook-design"
 ```
 
+**OPTIONAL:** For complex hooks requiring Python (data processing, API calls, validation logic):
+
+```
+Use Skill tool: skill="forge:uv-scripts"
+```
+
 **Do NOT use Read tool** - The Skill tool ensures proper loading and context integration.
 
-**WHY both skills:**
+**WHY these skills:**
 - `forge-architecture` - Understanding hook→agent interaction, cross-component patterns
 - `hook-design` - Hook-specific patterns including lifecycle events, exit codes, security
+- `uv-scripts` - Python single-file scripts with inline dependencies (for complex hooks)
 
 ### 2. Fetch Official Documentation (REQUIRED)
 
@@ -76,6 +83,11 @@ Apply hook-design skill principles:
 
 - Command hooks: Deterministic, fast operations (formatters, linters, validators)
 - Prompt-based hooks: Context-aware decisions requiring judgment
+
+**Implementation language:**
+
+- Bash: Simple operations (< 20 lines, basic text processing, command chaining)
+- Python+UV: Complex logic (JSON parsing, API calls, data validation, multi-step processing)
 
 **Exit code strategy:**
 
@@ -208,7 +220,7 @@ Available in command hooks:
 
 ## Common Patterns
 
-**Format after write:**
+**Format after write (bash):**
 
 ```json
 {
@@ -259,6 +271,58 @@ Available in command hooks:
     }
   ]
 }
+```
+
+**Validate JSON with Python+UV (complex validation):**
+
+```json
+{
+  "PostToolUse": [
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "uvx ${CLAUDE_PLUGIN_ROOT}/hooks/validate-json.py",
+          "timeout": 30
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Example UV Python hook script** (`hooks/validate-json.py`):
+
+```python
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# dependencies = ["jsonschema>=4.20.0"]
+# ///
+import sys
+import json
+from pathlib import Path
+
+def main():
+    # Read hook input from stdin
+    hook_input = json.load(sys.stdin)
+    file_paths = hook_input.get("file_paths", [])
+
+    for file_path in file_paths:
+        if not file_path.endswith(".json"):
+            continue
+
+        try:
+            with open(file_path) as f:
+                json.load(f)  # Validate JSON syntax
+        except json.JSONDecodeError as e:
+            print(f"Invalid JSON in {file_path}: {e}", file=sys.stderr)
+            sys.exit(1)  # Non-blocking error
+
+    sys.exit(0)  # Success
+
+if __name__ == "__main__":
+    main()
 ```
 
 ## Output Format
@@ -312,6 +376,21 @@ Include complete hook configuration in code block for reference.
 - Natural language judgment needed
 - Complex criteria evaluation
 - Available for: Stop, SubagentStop, UserPromptSubmit, PreToolUse
+
+**Use bash when:**
+
+- Simple operations (< 20 lines)
+- Basic text processing
+- Command chaining (grep, sed, awk)
+- Shelling out to existing tools
+
+**Use Python+UV when:**
+
+- Complex validation logic
+- JSON/YAML parsing with schemas
+- API calls or network operations
+- Multi-step data processing
+- Need external dependencies
 
 **Choose exit code 2 when:**
 

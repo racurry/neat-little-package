@@ -109,6 +109,72 @@ Complete list of available events:
 
 **Rule of thumb:** If you can write it as a bash script = command hook. If you need judgment = prompt hook.
 
+## Hook Script Implementation Patterns (Best Practices)
+
+### Bash vs Python for Hook Scripts
+
+**Bash is ideal for:**
+
+- Simple file operations (formatting, linting with external tools)
+- Calling CLI tools directly
+- Quick text processing with standard utilities
+- Minimal logic, mostly orchestration
+
+**Python is better for:**
+
+- Complex validation logic
+- JSON parsing and manipulation
+- Advanced text processing
+- Using Python libraries for analysis
+- Multi-step processing with error handling
+
+### Python Hook Scripts with UV (Best Practice)
+
+For Python-based hooks requiring dependencies or complex logic, use UV's single-file script format with inline metadata. This provides self-contained, executable scripts without separate environment setup.
+
+**When to use Python hooks:**
+
+- Parsing complex JSON from stdin
+- Advanced validation requiring libraries (AST analysis, schema validation)
+- Multi-step processing beyond simple shell pipelines
+- Need for structured error handling and reporting
+
+**Pattern:** Use Skill tool: skill="forge:uv-scripts"
+
+The uv-scripts skill provides complete patterns for creating Python hook scripts with inline dependencies, proper shebangs, and Claude Code integration.
+
+**Quick example:**
+
+```python
+#!/usr/bin/env -S uv run --script
+# /// script
+# dependencies = ["ruff"]
+# ///
+
+import subprocess
+import sys
+import os
+
+def main():
+    file_paths = os.environ.get("CLAUDE_FILE_PATHS", "").split()
+    if not file_paths:
+        sys.exit(0)
+
+    result = subprocess.run(["ruff", "check", *file_paths])
+    sys.exit(result.returncode)
+
+if __name__ == "__main__":
+    main()
+```
+
+**Key advantages:**
+
+- Self-contained (dependencies declared inline)
+- No separate virtual environment management
+- Executable directly with proper shebang
+- Fast startup with UV's performance
+- Perfect for plugin hooks (ships with dependencies)
+
 ## Matcher Syntax (Official Specification)
 
 Matchers specify which tools trigger hooks (applies to PreToolUse and PostToolUse only):
@@ -713,5 +779,6 @@ These are the authoritative sources. Fetch them before creating hooks:
 - See agent-design skill for when to use agents instead
 - See slash-command-design skill for user-triggered operations
 - See plugin-design skill for packaging hooks in plugins
+- See uv-scripts skill for Python-based hook implementation patterns
 
 **Remember:** Official docs provide structure and features. This skill provides best practices and patterns for creating excellent hooks.

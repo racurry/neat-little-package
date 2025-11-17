@@ -210,6 +210,7 @@ Understanding when to use each component type is critical for good architecture.
 - You want to teach "how to think about" something
 
 **Examples:**
+
 - `agent-design` - Teaches how to design agents
 - `api-documentation-standards` - Reusable formatting rules
 - `testing-strategy` - Methodologies applicable across projects
@@ -223,6 +224,7 @@ Understanding when to use each component type is critical for good architecture.
 - Require specific tool restrictions
 
 **Examples:**
+
 - `test-runner` - Execute tests and analyze failures
 - `code-reviewer` - Security and quality analysis
 - `doc-generator` - Generate API documentation
@@ -236,6 +238,7 @@ Understanding when to use each component type is critical for good architecture.
 - "I want to type `/something` to make X happen"
 
 **Examples:**
+
 - `/deploy` - Explicit deployment trigger
 - `/create-component` - User-initiated file generation
 - `/git-commit` - Controlled git operations
@@ -249,6 +252,7 @@ Understanding when to use each component type is critical for good architecture.
 - Must happen at specific lifecycle event
 
 **Examples:**
+
 - PostToolUse formatter - Always format after writes
 - PreToolUse security check - Always validate bash commands
 - SessionStart context loader - Always inject project guidelines
@@ -344,6 +348,7 @@ Use the design skills for expert guidance:
 - **skill-design** - Creating skills with Forge philosophy
 
 These skills will:
+
 1. Fetch current official documentation
 2. Provide interpretive guidance
 3. Identify common pitfalls
@@ -646,11 +651,13 @@ All responses should follow:
 ## Documentation Requirements
 
 Each endpoint must document:
+
 - Purpose and use case
 - Request parameters with types
 - Response schema with examples
 - Error codes and meanings
 - Authentication requirements
+
 ```
 
 ### Example Agent File
@@ -721,10 +728,10 @@ You execute and analyze test results.
 
 Always fetch current documentation:
 
-- **Plugins**: https://code.claude.com/docs/en/plugins
-- **Slash Commands**: https://code.claude.com/docs/en/slash-commands
-- **Agents**: https://code.claude.com/docs/en/sub-agents
-- **Hooks**: https://code.claude.com/docs/en/hooks
+- **Plugins**: <https://code.claude.com/docs/en/plugins>
+- **Slash Commands**: <https://code.claude.com/docs/en/slash-commands>
+- **Agents**: <https://code.claude.com/docs/en/sub-agents>
+- **Hooks**: <https://code.claude.com/docs/en/hooks>
 - **Skills**: Part of agent documentation
 
 ### Design Skills (Included in Forge)
@@ -737,39 +744,13 @@ Use these skills for expert guidance:
 - `hooks-design` - Hook lifecycle and patterns
 - `skill-design` - Skill creation following Forge philosophy
 
-## Version History
-
-### v1.0.0 (2025-11-16)
-
-**Initial release - Complete toolkit for all Claude Code components**
-
-**Commands (7):**
-- `/add-plugin` - Create new plugins with complete scaffolding
-- `/add-agent` - Add agents to plugins
-- `/add-command` - Add slash commands to plugins
-- `/add-skill` - Add skills to plugins
-- `/add-hook` - Add hooks to plugins
-- `/validate-plugin` - Validate plugin structure and components
-- `/review-component` - Review components for quality
-
-**Agents (7):**
-- `plugin-writer` - Creates complete plugins, orchestrates other writers
-- `agent-writer` - Creates agents following agent-design patterns
-- `slash-command-writer` - Creates commands following slash-command-design patterns
-- `skill-writer` - Creates skills following skill-design patterns
-- `hooks-writer` - Creates hooks following hooks-design patterns
-- `validation-agent` - Validates plugins and components (read-only)
-- `component-reviewer` - Reviews components for quality (read-only)
-
-**Design Skills (5):**
-- `agent-design` - Agent and subagent design guidance
-- `slash-command-design` - Command design and best practices
-- `plugin-design` - Plugin architecture and distribution
-- `hooks-design` - Hook lifecycle and patterns
-- `skill-design` - Meta-skill for skill creation
-
 **Design Philosophy:**
+
 - Low-maintenance: Defer to official docs via WebFetch, avoid hardcoding
 - Two-layer approach: Official specs + opinionated guidance
 - Evidence-based: All recommendations grounded in docs or clearly marked as opinions
 - Delegation pattern: Commands delegate to specialized agents that follow design skills
+
+## TODO
+
+- [ ] Add a command to update docs.  README, CLAUDE.md
