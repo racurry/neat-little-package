@@ -7,8 +7,8 @@
   "description": "Claude Code plugins that help me do things",
   "plugins": [
     {
-      "name": "forge",
-      "source": "./plugins/forge",
+      "name": "box-factory",
+      "source": "./plugins/box-factory",
       "description": "Toolkit for creating and managing all Claude Code components"
     },
     {
