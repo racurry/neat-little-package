@@ -6,8 +6,6 @@ A collection of Claude Code plugins
 
 ## Set up
 
-TODO: update w/ repo once published
-
 ```
  # Add the marketplace
 /plugin marketplace add racurry/neat-little-package
