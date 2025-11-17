@@ -65,7 +65,7 @@ When reviewing a component:
 
 5. **Check for common anti-patterns** specific to component type:
    - **Agents**: User interaction language, overly broad scope, tool mismatches, weak delegation triggers
-   - **Commands**: Knowledge storage instead of action, complex logic not delegated to agents, missing descriptions
+   - **Commands**: Knowledge storage instead of action, complex logic requiring file I/O or decision trees not delegated to agents, missing descriptions
    - **Skills**: Knowledge that should be hardcoded prompts, overly narrow scope
    - **Hooks**: Slow execution, silent failures, security vulnerabilities, user interaction assumptions
    - **Plugins**: Components in wrong directories, premature pluginification, missing documentation
@@ -132,7 +132,7 @@ When reviewing a component:
 - Single, clear purpose
 - Appropriate tool restrictions (if specified)
 - Model choice matches complexity
-- Delegates to agents for complex logic
+- Delegates to agents for complex logic requiring file I/O or decision trees
 
 **Quality:**
 - Clear, actionable prompt
@@ -142,10 +142,41 @@ When reviewing a component:
 - References project conventions when applicable
 
 **Anti-patterns:**
-- Using commands for documentation/knowledge
-- Complex logic that should be in agents
+- Using commands for documentation/knowledge storage
+- Complex logic requiring file I/O, parsing, or decision trees
+- Logic requiring Read, Grep, or state management
 - Overly complex argument parsing
 - Scope creep (too many unrelated operations)
+
+**NOT anti-patterns (simple sequences are OK in commands):**
+- Sequential bash commands (3-5 steps with `&&` chaining)
+- Basic conditionals (e.g., "check if tool installed, then install if missing")
+- Simple verification steps (e.g., version checks, directory existence)
+- User-facing instructions or guidance text
+- Direct tool invocation without parsing or decision logic
+
+**Examples to distinguish:**
+
+✅ **OK in command** (simple bash sequence):
+```markdown
+Check if prettier is installed: `which prettier || npm install -D prettier`
+Run formatter: `prettier --write "$1"`
+Verify formatting: `prettier --check "$1"`
+```
+
+❌ **Needs agent** (file I/O + parsing + decisions):
+```markdown
+Read configuration file to determine formatting rules
+Parse package.json to identify project type
+Decide which formatter to use based on file type
+Generate formatter config if missing
+Run formatter and parse output for errors
+```
+
+✅ **OK in command** (direct delegation):
+```markdown
+Use the code-formatter agent to format $1 according to project standards.
+```
 
 ### Skill Review Checklist
 

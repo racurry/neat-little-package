@@ -162,7 +162,7 @@ Use the test-runner agent to execute all tests and provide detailed failure anal
 - Avoids reimplementing logic
 - Agent gets isolated context for complex work
 
-**When to use:** Any command that needs more than simple string substitution or basic tool invocation.
+**When to use:** Any command that needs file reading/parsing, complex decision trees, error recovery logic, or multi-step state management.
 
 ### Tool Restriction Pattern
 
@@ -183,6 +183,94 @@ Run `git status` and display the output.
 - Fast execution (haiku model)
 - Restricted permissions
 - Clear, single-purpose command
+
+### Simple Sequential Pattern
+
+**Commands CAN handle sequential bash operations** when they're straightforward and don't require file inspection or complex parsing:
+
+```markdown
+---
+description: Install GitHub CLI if not present
+allowed-tools: Bash
+model: haiku
+---
+
+Check if gh CLI is installed. If not, provide installation instructions for the user's platform.
+
+Simple workflow:
+1. Check: `which gh` or `command -v gh`
+2. If not found, provide platform-specific install guidance
+3. Verify with `gh --version` if installed
+4. Output success message or next steps
+```
+
+**This pattern is OK in commands when you have:**
+
+✅ **3-5 sequential bash steps** - Simple linear workflow
+✅ **Basic conditionals** - Simple if/else (installed vs not installed)
+✅ **Simple verification** - Exit codes, command success/failure
+✅ **User-facing instructions** - Output guidance, next steps
+
+**When to keep it in a command:**
+
+- Checking if a tool is installed (`which`, `command -v`)
+- Installing via package manager (`brew install`, `apt-get install`)
+- Running simple verification (`--version`, `status` checks)
+- Providing user instructions based on results
+- Linear workflows without branching complexity
+
+**Rule of thumb:** If you can write it as 3-5 bash commands with simple if/else logic and no file reading, keep it in the command.
+
+**Delegate to an agent when you need:**
+
+❌ **File reading/parsing** - Requires Read, Grep, or complex text processing
+❌ **Complex decision trees** - Framework detection, config file parsing, multi-path logic
+❌ **Error recovery logic** - Retries, fallbacks, multiple failure modes
+❌ **State management** - Tracking across multiple steps, rollback capability
+❌ **Multiple tool orchestration** - Coordinating Read + Grep + Write + Bash
+
+**Example requiring agent delegation:**
+
+```markdown
+# ❌ Too complex for command - needs agent
+---
+description: Set up test environment
+---
+
+Detect test framework by:
+1. Read package.json, check for jest/mocha/vitest dependencies
+2. Read test config files (.jestrc, mocha.opts, vitest.config.ts)
+3. Scan for existing test files in src/, tests/, __tests__/
+4. Parse configuration to determine coverage settings
+5. Install missing dependencies based on framework
+6. Generate framework-specific config if missing
+7. Create example test files following detected patterns
+8. Verify setup with test run
+```
+
+**Why this needs an agent:**
+
+- Requires Read tool for multiple files
+- Complex decision tree (framework detection)
+- Config file parsing
+- State management across steps
+- Multiple failure modes to handle
+- Error recovery (config generation, dependency installation)
+
+**Better approach:**
+
+```markdown
+---
+description: Set up test environment for current project
+---
+
+Use the test-setup agent to detect the test framework, install dependencies, and configure the testing environment.
+```
+
+**The threshold:**
+
+- **Commands:** `which gh && gh --version || echo "Install with: brew install gh"`
+- **Agents:** Anything requiring Read/Grep/Parse or complex multi-step decision-making
 
 ### Generation Pattern
 
@@ -315,7 +403,8 @@ Before finalizing a command:
 - ✓ Includes `description` field for discoverability
 - ✓ Uses `argument-hint` if arguments expected
 - ✓ Action-oriented (not knowledge storage)
-- ✓ Delegates to agents for complex logic
+- ✓ Delegates to agents for complex logic (file parsing, decision trees, error recovery)
+- ✓ Simple sequential bash is OK (3-5 steps, basic if/else)
 - ✓ Arguments are simple (if present)
 - ✓ Clear, single-purpose design
 - ✓ Appropriate tool restrictions (if needed)

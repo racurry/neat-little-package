@@ -1,0 +1,6 @@
+{
+  "name": "gitting",
+  "version": "1.0.0",
+  "description": "Do git the way I like",
+  "mcpServers": "./.mcp.json"
+}
