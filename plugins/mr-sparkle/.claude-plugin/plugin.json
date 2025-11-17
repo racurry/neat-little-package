@@ -1,0 +1,5 @@
+{
+  "name": "mr-sparkle",
+  "version": "0.1.0",
+  "description": "Automated code quality enforcement with linting and formatting."
+}

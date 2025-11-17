@@ -220,30 +220,44 @@ Available in command hooks:
 
 ## PostToolUse Output Requirements (CRITICAL)
 
-**Key insight:** PostToolUse hooks communicate with Claude, NOT directly with users.
+**Key insight:** PostToolUse hooks have two output channels with different visibility:
 
-**To make hook output visible:**
+**For messages visible DIRECTLY to users (no verbose mode required):**
 
-Hook scripts MUST output JSON to stdout with `additionalContext` field:
+Use `systemMessage` field:
+
+```python
+import json
+output = {
+    "systemMessage": "Formatted successfully: file.md"
+}
+print(json.dumps(output), flush=True)
+sys.exit(0)
+```
+
+**For messages visible ONLY to Claude (user must enable verbose mode CTRL-O):**
+
+Use `additionalContext` in `hookSpecificOutput`:
 
 ```python
 import json
 output = {
     "hookSpecificOutput": {
         "hookEventName": "PostToolUse",
-        "additionalContext": "Message for Claude to see and relay"
+        "additionalContext": "Internal context for Claude's awareness"
     }
 }
 print(json.dumps(output), flush=True)
 sys.exit(0)
 ```
 
-**Common mistake:** Writing to stderr instead of JSON stdout. This prevents Claude from seeing messages.
+**Common mistake:** Using only `additionalContext` when user feedback is needed. This requires users to enable verbose mode to see output.
 
 **Correct pattern:**
-- Success: JSON with `additionalContext` to stdout, exit 0
-- Errors: JSON with error details in `additionalContext` to stdout, exit 0
-- Blocking errors: Use exit 2 with stderr (rare, security/safety only)
+- **User feedback needed:** Use `systemMessage` (visible immediately)
+- **Claude context only:** Use `additionalContext` (verbose mode only)
+- **Both:** Include both fields in the JSON output
+- **Blocking errors:** Use exit 2 with stderr (rare, security/safety only)
 
 ## Common Patterns
 
@@ -330,13 +344,15 @@ import sys
 import json
 from pathlib import Path
 
-def output_json_response(additional_context=None):
+def output_json_response(system_message=None, additional_context=None):
     """Output JSON response for Claude to process."""
     response = {}
+    if system_message:
+        response["systemMessage"] = system_message  # Visible directly to user
     if additional_context:
         response["hookSpecificOutput"] = {
             "hookEventName": "PostToolUse",
-            "additionalContext": additional_context
+            "additionalContext": additional_context  # Only visible in verbose mode
         }
     print(json.dumps(response), flush=True)
 
@@ -352,14 +368,14 @@ def main():
         with open(file_path) as f:
             json.load(f)  # Validate JSON syntax
 
-        # Success - output to Claude via JSON
-        output_json_response(f"JSON validated: {file_path}")
+        # Success - output visible to user
+        output_json_response(system_message=f"JSON validated: {file_path}")
         sys.exit(0)
 
     except json.JSONDecodeError as e:
-        # Error - output to Claude via JSON
+        # Error - output visible to user
         error_msg = f"Invalid JSON in {file_path}: {e}"
-        output_json_response(error_msg)
+        output_json_response(system_message=error_msg)
         sys.exit(0)  # Non-blocking error
 
 if __name__ == "__main__":

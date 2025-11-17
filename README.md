@@ -2,7 +2,7 @@
 
 ![Sorry if it sounded sarcastic](assets/really-i-mean-that.png)
 
-Some claude plugins
+A collection of Claude Code plugins
 
 ## Set up
 

@@ -1,0 +1,58 @@
+{
+  // Configuration for markdownlint-cli2
+  // See https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md for rule details
+
+  "config": {
+    // Default state for all rules
+    "default": true,
+
+    // MD013/line-length - Line length (disabled)
+    "MD013": false,
+
+    // MD033/no-inline-html - Inline HTML
+    "MD033": {
+      "allowed_elements": [
+        "br",
+        "details",
+        "summary",
+        "img",
+        "kbd",
+        "sub",
+        "sup"
+      ]
+    },
+
+    // MD041/first-line-heading - First line in file should be a top level heading
+    "MD041": false,
+
+    // MD024/no-duplicate-heading - Multiple headings with the same content
+    "MD024": {
+      "siblings_only": true
+    },
+
+    // MD046/code-block-style - Code block style
+    "MD046": {
+      "style": "fenced"
+    }
+  },
+
+  // Globs to ignore
+  "ignores": [
+    "node_modules/**",
+    "**/node_modules/**",
+    "vendor/**",
+    ".git/**",
+    "**/.git/**",
+    "dist/**",
+    "build/**",
+    ".next/**",
+    "coverage/**",
+    ".venv/**",
+    "venv/**"
+  ],
+
+  // Enable glob matching for .gitignore files
+  "gitignore": true,
+
+  "noProgress": true
+}

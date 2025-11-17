@@ -275,39 +275,53 @@ Return structured JSON for sophisticated control:
 
 ### PostToolUse Communication Pattern (CRITICAL)
 
-**Key insight:** PostToolUse hooks communicate with Claude, NOT directly with users.
+**Key insight:** PostToolUse hooks have two output channels with different visibility:
 
-**For Claude to see hook messages:**
+**For messages visible DIRECTLY to users (no verbose mode required):**
+
+Use `systemMessage` field - displays immediately to users:
+
+```json
+{
+  "systemMessage": "Markdown formatted: path/to/file.md"
+}
+```
+
+**For messages visible ONLY to Claude (user must enable verbose mode):**
+
+Use `additionalContext` in `hookSpecificOutput`:
 
 ```json
 {
   "hookSpecificOutput": {
     "hookEventName": "PostToolUse",
-    "additionalContext": "Message for Claude to relay to user"
+    "additionalContext": "Internal context for Claude's awareness"
   }
 }
 ```
 
-**Output to stdout as JSON (with exit 0):**
+**Complete output pattern:**
 
 ```python
 import json
 output = {
+    "systemMessage": "Formatted successfully: file.md",  # Shows to user directly
     "hookSpecificOutput": {
         "hookEventName": "PostToolUse",
-        "additionalContext": "Markdown formatted: path/to/file.md"
+        "additionalContext": "Additional context for Claude"  # Only in verbose mode
     }
 }
 print(json.dumps(output), flush=True)
 sys.exit(0)
 ```
 
-**Common mistake:** Writing messages to stderr instead of JSON to stdout. This prevents Claude from seeing the messages and relaying them to users.
+**Common mistake:** Using only `additionalContext` when user feedback is needed. This requires users to enable verbose mode (CTRL-O) to see output.
 
 **Correct pattern:**
-- Success: Output JSON with `additionalContext` to stdout, exit 0
-- Errors: Output JSON with error details in `additionalContext` to stdout, exit 0 (non-blocking) or exit 1 (non-blocking with visibility)
-- Blocking errors: Use exit 2 with stderr (rare, security/safety only)
+- **User feedback needed:** Use `systemMessage` (visible immediately)
+- **Claude context only:** Use `additionalContext` (verbose mode only)
+- **Both:** Include both fields in the JSON output
+- **Blocking errors:** Use exit 2 with stderr (rare, security/safety only)
 
 ### PreToolUse Special Output
 
@@ -451,7 +465,7 @@ Available in command hooks:
 
 **Common uses:** Format code, run linters, update documentation, cleanup.
 
-**CRITICAL for PostToolUse:** To communicate results to users, hooks must output JSON to stdout with `additionalContext`:
+**CRITICAL for PostToolUse:** To communicate results to users, hooks must output JSON to stdout with `systemMessage`:
 
 ```python
 #!/usr/bin/env -S uv run --quiet --script
@@ -461,13 +475,15 @@ Available in command hooks:
 import json
 import sys
 
-def output_json_response(additional_context=None):
+def output_json_response(system_message=None, additional_context=None):
     """Output JSON response for Claude to process."""
     response = {}
+    if system_message:
+        response["systemMessage"] = system_message  # Visible directly to user
     if additional_context:
         response["hookSpecificOutput"] = {
             "hookEventName": "PostToolUse",
-            "additionalContext": additional_context
+            "additionalContext": additional_context  # Only visible in verbose mode
         }
     print(json.dumps(response), flush=True)
 
@@ -478,12 +494,14 @@ file_path = hook_input.get("tool_input", {}).get("file_path")
 # Run linter/formatter
 # ...
 
-# Communicate result to Claude
-output_json_response(f"Formatted successfully: {file_path}")
+# Communicate result directly to user
+output_json_response(system_message=f"Formatted successfully: {file_path}")
 sys.exit(0)
 ```
 
-**Common mistake:** Writing to stderr instead of JSON stdout prevents Claude from seeing messages.
+**Common mistakes:**
+- Using only `additionalContext` when user feedback is needed (requires verbose mode)
+- Writing to stderr instead of JSON stdout (completely invisible)
 
 ### Stop Pattern
 
@@ -625,22 +643,12 @@ prettier --write $CLAUDE_FILE_PATHS  # Breaks if path has spaces
 prettier --write "$CLAUDE_FILE_PATHS"
 ```
 
-### Pitfall #7: PostToolUse Writing to stderr Instead of JSON stdout
+### Pitfall #7: PostToolUse Using Wrong Output Field
 
-**Problem:** Hook writes messages to stderr instead of JSON stdout
-
-```python
-# Wrong - Claude can't see this
-print("Formatted successfully: file.md", file=sys.stderr)
-sys.exit(0)
-```
-
-**Result:** Messages invisible to Claude, user never sees feedback.
-
-**Better:** Output JSON to stdout with `additionalContext`
+**Problem:** Hook uses `additionalContext` when user feedback is needed
 
 ```python
-# Correct - Claude sees and relays to user
+# Wrong - Only visible in verbose mode (CTRL-O)
 import json
 output = {
     "hookSpecificOutput": {
@@ -652,7 +660,24 @@ print(json.dumps(output), flush=True)
 sys.exit(0)
 ```
 
-**Why:** PostToolUse hooks communicate with Claude (not users directly). JSON stdout with `additionalContext` is required for visibility.
+**Result:** User must enable verbose mode to see feedback.
+
+**Better:** Use `systemMessage` for direct user visibility
+
+```python
+# Correct - Visible immediately to user
+import json
+output = {
+    "systemMessage": "Formatted successfully: file.md"
+}
+print(json.dumps(output), flush=True)
+sys.exit(0)
+```
+
+**Why:**
+- `systemMessage` displays directly to users (no verbose mode required)
+- `additionalContext` only visible in verbose mode (CTRL-O) or as Claude's context
+- stderr output is only for blocking errors (exit 2)
 
 ## Security Considerations (Official Guidance)
 

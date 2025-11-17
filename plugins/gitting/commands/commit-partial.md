@@ -1,7 +1,6 @@
 ---
 description: Commit a subset of changes based on a description
 argument-hint: <what_to_commit>
-model: haiku
 ---
 
 Use the git-committer agent to execute a partial commit workflow.

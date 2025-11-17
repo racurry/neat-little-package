@@ -7,9 +7,19 @@
   "description": "Claude Code plugins that help me do things",
   "plugins": [
     {
-      "name": "hello-world",
-      "source": "./plugins/hello-world",
-      "description": "A simple hello world plugin demonstrating commands and skills"
+      "name": "forge",
+      "source": "./plugins/forge",
+      "description": "Toolkit for creating and managing all Claude Code components"
+    },
+    {
+      "name": "mr-sparkle",
+      "source": "./plugins/mr-sparkle",
+      "description": "Automated code quality enforcement with linting and formatting"
+    },
+    {
+      "name": "gitting",
+      "source": "./plugins/gitting",
+      "description": "Streamline git and GitHub workflows with integrated CLI tools and MCP server support"
     }
   ]
 }
