@@ -273,6 +273,42 @@ Return structured JSON for sophisticated control:
 }
 ```
 
+### PostToolUse Communication Pattern (CRITICAL)
+
+**Key insight:** PostToolUse hooks communicate with Claude, NOT directly with users.
+
+**For Claude to see hook messages:**
+
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PostToolUse",
+    "additionalContext": "Message for Claude to relay to user"
+  }
+}
+```
+
+**Output to stdout as JSON (with exit 0):**
+
+```python
+import json
+output = {
+    "hookSpecificOutput": {
+        "hookEventName": "PostToolUse",
+        "additionalContext": "Markdown formatted: path/to/file.md"
+    }
+}
+print(json.dumps(output), flush=True)
+sys.exit(0)
+```
+
+**Common mistake:** Writing messages to stderr instead of JSON to stdout. This prevents Claude from seeing the messages and relaying them to users.
+
+**Correct pattern:**
+- Success: Output JSON with `additionalContext` to stdout, exit 0
+- Errors: Output JSON with error details in `additionalContext` to stdout, exit 0 (non-blocking) or exit 1 (non-blocking with visibility)
+- Blocking errors: Use exit 2 with stderr (rare, security/safety only)
+
 ### PreToolUse Special Output
 
 For modifying or blocking tool execution:
@@ -415,6 +451,40 @@ Available in command hooks:
 
 **Common uses:** Format code, run linters, update documentation, cleanup.
 
+**CRITICAL for PostToolUse:** To communicate results to users, hooks must output JSON to stdout with `additionalContext`:
+
+```python
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# dependencies = []
+# ///
+import json
+import sys
+
+def output_json_response(additional_context=None):
+    """Output JSON response for Claude to process."""
+    response = {}
+    if additional_context:
+        response["hookSpecificOutput"] = {
+            "hookEventName": "PostToolUse",
+            "additionalContext": additional_context
+        }
+    print(json.dumps(response), flush=True)
+
+# Read hook input from stdin
+hook_input = json.load(sys.stdin)
+file_path = hook_input.get("tool_input", {}).get("file_path")
+
+# Run linter/formatter
+# ...
+
+# Communicate result to Claude
+output_json_response(f"Formatted successfully: {file_path}")
+sys.exit(0)
+```
+
+**Common mistake:** Writing to stderr instead of JSON stdout prevents Claude from seeing messages.
+
 ### Stop Pattern
 
 **Purpose:** Session cleanup, final actions
@@ -554,6 +624,35 @@ prettier --write $CLAUDE_FILE_PATHS  # Breaks if path has spaces
 ```bash
 prettier --write "$CLAUDE_FILE_PATHS"
 ```
+
+### Pitfall #7: PostToolUse Writing to stderr Instead of JSON stdout
+
+**Problem:** Hook writes messages to stderr instead of JSON stdout
+
+```python
+# Wrong - Claude can't see this
+print("Formatted successfully: file.md", file=sys.stderr)
+sys.exit(0)
+```
+
+**Result:** Messages invisible to Claude, user never sees feedback.
+
+**Better:** Output JSON to stdout with `additionalContext`
+
+```python
+# Correct - Claude sees and relays to user
+import json
+output = {
+    "hookSpecificOutput": {
+        "hookEventName": "PostToolUse",
+        "additionalContext": "Formatted successfully: file.md"
+    }
+}
+print(json.dumps(output), flush=True)
+sys.exit(0)
+```
+
+**Why:** PostToolUse hooks communicate with Claude (not users directly). JSON stdout with `additionalContext` is required for visibility.
 
 ## Security Considerations (Official Guidance)
 
