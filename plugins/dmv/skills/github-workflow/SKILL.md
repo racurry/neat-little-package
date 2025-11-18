@@ -53,7 +53,7 @@ which gh  # Returns path if installed, empty if not
 
 **If gh not found:**
 
-- Use `/gitting:install-gh` command (installs via Homebrew on macOS)
+- Use `/dmv:install-gh` command (installs via Homebrew on macOS)
 - Or fall back to GitHub MCP Server
 - Or guide user to install manually
 

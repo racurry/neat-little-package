@@ -17,8 +17,8 @@
       "description": "Automated code quality enforcement with linting and formatting"
     },
     {
-      "name": "gitting",
-      "source": "./plugins/gitting",
+      "name": "dmv",
+      "source": "./plugins/dmv",
       "description": "Streamline git and GitHub workflows with integrated CLI tools and MCP server support"
     }
   ]

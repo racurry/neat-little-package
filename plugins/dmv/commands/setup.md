@@ -1,10 +1,10 @@
 ---
-description: Set up the Gitting plugin (install gh CLI and configure GitHub MCP server)
+description: Set up the DMV plugin (install gh CLI and configure GitHub MCP server)
 allowed-tools: Bash, Read
 model: sonnet
 ---
 
-Set up everything needed for the Gitting plugin to work properly.
+Set up everything needed for the DMV plugin to work properly.
 
 **Step 1: GitHub CLI Installation**
 
