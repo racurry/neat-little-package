@@ -117,18 +117,20 @@ Create properly formatted JSON configuration:
 
 ```json
 {
-  "EventName": [
-    {
-      "matcher": "ToolPattern",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/scripts/hook-script.sh",
-          "timeout": 30
-        }
-      ]
-    }
-  ]
+  "hooks": {
+    "EventName": [
+      {
+        "matcher": "ToolPattern",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/hook-script.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -265,17 +267,19 @@ sys.exit(0)
 
 ```json
 {
-  "PostToolUse": [
-    {
-      "matcher": "Write|Edit",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "prettier --write \"$CLAUDE_FILE_PATHS\" 2>/dev/null || true"
-        }
-      ]
-    }
-  ]
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "prettier --write \"$CLAUDE_FILE_PATHS\" 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -283,17 +287,19 @@ sys.exit(0)
 
 ```json
 {
-  "PreToolUse": [
-    {
-      "matcher": "Bash",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/scripts/security-check.sh"
-        }
-      ]
-    }
-  ]
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/security-check.sh"
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -301,16 +307,18 @@ sys.exit(0)
 
 ```json
 {
-  "SessionStart": [
-    {
-      "hooks": [
-        {
-          "type": "command",
-          "command": "cat \"$CLAUDE_PROJECT_DIR\"/.claude/context.md"
-        }
-      ]
-    }
-  ]
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat \"$CLAUDE_PROJECT_DIR\"/.claude/context.md"
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -318,18 +326,20 @@ sys.exit(0)
 
 ```json
 {
-  "PostToolUse": [
-    {
-      "matcher": "Write|Edit",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "uvx ${CLAUDE_PLUGIN_ROOT}/hooks/validate-json.py",
-          "timeout": 30
-        }
-      ]
-    }
-  ]
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uvx ${CLAUDE_PLUGIN_ROOT}/hooks/validate-json.py",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
