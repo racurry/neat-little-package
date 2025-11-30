@@ -11,7 +11,7 @@ This skill provides interpretive guidance and best practices for creating Claude
 
 Fetch these docs with WebFetch every time:
 
-- **https://code.claude.com/docs/en/hooks** - Complete hook reference
+- **<https://code.claude.com/docs/en/hooks>** - Complete hook reference
 
 ## Core Understanding
 
@@ -180,17 +180,20 @@ if __name__ == "__main__":
 Matchers specify which tools trigger hooks (applies to PreToolUse and PostToolUse only):
 
 **Exact matching:**
+
 ```json
 "matcher": "Write"
 ```
 
 **Regex patterns with pipe:**
+
 ```json
 "matcher": "Edit|Write"
 "matcher": "Notebook.*"
 ```
 
 **Wildcard (match all):**
+
 ```json
 "matcher": "*"
 ```
@@ -230,6 +233,7 @@ Located in `~/.claude/settings.json`, `.claude/settings.json`, or `.claude/setti
 All hooks receive JSON via stdin:
 
 **Base structure (all events):**
+
 ```json
 {
   "session_id": "string",
@@ -318,10 +322,66 @@ sys.exit(0)
 **Common mistake:** Using only `additionalContext` when user feedback is needed. This requires users to enable verbose mode (CTRL-O) to see output.
 
 **Correct pattern:**
+
 - **User feedback needed:** Use `systemMessage` (visible immediately)
 - **Claude context only:** Use `additionalContext` (verbose mode only)
 - **Both:** Include both fields in the JSON output
 - **Blocking errors:** Use exit 2 with stderr (rare, security/safety only)
+
+### SessionStart Output Format (CRITICAL)
+
+SessionStart hooks use a different output pattern than PostToolUse. The `additionalContext` becomes Claude's context at session start.
+
+**Correct SessionStart JSON format:**
+
+```json
+{
+  "systemMessage": "Message shown directly to user",
+  "hookSpecificOutput": {
+    "hookEventName": "SessionStart",
+    "additionalContext": "Context injected for Claude to use during session"
+  }
+}
+```
+
+**Key differences from PostToolUse:**
+
+- `hookEventName` MUST be `"SessionStart"` (not `"PostToolUse"`)
+- `additionalContext` becomes persistent session context for Claude
+- Use for: plugin paths, environment info, project state
+
+**Bash example:**
+
+```bash
+#!/bin/bash
+PLUGIN_ROOT="$(dirname "$(dirname "$0")")"
+cat <<EOF
+{
+  "systemMessage": "[my-plugin] Loaded from: $PLUGIN_ROOT",
+  "hookSpecificOutput": {
+    "hookEventName": "SessionStart",
+    "additionalContext": "MY_PLUGIN_ROOT=$PLUGIN_ROOT - Use this path for plugin resources."
+  }
+}
+EOF
+exit 0
+```
+
+**Common mistake:** Using bare `systemMessage` without `hookSpecificOutput`:
+
+```json
+// Wrong - missing hookSpecificOutput structure
+{"systemMessage": "Plugin loaded"}
+
+// Correct - full structure
+{
+  "systemMessage": "Plugin loaded",
+  "hookSpecificOutput": {
+    "hookEventName": "SessionStart",
+    "additionalContext": "Plugin context for Claude"
+  }
+}
+```
 
 ### PreToolUse Special Output
 
@@ -500,6 +560,7 @@ sys.exit(0)
 ```
 
 **Common mistakes:**
+
 - Using only `additionalContext` when user feedback is needed (requires verbose mode)
 - Writing to stderr instead of JSON stdout (completely invisible)
 
@@ -675,6 +736,7 @@ sys.exit(0)
 ```
 
 **Why:**
+
 - `systemMessage` displays directly to users (no verbose mode required)
 - `additionalContext` only visible in verbose mode (CTRL-O) or as Claude's context
 - stderr output is only for blocking errors (exit 2)
@@ -711,6 +773,7 @@ sys.exit(0)
 **View hook execution:**
 
 Press **CTRL-R** in Claude Code to see:
+
 - Hook stdout/stderr
 - Execution flow
 - Exit codes
@@ -799,6 +862,7 @@ Use Claude Haiku for context-aware decisions:
 When creating hooks for plugins:
 
 **Structure:**
+
 ```
 my-plugin/
 ├── .claude-plugin/plugin.json
@@ -807,6 +871,7 @@ my-plugin/
 ```
 
 **Reference plugin root:**
+
 ```bash
 "${CLAUDE_PLUGIN_ROOT}/scripts/hook-script.sh"
 ```
@@ -896,7 +961,7 @@ These are the authoritative sources. Fetch them before creating hooks:
 
 **Core specifications:**
 
-- https://code.claude.com/docs/en/hooks - Complete hook reference
+- <https://code.claude.com/docs/en/hooks> - Complete hook reference
 
 **Related topics:**
 

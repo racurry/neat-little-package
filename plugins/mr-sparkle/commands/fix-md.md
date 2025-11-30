@@ -1,7 +1,7 @@
 ---
 description: Automatically fix markdown linting issues
 argument-hint: [path] [--config CONFIG_FILE]
-allowed-tools: Bash(markdownlint-cli2:*), Bash($HOME/.claude/plugins/mr-sparkle@neat-little-package/skills/markdown-quality/scripts/lint-helper.py)
+allowed-tools: Bash(markdownlint-cli2:*), Bash(*/lint-helper.py)
 ---
 
 Run `markdownlint-cli2 --fix` to automatically correct markdown formatting issues.
@@ -18,17 +18,21 @@ Run `markdownlint-cli2 --fix` to automatically correct markdown formatting issue
 The command uses the following config file resolution order:
 
 1. **Explicit config** - If `--config CONFIG_FILE` is passed, use that file
-2. **Project config** - Look for `.markdownlint-cli2.*` files in current directory (`.jsonc`, `.yaml`, `.cjs`, `.mjs`)
-3. **User config** - Check `~/.markdownlint-cli2.jsonc` for user-level defaults
-4. **Skill default** - Use `~/.claude/plugins/mr-sparkle@neat-little-package/skills/markdown-quality/default-config.jsonc` as fallback
+2. **Project config** - If `.markdownlint-cli2.*` exists in cwd, let markdownlint auto-discover it
+3. **User config** - If `~/.markdownlint-cli2.jsonc` exists, use `--config` with it
+4. **Skill default** - Use the plugin's default-config.jsonc as fallback
 
 ## Implementation
 
-1. Parse the arguments to check if `--config` flag was passed with a config file path
-2. If no explicit config provided, call `$HOME/.claude/plugins/mr-sparkle@neat-little-package/skills/markdown-quality/scripts/lint-helper.py` to resolve the config file
-3. If the helper returns a config path, run `markdownlint-cli2 --fix --config <path> <target>`
-4. If the helper returns empty string, run `markdownlint-cli2 --fix <target>` (uses project config or defaults)
+1. Parse arguments: extract target path and check for `--config CONFIG_FILE`
+2. If explicit `--config` provided: run `markdownlint-cli2 --fix --config <CONFIG_FILE> <target>`
+3. Otherwise, use the lint-helper.py script to resolve config:
+   - The script is at: `MR_SPARKLE_ROOT/skills/markdown-quality/scripts/lint-helper.py`
+   - MR_SPARKLE_ROOT is provided via SessionStart hook context (check your session context)
+   - Run the helper: `<MR_SPARKLE_ROOT>/skills/markdown-quality/scripts/lint-helper.py`
+   - If it returns a config path, run `markdownlint-cli2 --fix --config <path> <target>`
+   - If it returns empty string, run `markdownlint-cli2 --fix <target>` (auto-discovers or uses defaults)
 
-After fixing, the tool will report which files were processed and any issues that couldn't be auto-fixed.
+After fixing, report which files were processed and any issues that couldn't be auto-fixed.
 
 For details on the linting rules and configuration, see the markdown-quality skill.

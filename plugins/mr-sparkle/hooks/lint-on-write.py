@@ -15,11 +15,10 @@ Exit codes:
 """
 
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 
 # Configuration: Map file extensions to linter configurations
@@ -87,8 +86,8 @@ def resolve_markdown_config() -> Optional[str]:
         return str(user_config)
 
     # Fall back to skill default config
-    # Plugin location: ~/.claude/plugins/mr-sparkle@neat-little-package/
-    plugin_dir = home / ".claude" / "plugins" / "mr-sparkle@neat-little-package"
+    # Self-locate: this script is at <plugin_root>/hooks/lint-on-write.py
+    plugin_dir = Path(__file__).resolve().parent.parent
     skill_config = plugin_dir / "skills" / "markdown-quality" / "default-config.jsonc"
 
     if skill_config.is_file():
@@ -287,7 +286,7 @@ def main():
             context_parts.append(hint)
 
         full_context = "\n".join(context_parts)
-        output_json_response(system_message=full_context)
+        output_json_response(system_message=full_context, additional_context=output)
         sys.exit(0)
 
     else:

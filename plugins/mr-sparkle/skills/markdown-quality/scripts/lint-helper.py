@@ -54,10 +54,9 @@ def resolve_config() -> str:
         return str(user_config)
 
     # 3. Fall back to skill default config
-    skill_config = (
-        Path.home()
-        / ".claude/plugins/mr-sparkle@neat-little-package/skills/markdown-quality/default-config.jsonc"
-    )
+    # Self-locate: this script is at <plugin_root>/skills/markdown-quality/scripts/lint-helper.py
+    plugin_dir = Path(__file__).resolve().parent.parent.parent.parent
+    skill_config = plugin_dir / "skills" / "markdown-quality" / "default-config.jsonc"
     if skill_config.is_file():
         return str(skill_config)
 
