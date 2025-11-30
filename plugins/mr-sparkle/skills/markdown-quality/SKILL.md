@@ -9,12 +9,12 @@ This skill teaches how to interpret and apply markdownlint rules effectively usi
 
 ## Required Reading Before Editing Markdown
 
-Fetch official markdownlint documentation every time:
+Fetch official markdownlint documentation when needed for reference:
 
-- **https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md** - Complete rule reference with examples
-- **https://github.com/DavidAnson/markdownlint-cli2** - CLI tool documentation and configuration options
+- **<https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md>** - Complete rule reference with examples
+- **<https://github.com/DavidAnson/markdownlint-cli2>** - CLI tool documentation and configuration options
 
-**Why fetch-first:** Rules and best practices evolve. This skill interprets the rules; official docs define them.
+**Why fetch:** Rules and best practices evolve. This skill interprets the rules; official docs define them.
 
 ## Core Understanding
 
@@ -54,34 +54,7 @@ Fetch official markdownlint documentation every time:
 
 **Our philosophy-driven configuration:**
 
-```jsonc
-{
-  "config": {
-    "default": true,  // Start with all rules
-
-    // Readability over rigid constraints
-    "MD013": false,   // No line length limits
-
-    // Practical HTML usage
-    "MD033": {
-      "allowed_elements": ["br", "details", "summary", "img", "kbd", "sub", "sup"]
-    },
-
-    // Modern document patterns
-    "MD041": false,   // First line doesn't need to be H1
-
-    // Flexible but organized
-    "MD024": {
-      "siblings_only": true  // Duplicate headings OK if not siblings
-    },
-
-    // Strict code formatting
-    "MD046": {
-      "style": "fenced"  // Always fenced, never indented
-    }
-  }
-}
-```
+See `default-config.jsonc` in this skill directory for the complete configuration file.
 
 **Why these overrides work:**
 
@@ -162,13 +135,16 @@ More content.
 ```markdown
 <!-- ❌ No language specified -->
 ```
+
 code here
+
 ```
 
 <!-- ✅ Language specified -->
 ```javascript
 code here
 ```
+
 ```
 
 **Why:** Enables syntax highlighting, makes intent clear, helps tools process content.
@@ -300,6 +276,7 @@ Use **bold** and __bold__ mixed
 const x = 1;
 console.log(x);
 ```
+
 ```
 
 ### Pitfall #3: Missing Blank Lines
@@ -400,13 +377,13 @@ The mr-sparkle plugin includes a PostToolUse hook that:
 - `rules-reference.md` - Complete table of markdownlint rules enforced
 - `pitfalls-reference.md` - Common mistakes with detailed examples
 - `troubleshooting.md` - Debugging guide for common issues
-- `example-config.jsonc` - Full configuration file example
+- `default-config.jsonc` - Full configuration file with opinionated defaults
 
 **Official documentation to fetch:**
 
-- https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md - Complete rule reference
-- https://github.com/DavidAnson/markdownlint-cli2 - CLI tool and configuration
-- https://commonmark.org/ - CommonMark standard
-- https://github.github.com/gfm/ - GitHub Flavored Markdown
+- <https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md> - Complete rule reference
+- <https://github.com/DavidAnson/markdownlint-cli2> - CLI tool and configuration
+- <https://commonmark.org/> - CommonMark standard
+- <https://github.github.com/gfm/> - GitHub Flavored Markdown
 
 **Remember:** This skill interprets markdownlint rules and our configuration philosophy. Always fetch official docs for current rule definitions and syntax details.

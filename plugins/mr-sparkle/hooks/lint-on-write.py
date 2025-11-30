@@ -15,6 +15,7 @@ Exit codes:
 """
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -54,6 +55,47 @@ LINTER_CONFIG = {
     #     "unfixable_exit_code": 1,
     # },
 }
+
+
+def resolve_markdown_config() -> Optional[str]:
+    """
+    Resolve markdownlint config file using hierarchy:
+    1. Project config - .markdownlint-cli2.* in cwd
+    2. User config - ~/.markdownlint-cli2.jsonc
+    3. Skill default - plugin's default-config.jsonc
+
+    Returns:
+        Path to config file, or None if using project config (let markdownlint auto-discover)
+    """
+    # Check for project config in current directory
+    project_config_patterns = [
+        ".markdownlint-cli2.jsonc",
+        ".markdownlint-cli2.yaml",
+        ".markdownlint-cli2.cjs",
+        ".markdownlint-cli2.mjs"
+    ]
+
+    for config_file in project_config_patterns:
+        if Path(config_file).is_file():
+            # Found project config - return None to let markdownlint auto-discover
+            return None
+
+    # Check for user config
+    home = Path.home()
+    user_config = home / ".markdownlint-cli2.jsonc"
+    if user_config.is_file():
+        return str(user_config)
+
+    # Fall back to skill default config
+    # Plugin location: ~/.claude/plugins/mr-sparkle@neat-little-package/
+    plugin_dir = home / ".claude" / "plugins" / "mr-sparkle@neat-little-package"
+    skill_config = plugin_dir / "skills" / "markdown-quality" / "default-config.jsonc"
+
+    if skill_config.is_file():
+        return str(skill_config)
+
+    # No config found - let markdownlint use its built-in defaults
+    return None
 
 
 def read_stdin_json() -> Dict:
@@ -107,14 +149,25 @@ def check_tool_installed(command_name: str) -> bool:
         return False
 
 
-def run_linter(file_path: str, config: Dict) -> Tuple[int, str]:
+def run_linter(file_path: str, config: Dict, config_file: Optional[str] = None) -> Tuple[int, str]:
     """
     Run linter command on file.
+
+    Args:
+        file_path: Path to file to lint
+        config: Linter configuration dict
+        config_file: Optional path to config file to use
 
     Returns:
         Tuple of (exit_code, output)
     """
-    command = config["command"] + [file_path]
+    command = config["command"].copy()
+
+    # Add --config flag if explicit config file specified
+    if config_file:
+        command.extend(["--config", config_file])
+
+    command.append(file_path)
 
     try:
         result = subprocess.run(
@@ -197,8 +250,13 @@ def main():
         # User can install the tool if desired
         sys.exit(0)
 
+    # Resolve config file for markdown (other linters can add their own resolvers)
+    config_file = None
+    if _language == "markdown":
+        config_file = resolve_markdown_config()
+
     # Run the linter
-    exit_code, output = run_linter(file_path, config)
+    exit_code, output = run_linter(file_path, config, config_file)
 
     # Handle linter results
     if exit_code == 0:

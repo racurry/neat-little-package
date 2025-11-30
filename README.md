@@ -2,11 +2,11 @@
 
 ![Sorry if it sounded sarcastic](assets/really-i-mean-that.png)
 
-A collection of Claude Code plugins
+A collection of Claude Code plugins.
 
 ## Set up
 
-```
+```bash
  # Add the marketplace
 /plugin marketplace add racurry/neat-little-package
 
