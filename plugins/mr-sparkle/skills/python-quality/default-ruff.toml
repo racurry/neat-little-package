@@ -1,0 +1,22 @@
+# Default ruff configuration for fallback (no project config)
+# Used by lint-on-write.py when no project-specific Python tooling is detected
+
+[lint]
+# Enable recommended rules
+select = ["E", "F", "W", "I"]
+
+# Allow autofix for all enabled rules
+fixable = ["ALL"]
+
+[format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Indent with spaces
+indent-style = "space"
+
+# 4-space indentation (PEP 8 standard)
+indent-width = 4
+
+# Unix-style line endings
+line-ending = "auto"
