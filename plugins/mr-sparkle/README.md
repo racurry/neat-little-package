@@ -298,6 +298,6 @@ The plugin architecture supports:
 - Custom linter integration
 - Conditional linting based on project type
 
-## Testing Section - Updated Again
+## Development
 
-This section tests the hook output to see if it actually runs.
+The `tests/` directory contains unit tests for local development and is not part of the plugin itself.

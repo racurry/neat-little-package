@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/block-direct-markdownlint.py",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/block_direct_markdownlint.py",
             "timeout": 5
           }
         ]
@@ -30,7 +30,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/lint-on-write.py",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/lint_on_write.py",
             "timeout": 30
           }
         ]
