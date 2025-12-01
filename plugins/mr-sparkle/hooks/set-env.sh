@@ -12,6 +12,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PLUGIN_ROOT="$(dirname "$SCRIPT_DIR")"
 
 # Try to set env var if available (currently broken for plugin hooks)
+# Note: CLAUDE_ENV_FILE not available for plugin hooks, see https://github.com/anthropics/claude-code/issues/9567
 if [ -n "$CLAUDE_ENV_FILE" ]; then
   echo "export MR_SPARKLE_ROOT=$PLUGIN_ROOT" >> "$CLAUDE_ENV_FILE"
 fi
@@ -19,12 +20,13 @@ fi
 # Output JSON in correct SessionStart format
 # - additionalContext becomes Claude's context
 # - systemMessage shows warning to user
+# We can remove this once the claude bug is fixed
 cat <<EOF
 {
-  "systemMessage": "[mr-sparkle] Plugin loaded from: $PLUGIN_ROOT\nWaiting on Anthropic to fix https://github.com/anthropics/claude-code/issues/9567",
+  "systemMessage": "I am Mr. Sparkle.",
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "MR_SPARKLE_ROOT=$PLUGIN_ROOT - Use this path for mr-sparkle plugin scripts and config files. Note: CLAUDE_ENV_FILE not available for plugin hooks, see https://github.com/anthropics/claude-code/issues/9567"
+    "additionalContext": "MR_SPARKLE_ROOT=$PLUGIN_ROOT - Use this path for mr-sparkle plugin scripts and config files."
   }
 }
 EOF

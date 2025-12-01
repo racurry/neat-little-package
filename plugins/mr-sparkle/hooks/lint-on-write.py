@@ -23,6 +23,9 @@ from typing import Dict, Optional, Tuple
 
 # Configuration: Map file extensions to linter configurations
 # Each config includes: command, extensions, success messages, error handling
+# Configs can use either:
+#   - "command": single linter command
+#   - "pipeline": list of stages to run in sequence (formatter then checker)
 LINTER_CONFIG = {
     "markdown": {
         "extensions": [".md", ".markdown"],
@@ -33,16 +36,6 @@ LINTER_CONFIG = {
         "unfixable_hint": "Run: markdownlint-cli2 {file_path} to see details",
         "unfixable_exit_code": 1,  # markdownlint-cli2 returns 1 for unfixable issues
     },
-    # Example: Future JavaScript/TypeScript support
-    # "javascript": {
-    #     "extensions": [".js", ".jsx", ".ts", ".tsx"],
-    #     "command": ["eslint", "--fix"],
-    #     "check_installed": "eslint",
-    #     "success_message": "JavaScript formatted: {file_path}",
-    #     "unfixable_message": "ESLint found unfixable issues in {file_path}",
-    #     "unfixable_hint": "Run: eslint {file_path} to see details",
-    #     "unfixable_exit_code": 1,
-    # },
     "python": {
         "extensions": [".py"],
         "command": ["ruff", "check", "--fix"],
@@ -51,6 +44,28 @@ LINTER_CONFIG = {
         "unfixable_message": "Ruff found unfixable issues in {file_path}",
         "unfixable_hint": "Run: ruff check {file_path} to see details",
         "unfixable_exit_code": 1,
+    },
+    "shell": {
+        "extensions": [".sh", ".bash", ".zsh"],
+        "pipeline": [
+            {
+                "name": "shfmt",
+                "command": ["shfmt", "-w", "-i", "4", "-ci"],  # -w: write, -i 4: indent, -ci: case indent
+                "check_installed": "shfmt",
+                "success_message": "Shell script formatted: {file_path}",
+                "optional": True,  # Continue to next stage if tool not installed
+            },
+            {
+                "name": "shellcheck",
+                "command": ["shellcheck"],
+                "check_installed": "shellcheck",
+                "success_message": "Shell script checked: {file_path}",
+                "unfixable_message": "Shellcheck found issues in {file_path}",
+                "unfixable_hint": "Review shellcheck output above and fix manually",
+                "unfixable_exit_code": 1,
+                "optional": True,  # Don't block if shellcheck not installed
+            },
+        ],
     },
 }
 
@@ -190,6 +205,64 @@ def format_message(template: str, **kwargs) -> str:
     return template.format(**kwargs)
 
 
+def run_pipeline(file_path: str, stages: list[Dict]) -> tuple[list[str], list[str], bool]:
+    """
+    Run a pipeline of linter stages on a file.
+
+    Args:
+        file_path: Path to file to lint
+        stages: List of stage configurations
+
+    Returns:
+        Tuple of (success_messages, error_messages, had_issues)
+    """
+    success_messages: list[str] = []
+    error_messages: list[str] = []
+    had_issues = False
+
+    for stage in stages:
+        tool_name = stage.get("name", stage["check_installed"])
+
+        # Check if tool is installed
+        if not check_tool_installed(stage["check_installed"]):
+            if stage.get("optional", False):
+                # Skip optional tools that aren't installed
+                continue
+            else:
+                # Required tool missing - report and stop
+                error_messages.append(f"{tool_name} not installed (required)")
+                had_issues = True
+                break
+
+        # Run the linter stage
+        exit_code, output = run_linter(file_path, stage)
+
+        if exit_code == 0:
+            # Success
+            if "success_message" in stage:
+                msg = format_message(stage["success_message"], file_path=file_path)
+                success_messages.append(msg)
+        elif exit_code == stage.get("unfixable_exit_code", 1):
+            # Found issues that need manual attention
+            had_issues = True
+            if "unfixable_message" in stage:
+                msg = format_message(stage["unfixable_message"], file_path=file_path)
+                error_messages.append(msg)
+            if output:
+                error_messages.append(output)
+            if "unfixable_hint" in stage:
+                hint = format_message(stage["unfixable_hint"], file_path=file_path)
+                error_messages.append(hint)
+        else:
+            # Unexpected error
+            had_issues = True
+            error_messages.append(f"{tool_name} error (exit code {exit_code})")
+            if output:
+                error_messages.append(output)
+
+    return success_messages, error_messages, had_issues
+
+
 def output_json_response(system_message: Optional[str] = None, additional_context: Optional[str] = None, decision: Optional[str] = None, reason: Optional[str] = None):
     """Output JSON response to stdout for Claude to process."""
     response = {}
@@ -240,8 +313,23 @@ def main():
     if not linter_info:
         sys.exit(0)
 
-    _language, config = linter_info
+    language, config = linter_info
 
+    # Check if this is a pipeline config (multiple stages) or single command
+    if "pipeline" in config:
+        # Run pipeline of linter stages
+        success_msgs, error_msgs, _had_issues = run_pipeline(file_path, config["pipeline"])
+
+        # Build response message
+        all_messages = success_msgs + error_msgs
+        if all_messages:
+            full_message = "\n".join(all_messages)
+            additional_context = "\n".join(error_msgs) if error_msgs else None
+            output_json_response(system_message=full_message, additional_context=additional_context)
+
+        sys.exit(0)
+
+    # Single command config (backward compatible path)
     # Check if linter tool is installed
     if not check_tool_installed(config["check_installed"]):
         # Not installed - exit silently (non-blocking)
@@ -250,7 +338,7 @@ def main():
 
     # Resolve config file for markdown (other linters can add their own resolvers)
     config_file = None
-    if _language == "markdown":
+    if language == "markdown":
         config_file = resolve_markdown_config()
 
     # Run the linter
