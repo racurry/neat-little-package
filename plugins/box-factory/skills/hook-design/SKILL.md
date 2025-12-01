@@ -39,7 +39,7 @@ Fetch these docs with WebFetch every time:
 
 **Execution flow:**
 
-```
+```text
 User Input → Claude Thinks → Tool Execution
                     ↑              ↓
               Hooks fire here ────┘
@@ -291,18 +291,32 @@ Use `systemMessage` field - displays immediately to users:
 }
 ```
 
-**For messages visible ONLY to Claude (user must enable verbose mode):**
+**ANSI escape codes work:** You can colorize `systemMessage` output:
 
-Use `additionalContext` in `hookSpecificOutput`:
+```python
+# Red error text
+error_msg = f"\033[31mLinter error in {file_path}:\033[0m"
+# Green success
+success_msg = f"\033[32mFormatted: {file_path}\033[0m"
+```
+
+**For context injected into Claude's awareness:**
+
+Use `additionalContext` in `hookSpecificOutput`. This appears to Claude as a `<system-reminder>` with prefix `PostToolUse:{ToolName} hook additional context:`:
 
 ```json
 {
   "hookSpecificOutput": {
     "hookEventName": "PostToolUse",
-    "additionalContext": "Internal context for Claude's awareness"
+    "additionalContext": "Linter output details for Claude to act on"
   }
 }
 ```
+
+**Visibility behavior (empirically tested):**
+
+- `systemMessage` → User sees immediately in terminal
+- `additionalContext` → Claude receives as system-reminder; user sees only in verbose mode (CTRL-O)
 
 **Complete output pattern:**
 
@@ -312,20 +326,20 @@ output = {
     "systemMessage": "Formatted successfully: file.md",  # Shows to user directly
     "hookSpecificOutput": {
         "hookEventName": "PostToolUse",
-        "additionalContext": "Additional context for Claude"  # Only in verbose mode
+        "additionalContext": "Linter details for Claude"  # Claude gets this as system-reminder
     }
 }
 print(json.dumps(output), flush=True)
 sys.exit(0)
 ```
 
-**Common mistake:** Using only `additionalContext` when user feedback is needed. This requires users to enable verbose mode (CTRL-O) to see output.
+**Common mistake:** Using only `additionalContext` when user feedback is needed. Users won't see it without verbose mode.
 
 **Correct pattern:**
 
-- **User feedback needed:** Use `systemMessage` (visible immediately)
-- **Claude context only:** Use `additionalContext` (verbose mode only)
-- **Both:** Include both fields in the JSON output
+- **User feedback needed:** Use `systemMessage` (visible immediately, supports ANSI colors)
+- **Claude context needed:** Use `additionalContext` (Claude receives as system-reminder)
+- **Both:** Include both fields - user sees status, Claude gets details
 - **Blocking errors:** Use exit 2 with stderr (rare, security/safety only)
 
 ### SessionStart Output Format (CRITICAL)
@@ -863,7 +877,7 @@ When creating hooks for plugins:
 
 **Structure:**
 
-```
+```text
 my-plugin/
 ├── .claude-plugin/plugin.json
 └── hooks/

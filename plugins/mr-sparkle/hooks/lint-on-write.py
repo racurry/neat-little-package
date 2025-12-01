@@ -43,16 +43,15 @@ LINTER_CONFIG = {
     #     "unfixable_hint": "Run: eslint {file_path} to see details",
     #     "unfixable_exit_code": 1,
     # },
-    # Example: Future Python support
-    # "python": {
-    #     "extensions": [".py"],
-    #     "command": ["ruff", "check", "--fix"],
-    #     "check_installed": "ruff",
-    #     "success_message": "Python formatted: {file_path}",
-    #     "unfixable_message": "Ruff found unfixable issues in {file_path}",
-    #     "unfixable_hint": "Run: ruff check {file_path} to see details",
-    #     "unfixable_exit_code": 1,
-    # },
+    "python": {
+        "extensions": [".py"],
+        "command": ["ruff", "check", "--fix"],
+        "check_installed": "ruff",
+        "success_message": "Python formatted: {file_path}",
+        "unfixable_message": "Ruff found unfixable issues in {file_path}",
+        "unfixable_hint": "Run: ruff check {file_path} to see details",
+        "unfixable_exit_code": 1,
+    },
 }
 
 
@@ -181,7 +180,7 @@ def run_linter(file_path: str, config: Dict, config_file: Optional[str] = None) 
         return (result.returncode, output.strip())
 
     except subprocess.TimeoutExpired:
-        return (1, f"Linter timed out after 60 seconds")
+        return (1, "Linter timed out after 60 seconds")
     except Exception as e:
         return (1, f"Linter execution error: {str(e)}")
 
@@ -290,15 +289,15 @@ def main():
         sys.exit(0)
 
     else:
-        # Unexpected exit code - report error
-        error_msg = f"Linter error (exit code {exit_code}) in {file_path}:"
+        # Unexpected exit code - report error (ANSI red)
+        error_msg = f"\033[31mLinter error (exit code {exit_code}) in {file_path}:\033[0m"
 
         context_parts = [error_msg]
         if output:
             context_parts.append(output)
 
         full_context = "\n".join(context_parts)
-        output_json_response(system_message=full_context)
+        output_json_response(system_message=full_context, additional_context=output)
         sys.exit(0)
 
 
