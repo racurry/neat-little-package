@@ -73,7 +73,7 @@ LINTER_CONFIG = {
         "pipeline": [
             {
                 "name": "shfmt",
-                "command": ["shfmt", "-w", "-i", "4", "-ci"],  # -w: write, -i 4: indent, -ci: case indent
+                "command": ["shfmt", "-w"],
                 "check_installed": "shfmt",
                 "optional": True,
             },

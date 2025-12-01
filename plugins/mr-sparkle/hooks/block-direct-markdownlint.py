@@ -33,14 +33,14 @@ def main():
 
     command = tool_input.get("command", "")
 
-    # Check if this is a markdownlint invocation without explicit config
-    if "markdownlint" in command.lower():
+    # Block direct markdownlint-cli2 invocations
+    if command.startswith("markdownlint-cli2 "):
         # Allow if --config is specified (proper usage via slash command)
         if "--config" in command:
             sys.exit(0)
         # Block direct invocation without config
         print(
-            "markdownlint-cli2 requires a --config argument.  Specify a config or use /mr-sparkle:lint-md [path]",
+            "markdownlint-cli2 requires a --config argument. Specify a config or use /mr-sparkle:lint-md [path]",
             file=sys.stderr,
         )
         sys.exit(2)
