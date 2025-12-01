@@ -892,6 +892,59 @@ my-plugin/
 
 See plugin-design skill for complete plugin context.
 
+## Testing Hook Scripts (Best Practices)
+
+**Key constraint:** Claude Code plugins distribute via git clone - tests are included. Keep them lightweight.
+
+### Recommended Structure
+
+```text
+my-plugin/
+├── hooks/
+│   └── my-hook.py
+└── tests/
+    └── test_my_hook.py    # Lightweight, focused tests
+```
+
+### Testing Approaches
+
+**Manual testing with stdin simulation:**
+
+```bash
+# Test with realistic Claude Code input
+echo '{"tool_name": "Write", "tool_input": {"file_path": "test.py"}, "cwd": "/tmp"}' | ./hooks/my-hook.py
+echo "Exit code: $?"
+```
+
+**Automated tests with pytest:**
+
+```python
+import subprocess
+import json
+
+def test_hook_allows_valid_file():
+    input_data = json.dumps({
+        "tool_name": "Write",
+        "tool_input": {"file_path": "src/app.py"},
+        "cwd": "/project"
+    })
+    result = subprocess.run(
+        ["./hooks/my-hook.py"],
+        input=input_data,
+        capture_output=True,
+        text=True
+    )
+    assert result.returncode == 0
+```
+
+**Guidelines:**
+
+- Test with realistic stdin JSON (match Claude Code's format)
+- Test all exit code paths (0, 2, other)
+- Verify stdout JSON structure for hooks that output JSON
+- Keep test files small (prefer inline data over fixtures)
+- Document tests are for development only in README
+
 ## Hook Quality Checklist
 
 Before deploying hooks:

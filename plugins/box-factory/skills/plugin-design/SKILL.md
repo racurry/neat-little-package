@@ -191,6 +191,7 @@ Define hooks or MCP servers directly in plugin.json instead of separate files:
 ```
 
 **Why external files are better:**
+
 - Separation of concerns (metadata vs configuration)
 - Easier to edit MCP config independently
 - Cleaner plugin.json focused on plugin metadata
@@ -240,6 +241,7 @@ Define hooks or MCP servers directly in plugin.json instead of separate files:
 ```
 
 **Why environment variables are critical:**
+
 - **Security**: Never commit secrets to git history
 - **Portability**: Different users/environments have different credentials
 - **Standard practice**: `${VAR_NAME}` is the established MCP pattern
@@ -271,7 +273,8 @@ This plugin includes the [Server Name] MCP server.
    export AUTH_TOKEN="your_token_here"
    ```
 
-3. The MCP server will start automatically when the plugin is enabled
+1. The MCP server will start automatically when the plugin is enabled
+
 ```
 
 **Required documentation elements:**
@@ -297,6 +300,7 @@ This plugin includes the [Server Name] MCP server.
 ```
 
 **Filesystem:**
+
 ```json
 {
   "filesystem": {
@@ -308,6 +312,7 @@ This plugin includes the [Server Name] MCP server.
 ```
 
 **Database:**
+
 ```json
 {
   "database": {
@@ -321,6 +326,7 @@ This plugin includes the [Server Name] MCP server.
 ```
 
 **Custom server using plugin root:**
+
 ```json
 {
   "custom": {
@@ -338,17 +344,20 @@ This plugin includes the [Server Name] MCP server.
 Before publishing plugin with MCP servers:
 
 **Security:**
+
 - ✓ All secrets use `${ENV_VAR}` references (never hardcoded)
 - ✓ No empty string placeholders for secrets
 - ✓ No actual credentials in git history
 - ✓ .env files in .gitignore if used for local testing
 
 **Structure:**
+
 - ✓ MCP configuration in external file (`.mcp.json` or custom path)
 - ✓ Path in plugin.json is relative and starts with `./`
 - ✓ Valid JSON syntax in MCP configuration file
 
 **Documentation:**
+
 - ✓ README explains how to obtain credentials
 - ✓ Required scopes/permissions documented
 - ✓ Environment variable names clearly listed
@@ -356,6 +365,7 @@ Before publishing plugin with MCP servers:
 - ✓ Troubleshooting section for common issues
 
 **Testing:**
+
 - ✓ Verified MCP server starts with plugin enabled
 - ✓ Tested with actual credentials in environment
 - ✓ Confirmed required tools/dependencies work
@@ -465,6 +475,62 @@ The docs show the mechanics. Here's the philosophy:
 9. **Publish** - Push to GitHub, share marketplace
 
 **Key insight:** Don't start with plugin structure. Build components, then package them.
+
+## Testing Plugin Scripts (Best Practices)
+
+**Key constraint:** Claude Code plugins distribute via git clone - you can't exclude files like npm's `.npmignore` or Python's `pyproject.toml` exclusions.
+
+### Recommended Approach
+
+**Keep tests in the repo** but minimize their footprint:
+
+```text
+my-plugin/
+├── .claude-plugin/plugin.json
+├── hooks/
+│   └── my-hook.py
+├── tests/                    # Development tests
+│   └── test_my_hook.py       # Lightweight, focused
+└── README.md                 # Document that tests/ is for dev
+```
+
+**Guidelines:**
+
+- Use a single `tests/` directory at plugin root
+- Keep test files small (avoid heavy fixtures or data files)
+- Prefer inline test data over separate fixture files
+- Document in README that `tests/` is for development only
+
+### Why Include Tests?
+
+The disk space impact is negligible for most plugins:
+
+- Plugin scripts are typically small (a few KB)
+- Test files are similarly small
+- Users benefit from knowing the plugin is tested
+- Tests serve as documentation of expected behavior
+
+### Testing Executable Scripts (Hooks)
+
+For Python hook scripts using UV:
+
+```bash
+# Run tests directly
+python -m pytest tests/
+
+# Or test the hook script itself
+echo '{"tool_name": "Write", "tool_input": {"file_path": "test.py"}}' | ./hooks/my-hook.py
+```
+
+For bash hooks:
+
+```bash
+# Test with sample input
+echo '{"tool_name": "Bash"}' | ./hooks/my-hook.sh
+echo $?  # Check exit code
+```
+
+**Best practice:** Test hooks with realistic stdin JSON matching what Claude Code provides.
 
 ## Testing Commands (Official Specification)
 
