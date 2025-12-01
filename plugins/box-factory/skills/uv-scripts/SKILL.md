@@ -242,13 +242,28 @@ if __name__ == "__main__":
       "hooks": [
         {
           "type": "command",
-          "command": "./hooks/format-code.py"
+          "command": "./hooks/format_code.py"
         }
       ]
     }
   ]
 }
 ```
+
+## Python Script Naming Convention (Critical)
+
+**Use underscores, not hyphens, in Python script names.**
+
+```text
+✅ format_code.py     (importable, testable)
+✅ lint_on_write.py   (importable, testable)
+❌ format-code.py     (cannot import - hyphen is minus operator)
+❌ lint-on-write.py   (cannot import - hyphen is minus operator)
+```
+
+**Why this matters:** Hyphenated Python files require `importlib.util` workarounds for testing. Using underscores allows normal `import` statements and pytest discovery.
+
+**Note:** Shell scripts (`.sh`) can use hyphens freely - this only affects Python files.
 
 ## Documentation References
 

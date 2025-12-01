@@ -901,7 +901,7 @@ See plugin-design skill for complete plugin context.
 ```text
 my-plugin/
 ├── hooks/
-│   └── my-hook.py
+│   └── my_hook.py
 └── tests/
     └── test_my_hook.py    # Lightweight, focused tests
 ```
@@ -912,7 +912,7 @@ my-plugin/
 
 ```bash
 # Test with realistic Claude Code input
-echo '{"tool_name": "Write", "tool_input": {"file_path": "test.py"}, "cwd": "/tmp"}' | ./hooks/my-hook.py
+echo '{"tool_name": "Write", "tool_input": {"file_path": "test.py"}, "cwd": "/tmp"}' | ./hooks/my_hook.py
 echo "Exit code: $?"
 ```
 
@@ -929,7 +929,7 @@ def test_hook_allows_valid_file():
         "cwd": "/project"
     })
     result = subprocess.run(
-        ["./hooks/my-hook.py"],
+        ["./hooks/my_hook.py"],
         input=input_data,
         capture_output=True,
         text=True

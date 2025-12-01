@@ -333,7 +333,7 @@ sys.exit(0)
         "hooks": [
           {
             "type": "command",
-            "command": "uvx ${CLAUDE_PLUGIN_ROOT}/hooks/validate-json.py",
+            "command": "uvx ${CLAUDE_PLUGIN_ROOT}/hooks/validate_json.py",
             "timeout": 30
           }
         ]
@@ -343,7 +343,7 @@ sys.exit(0)
 }
 ```
 
-**Example UV Python hook script with correct PostToolUse output** (`hooks/validate-json.py`):
+**Example UV Python hook script with correct PostToolUse output** (`hooks/validate_json.py`):
 
 ```python
 #!/usr/bin/env -S uv run --quiet --script
