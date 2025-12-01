@@ -3,7 +3,7 @@ description: Update or regenerate README and CLAUDE.md documentation for a plugi
 argument-hint: plugin-path
 ---
 
-Update or regenerate comprehensive documentation for the plugin at $1 (or current directory if not specified).
+Update documentation for the plugin at $1 (or current directory if not specified).
 
 ## Process
 
@@ -12,36 +12,28 @@ Update or regenerate comprehensive documentation for the plugin at $1 (or curren
    - All files in agents/, commands/, skills/, hooks/
    - Existing README.md and CLAUDE.md (if present)
 
-2. **Analyze the plugin:**
-   - Core purpose and value proposition
-   - Features and capabilities
-   - Component architecture and relationships
-   - Usage patterns and workflows
-   - Development conventions and patterns
+2. **Generate/update README.md (minimal by default):**
+   - Brief description (1-2 sentences)
+   - Components list with one-line descriptions
+   - Installation only if external tools required
+   - Basic usage example if non-obvious
 
-3. **Generate/update README.md:**
-   - Plugin overview and description
-   - Features section (organize by component type)
-   - Installation instructions
-   - Quick start guide
-   - Usage examples for each component
-   - File structure reference
-   - Troubleshooting section
-   - Resources and links
-   - Follow existing Box Factory README patterns as reference
+   **Only add if actually needed:**
+   - Troubleshooting: Only for known issues
+   - Configuration: Only if plugin has settings
 
-4. **Generate/update CLAUDE.md:**
-   - Development philosophy and principles
-   - Component-specific patterns and conventions
-   - Decision frameworks (when to use what)
-   - Quality standards and checklists
-   - Anti-patterns (forbidden approaches)
-   - Architecture diagrams or patterns
-   - Follow existing Box Factory CLAUDE.md patterns as reference
+   **Never include:**
+   - Future roadmap or planned features
+   - Extensibility sections (unless explicitly requested)
+   - Verbose error handling documentation
+   - Sections that duplicate what Claude already knows
 
-5. **Ensure quality:**
+3. **Generate/update CLAUDE.md (only if plugin has conventions):**
+   - Only create if plugin has specific patterns Claude should follow
+   - Focus on knowledge delta (what Claude wouldn't know)
+   - Skip if plugin is simple with no special conventions
+
+4. **Ensure accuracy:**
    - Documentation matches actual implementation
-   - All components are documented
-   - Examples are accurate and tested
-   - Consistent tone and formatting
-   - No outdated or incorrect information
+   - No speculative or aspirational content
+   - Remove outdated sections from existing docs

@@ -100,7 +100,7 @@ target-path/plugin-name/
 
 ### 5. Write plugin.json
 
-Create comprehensive metadata at `.claude-plugin/plugin.json`:
+Create metadata at `.claude-plugin/plugin.json`:
 
 ```json
 {
@@ -131,36 +131,29 @@ Create comprehensive metadata at `.claude-plugin/plugin.json`:
 
 ### 6. Write README.md
 
-Create comprehensive documentation at plugin root:
+Create focused documentation at plugin root. **Minimal by default:**
 
 ```markdown
 # Plugin Name
 
-[Brief description of what the plugin does]
-
+Brief description (1-2 sentences).
 
 ## Components
 
-### Commands
-
 - `/command-name` - What it does
-- `/another-command` - What it does
-
-### Agents
-
 - `agent-name` - When it's used
-- `another-agent` - When it's used
-
-### Skills
-
 - `skill-name` - What knowledge it provides
-- `another-skill` - What knowledge it provides
 
-### Hooks
+## Installation
 
-- `HookType:ToolName` - What it prevents/enables
-
+[Only if external tools required]
 ```
+
+**Never include:**
+- Future roadmap or planned features
+- Extensibility sections
+- Verbose error handling documentation
+- Troubleshooting (unless there are known issues)
 
 ### 7. Delegate Component Creation (MANDATORY)
 
@@ -357,8 +350,8 @@ Ensure created structure matches official specification:
 
 Create production-ready plugins:
 
-- Comprehensive plugin.json with all recommended fields
-- Detailed README with installation, usage, examples
+- Complete plugin.json with required fields
+- Focused README with components and basic usage
 - Proper directory structure
 - Well-documented components
 
@@ -390,8 +383,8 @@ Include all paths as absolute paths, never relative.
    - `assets/` directory (always created)
    - `agents/` directory
    - `commands/` directory
-6. Write comprehensive plugin.json with metadata
-7. Write detailed README with installation and usage
+6. Write plugin.json with metadata
+7. Write focused README with components and basic usage
 8. Delegate: Task agent-writer "Create test-runner agent..."
 9. Delegate: Task slash-command-writer "Create coverage command..."
 10. Verify all components created successfully

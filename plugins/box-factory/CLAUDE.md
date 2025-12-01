@@ -408,51 +408,47 @@ Run `/box-factory:validate-plugin` on:
 
 ## Documentation Standards
 
-### README.md
+### Plugin README.md (General Guidance)
 
-**Structure:**
+**Minimal by default.** Only document what users need to know:
 
-1. Overview and core capabilities
-2. Features (commands, agents, skills organized by type)
-3. Design philosophy
-4. When to use each component type
-5. Installation instructions
-6. Quick start guide
-7. Component design best practices
-8. Development workflow
-9. File structure reference
-10. Troubleshooting
-11. Resources and references
-12. Examples
-13. Version history
+1. Brief description (1-2 sentences)
+2. Components list (commands, agents, skills, hooks)
+3. Installation (if non-obvious)
+4. Basic usage examples
 
-**Tone:**
+**Add sections only when needed:**
 
-- User-facing documentation
-- Clear explanations of what/why
-- Practical examples
-- Troubleshooting guidance
+- Troubleshooting: Only if there are known issues
+- Configuration: Only if plugin has settings
+- Dependencies: Only if external tools required
+
+**Anti-patterns (forbidden in plugin READMEs):**
+
+- ❌ "Future Roadmap" or "Planned Features" (don't document what doesn't exist)
+- ❌ "Extensibility" sections (unless user asked for extensible design)
+- ❌ Detailed error handling documentation (Claude knows error handling)
+- ❌ Verbose explanations of obvious behavior
+- ❌ Sections copied from Box Factory's README (it's a meta-plugin, not a template)
+
+### Box Factory's Own README (Special Case)
+
+Box Factory is a meta-plugin that creates other plugins. Its README is intentionally comprehensive because it documents plugin creation patterns. **Do not use it as a template for simple plugins.**
 
 ### CLAUDE.md
 
 **Structure:**
 
-1. Philosophy (low-maintenance, two-layer, evidence-based)
-2. Component patterns (skills, agents, commands, hooks)
-3. Decision framework
-4. Architecture overview
-5. Quality standards
-6. Anti-patterns (forbidden approaches)
-7. Validation workflow
-8. Testing strategy
-9. Documentation standards
+1. Philosophy and principles
+2. Component patterns
+3. Decision frameworks
+4. Anti-patterns
 
 **Tone:**
 
 - Developer-facing guidelines
 - Prescriptive patterns
 - Clear do/don't distinctions
-- Quality enforcement
 
 ## Box Factory Self-Consistency
 

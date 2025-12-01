@@ -471,7 +471,7 @@ The docs show the mechanics. Here's the philosophy:
 5. **Create test marketplace** - Local marketplace with absolute paths
 6. **Install and test** - `/plugin marketplace add ./path/to/marketplace`
 7. **Iterate** - Fix issues, restart Claude Code, test again
-8. **Document** - Write comprehensive README
+8. **Document** - Write focused README (components, installation, basic usage)
 9. **Publish** - Push to GitHub, share marketplace
 
 **Key insight:** Don't start with plugin structure. Build components, then package them.
@@ -602,16 +602,15 @@ Check `/help` for newly installed commands and agents.
 
 - Users don't know what's included
 - No installation instructions
-- No troubleshooting guidance
-- Low adoption
 
-**Solution:** Comprehensive README with:
+**Solution:** Focused README with:
 
-- Installation steps
-- Component list with examples
-- Required dependencies
-- Troubleshooting section
-- Changelog
+- Brief description
+- Component list
+- Installation (if external tools needed)
+- Basic usage example
+
+**Anti-pattern:** Don't over-document. No roadmaps, planned features, or verbose error handling sections.
 
 ### Pitfall #5: Ignoring Semantic Versioning
 
@@ -719,12 +718,12 @@ Before publishing:
 
 **Documentation (best practices):**
 
-- ✓ Comprehensive README
-- ✓ Installation instructions
-- ✓ Usage examples for each component
-- ✓ Required dependencies documented
-- ✓ Troubleshooting section
-- ✓ Changelog
+- ✓ Focused README (not comprehensive)
+- ✓ Component list with brief descriptions
+- ✓ Installation only if external tools required
+- ✓ Basic usage example
+- ✗ No roadmaps or planned features
+- ✗ No verbose error handling docs
 
 **Design (best practices):**
 
