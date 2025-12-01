@@ -39,25 +39,34 @@ class StageResult:
     output: str = ""
 
 
-# Configuration: Map file extensions to linter configurations
-# Each config includes: command, extensions, success messages, error handling
-# Configs can use either:
-#   - "command": single linter command
-#   - "pipeline": list of stages to run in sequence (formatter then checker)
+# Configuration: Map file extensions to linter pipeline configurations
+# Each config has "extensions" and "pipeline" (list of stages to run in sequence)
+# Stage options:
+#   - name: Display name for the tool
+#   - command: Command array to run
+#   - check_installed: Binary name to check for availability
+#   - unfixable_exit_code: Exit code indicating lint errors needing manual fix
+#   - optional: If True, skip silently when tool not installed
+#   - config_resolver: Key into CONFIG_RESOLVERS for dynamic config file lookup
 LINTER_CONFIG = {
     "markdown": {
         "extensions": [".md", ".markdown"],
-        "name": "markdownlint",
-        "command": ["markdownlint-cli2", "--fix"],
-        "check_installed": "markdownlint-cli2",
-        "unfixable_exit_code": 1,
+        "pipeline": [{
+            "name": "markdownlint",
+            "command": ["markdownlint-cli2", "--fix"],
+            "check_installed": "markdownlint-cli2",
+            "unfixable_exit_code": 1,
+            "config_resolver": "markdown",
+        }],
     },
     "python": {
         "extensions": [".py"],
-        "name": "ruff",
-        "command": ["ruff", "check", "--fix"],
-        "check_installed": "ruff",
-        "unfixable_exit_code": 1,
+        "pipeline": [{
+            "name": "ruff",
+            "command": ["ruff", "check", "--fix"],
+            "check_installed": "ruff",
+            "unfixable_exit_code": 1,
+        }],
     },
     "shell": {
         "extensions": [".sh", ".bash", ".zsh"],
@@ -77,6 +86,11 @@ LINTER_CONFIG = {
             },
         ],
     },
+}
+
+# Map config_resolver keys to resolver functions
+CONFIG_RESOLVERS = {
+    "markdown": lambda: resolve_markdown_config(),
 }
 
 
@@ -239,8 +253,15 @@ def run_pipeline(file_path: str, stages: list[Dict]) -> list[StageResult]:
                 ))
                 break
 
+        # Resolve config file if stage has a config_resolver
+        config_file = None
+        if "config_resolver" in stage:
+            resolver = CONFIG_RESOLVERS.get(stage["config_resolver"])
+            if resolver:
+                config_file = resolver()
+
         # Run the linter stage
-        exit_code, output = run_linter(file_path, stage)
+        exit_code, output = run_linter(file_path, stage, config_file)
 
         if exit_code == 0:
             results.append(StageResult(name=tool_name, status=Status.OK))
@@ -366,45 +387,11 @@ def main():
     if not linter_info:
         sys.exit(0)
 
-    language, config = linter_info
+    _, config = linter_info
 
-    # Check if this is a pipeline config (multiple stages) or single command
-    if "pipeline" in config:
-        # Run pipeline of linter stages
-        results = run_pipeline(file_path, config["pipeline"])
-        summary, additional_context = format_summary_line(file_path, results)
-
-        if summary:
-            output_json_response(system_message=summary, additional_context=additional_context)
-
-        sys.exit(0)
-
-    # Single command config - wrap as single-stage pipeline for consistent output
-    tool_name = config.get("name", config["check_installed"])
-
-    # Check if linter tool is installed
-    if not check_tool_installed(config["check_installed"]):
-        sys.exit(0)
-
-    # Resolve config file for markdown (other linters can add their own resolvers)
-    config_file = None
-    if language == "markdown":
-        config_file = resolve_markdown_config()
-
-    # Run the linter
-    exit_code, output = run_linter(file_path, config, config_file)
-
-    # Convert to StageResult for consistent formatting
-    if exit_code == 0:
-        result = StageResult(name=tool_name, status=Status.OK)
-    elif "unfixable_exit_code" in config and exit_code == config["unfixable_exit_code"]:
-        # Linter found issues needing manual fix
-        result = StageResult(name=tool_name, status=Status.WARNING, output=output)
-    else:
-        # Tool error
-        result = StageResult(name=tool_name, status=Status.ERROR, output=output)
-
-    summary, additional_context = format_summary_line(file_path, [result])
+    # Run pipeline of linter stages
+    results = run_pipeline(file_path, config["pipeline"])
+    summary, additional_context = format_summary_line(file_path, results)
 
     if summary:
         output_json_response(system_message=summary, additional_context=additional_context)
