@@ -17,8 +17,26 @@ Exit codes:
 import json
 import subprocess
 import sys
+from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 from typing import Dict, Optional, Tuple
+
+
+class Status(Enum):
+    """Status of a linter stage or overall result."""
+    OK = "ok"           # Ran successfully
+    WARNING = "warning" # Found issues needing manual fix
+    ERROR = "error"     # Tool failed or unexpected error
+    SKIPPED = "skipped" # Tool not installed (optional)
+
+
+@dataclass
+class StageResult:
+    """Result from running a single linter stage."""
+    name: str
+    status: Status
+    output: str = ""
 
 
 # Configuration: Map file extensions to linter configurations
@@ -29,20 +47,16 @@ from typing import Dict, Optional, Tuple
 LINTER_CONFIG = {
     "markdown": {
         "extensions": [".md", ".markdown"],
+        "name": "markdownlint",
         "command": ["markdownlint-cli2", "--fix"],
         "check_installed": "markdownlint-cli2",
-        "success_message": "Markdown formatted: {file_path}",
-        "unfixable_message": "Markdown linting found unfixable issues in {file_path}",
-        "unfixable_hint": "Run: markdownlint-cli2 {file_path} to see details",
-        "unfixable_exit_code": 1,  # markdownlint-cli2 returns 1 for unfixable issues
+        "unfixable_exit_code": 1,
     },
     "python": {
         "extensions": [".py"],
+        "name": "ruff",
         "command": ["ruff", "check", "--fix"],
         "check_installed": "ruff",
-        "success_message": "Python formatted: {file_path}",
-        "unfixable_message": "Ruff found unfixable issues in {file_path}",
-        "unfixable_hint": "Run: ruff check {file_path} to see details",
         "unfixable_exit_code": 1,
     },
     "shell": {
@@ -52,18 +66,14 @@ LINTER_CONFIG = {
                 "name": "shfmt",
                 "command": ["shfmt", "-w", "-i", "4", "-ci"],  # -w: write, -i 4: indent, -ci: case indent
                 "check_installed": "shfmt",
-                "success_message": "Shell script formatted: {file_path}",
-                "optional": True,  # Continue to next stage if tool not installed
+                "optional": True,
             },
             {
                 "name": "shellcheck",
                 "command": ["shellcheck"],
                 "check_installed": "shellcheck",
-                "success_message": "Shell script checked: {file_path}",
-                "unfixable_message": "Shellcheck found issues in {file_path}",
-                "unfixable_hint": "Review shellcheck output above and fix manually",
                 "unfixable_exit_code": 1,
-                "optional": True,  # Don't block if shellcheck not installed
+                "optional": True,
             },
         ],
     },
@@ -200,12 +210,7 @@ def run_linter(file_path: str, config: Dict, config_file: Optional[str] = None) 
         return (1, f"Linter execution error: {str(e)}")
 
 
-def format_message(template: str, **kwargs) -> str:
-    """Format message template with provided variables."""
-    return template.format(**kwargs)
-
-
-def run_pipeline(file_path: str, stages: list[Dict]) -> tuple[list[str], list[str], bool]:
+def run_pipeline(file_path: str, stages: list[Dict]) -> list[StageResult]:
     """
     Run a pipeline of linter stages on a file.
 
@@ -214,11 +219,9 @@ def run_pipeline(file_path: str, stages: list[Dict]) -> tuple[list[str], list[st
         stages: List of stage configurations
 
     Returns:
-        Tuple of (success_messages, error_messages, had_issues)
+        List of StageResult objects
     """
-    success_messages: list[str] = []
-    error_messages: list[str] = []
-    had_issues = False
+    results: list[StageResult] = []
 
     for stage in stages:
         tool_name = stage.get("name", stage["check_installed"])
@@ -226,41 +229,96 @@ def run_pipeline(file_path: str, stages: list[Dict]) -> tuple[list[str], list[st
         # Check if tool is installed
         if not check_tool_installed(stage["check_installed"]):
             if stage.get("optional", False):
-                # Skip optional tools that aren't installed
+                results.append(StageResult(name=tool_name, status=Status.SKIPPED))
                 continue
             else:
-                # Required tool missing - report and stop
-                error_messages.append(f"{tool_name} not installed (required)")
-                had_issues = True
+                results.append(StageResult(
+                    name=tool_name,
+                    status=Status.ERROR,
+                    output=f"{tool_name} not installed (required)"
+                ))
                 break
 
         # Run the linter stage
         exit_code, output = run_linter(file_path, stage)
 
         if exit_code == 0:
-            # Success
-            if "success_message" in stage:
-                msg = format_message(stage["success_message"], file_path=file_path)
-                success_messages.append(msg)
-        elif exit_code == stage.get("unfixable_exit_code", 1):
-            # Found issues that need manual attention
-            had_issues = True
-            if "unfixable_message" in stage:
-                msg = format_message(stage["unfixable_message"], file_path=file_path)
-                error_messages.append(msg)
-            if output:
-                error_messages.append(output)
-            if "unfixable_hint" in stage:
-                hint = format_message(stage["unfixable_hint"], file_path=file_path)
-                error_messages.append(hint)
+            results.append(StageResult(name=tool_name, status=Status.OK))
+        elif "unfixable_exit_code" in stage and exit_code == stage["unfixable_exit_code"]:
+            # Linter found issues needing manual fix (expected behavior)
+            results.append(StageResult(name=tool_name, status=Status.WARNING, output=output))
         else:
-            # Unexpected error
-            had_issues = True
-            error_messages.append(f"{tool_name} error (exit code {exit_code})")
-            if output:
-                error_messages.append(output)
+            # Tool error (parse failure, crash, etc.)
+            results.append(StageResult(
+                name=tool_name,
+                status=Status.ERROR,
+                output=output or f"exit code {exit_code}"
+            ))
 
-    return success_messages, error_messages, had_issues
+    return results
+
+
+def format_summary_line(file_path: str, results: list[StageResult]) -> tuple[str, Optional[str]]:
+    """
+    Format a single-line summary of linting results.
+
+    Format: icon tools filename [: message]
+    - ✓ ruff goodfile.py
+    - ⚠ markdownlint badfile.md: Lint errors!
+    - ✗ shfmt, shellcheck somefile.bash: Error - message
+
+    Args:
+        file_path: Path to the file that was linted
+        results: List of StageResult objects
+
+    Returns:
+        Tuple of (summary_line, additional_context_or_none)
+    """
+    filename = Path(file_path).name
+
+    # Filter out skipped stages for display
+    ran_stages = [r for r in results if r.status != Status.SKIPPED]
+
+    if not ran_stages:
+        # No tools ran (all skipped)
+        return "", None
+
+    # Build tool list
+    tools_str = ", ".join(r.name for r in ran_stages)
+
+    # Determine overall status and build message
+    has_error = any(r.status == Status.ERROR for r in ran_stages)
+    has_warning = any(r.status == Status.WARNING for r in ran_stages)
+
+    # ANSI colors
+    GREEN = "\033[32m"
+    YELLOW = "\033[33m"
+    RED = "\033[31m"
+    RESET = "\033[0m"
+
+    if has_error:
+        # Find first error message
+        error_output = next((r.output for r in ran_stages if r.status == Status.ERROR and r.output), "")
+        if error_output:
+            # Take first line, strip file path prefix if present, truncate
+            first_line = error_output.split('\n')[0]
+            # Strip common path prefixes (full path or relative)
+            if ': ' in first_line:
+                first_line = first_line.split(': ', 1)[-1]
+            short_error = first_line[:50] + "..." if len(first_line) > 50 else first_line
+        else:
+            short_error = "execution failed"
+        summary = f"{RED}✗ {tools_str} {filename}: {short_error}{RESET}"
+    elif has_warning:
+        summary = f"{YELLOW}⚠ {tools_str} {filename}: Lint errors!{RESET}"
+    else:
+        summary = f"{GREEN}✓ {tools_str} {filename}: OK{RESET}"
+
+    # Collect additional context (error/warning output) for Claude
+    context_parts = [r.output for r in results if r.output and r.status in (Status.WARNING, Status.ERROR)]
+    additional_context = "\n".join(context_parts) if context_parts else None
+
+    return summary, additional_context
 
 
 def output_json_response(system_message: Optional[str] = None, additional_context: Optional[str] = None, decision: Optional[str] = None, reason: Optional[str] = None):
@@ -287,11 +345,6 @@ def output_json_response(system_message: Optional[str] = None, additional_contex
 
 def main():
     """Main hook execution logic."""
-    # Debug: log that hook was triggered
-    import datetime
-    with open("/tmp/hook-test.log", "a") as f:
-        f.write(f"{datetime.datetime.now()}: Hook triggered\n")
-
     # Read hook input from stdin
     hook_input = read_stdin_json()
 
@@ -318,22 +371,19 @@ def main():
     # Check if this is a pipeline config (multiple stages) or single command
     if "pipeline" in config:
         # Run pipeline of linter stages
-        success_msgs, error_msgs, _had_issues = run_pipeline(file_path, config["pipeline"])
+        results = run_pipeline(file_path, config["pipeline"])
+        summary, additional_context = format_summary_line(file_path, results)
 
-        # Build response message
-        all_messages = success_msgs + error_msgs
-        if all_messages:
-            full_message = "\n".join(all_messages)
-            additional_context = "\n".join(error_msgs) if error_msgs else None
-            output_json_response(system_message=full_message, additional_context=additional_context)
+        if summary:
+            output_json_response(system_message=summary, additional_context=additional_context)
 
         sys.exit(0)
 
-    # Single command config (backward compatible path)
+    # Single command config - wrap as single-stage pipeline for consistent output
+    tool_name = config.get("name", config["check_installed"])
+
     # Check if linter tool is installed
     if not check_tool_installed(config["check_installed"]):
-        # Not installed - exit silently (non-blocking)
-        # User can install the tool if desired
         sys.exit(0)
 
     # Resolve config file for markdown (other linters can add their own resolvers)
@@ -344,49 +394,22 @@ def main():
     # Run the linter
     exit_code, output = run_linter(file_path, config, config_file)
 
-    # Handle linter results
+    # Convert to StageResult for consistent formatting
     if exit_code == 0:
-        # Success - file was clean or successfully fixed
-        success_msg = format_message(
-            config["success_message"],
-            file_path=file_path
-        )
-        output_json_response(system_message=success_msg)
-        sys.exit(0)
-
-    elif exit_code == config.get("unfixable_exit_code", 1):
-        # Linter found issues that couldn't be auto-fixed
-        unfixable_msg = format_message(
-            config["unfixable_message"],
-            file_path=file_path
-        )
-
-        # Build complete context message
-        context_parts = [unfixable_msg]
-        if output:
-            context_parts.append(output)
-        if "unfixable_hint" in config:
-            hint = format_message(
-                config["unfixable_hint"],
-                file_path=file_path
-            )
-            context_parts.append(hint)
-
-        full_context = "\n".join(context_parts)
-        output_json_response(system_message=full_context, additional_context=output)
-        sys.exit(0)
-
+        result = StageResult(name=tool_name, status=Status.OK)
+    elif "unfixable_exit_code" in config and exit_code == config["unfixable_exit_code"]:
+        # Linter found issues needing manual fix
+        result = StageResult(name=tool_name, status=Status.WARNING, output=output)
     else:
-        # Unexpected exit code - report error (ANSI red)
-        error_msg = f"\033[31mLinter error (exit code {exit_code}) in {file_path}:\033[0m"
+        # Tool error
+        result = StageResult(name=tool_name, status=Status.ERROR, output=output)
 
-        context_parts = [error_msg]
-        if output:
-            context_parts.append(output)
+    summary, additional_context = format_summary_line(file_path, [result])
 
-        full_context = "\n".join(context_parts)
-        output_json_response(system_message=full_context, additional_context=output)
-        sys.exit(0)
+    if summary:
+        output_json_response(system_message=summary, additional_context=additional_context)
+
+    sys.exit(0)
 
 
 if __name__ == "__main__":
