@@ -198,6 +198,9 @@ If marketplace registration is requested, update or create marketplace.json:
 ```json
 {
   "name": "marketplace-name",
+  "metadata": {
+    "pluginRoot": ".."
+  },
   "plugins": [
     {
       "name": "plugin-name",
@@ -207,6 +210,8 @@ If marketplace registration is requested, update or create marketplace.json:
   ]
 }
 ```
+
+**Note:** The `pluginRoot` field tells Claude Code where to resolve plugin source paths from. Since marketplace.json lives in `.claude-plugin/`, use `".."` to resolve paths relative to the repository root.
 
 **Adding to existing marketplace:**
 

@@ -1,6 +1,7 @@
 """Tests for lint_on_write.py hook."""
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -9,393 +10,603 @@ import pytest
 
 # Import the module under test
 sys.path.insert(0, str(Path(__file__).parent.parent / "hooks"))
-import lint_on_write
+import lint_on_write as low
 
 
-class TestExtractFilePath:
-    """Tests for extract_file_path() - parsing file paths from hook input."""
-
-    def test_valid_path(self):
-        hook_input = {"tool_input": {"file_path": "/some/file.py"}}
-        assert lint_on_write.extract_file_path(hook_input) == "/some/file.py"
-
-    def test_missing_tool_input(self):
-        hook_input = {}
-        assert lint_on_write.extract_file_path(hook_input) is None
-
-    def test_missing_file_path(self):
-        hook_input = {"tool_input": {}}
-        assert lint_on_write.extract_file_path(hook_input) is None
-
-    def test_null_file_path(self):
-        hook_input = {"tool_input": {"file_path": None}}
-        assert lint_on_write.extract_file_path(hook_input) is None
-
-    def test_non_string_file_path(self):
-        hook_input = {"tool_input": {"file_path": 123}}
-        assert lint_on_write.extract_file_path(hook_input) is None
-
-    def test_empty_string_file_path(self):
-        hook_input = {"tool_input": {"file_path": ""}}
-        assert lint_on_write.extract_file_path(hook_input) is None
+# =============================================================================
+# Fixtures
+# =============================================================================
 
 
-class TestGetLinterConfig:
-    """Tests for get_linter_config() - mapping extensions to linter configs."""
+@pytest.fixture
+def temp_project(tmp_path):
+    """Create a temporary project directory."""
+    return tmp_path
 
-    def test_markdown_md(self):
-        result = lint_on_write.get_linter_config("/path/to/file.md")
-        assert result is not None
-        language, config = result
-        assert language == "markdown"
-        assert ".md" in config["extensions"]
 
-    def test_markdown_uppercase(self):
-        result = lint_on_write.get_linter_config("/path/to/README.MD")
-        assert result is not None
-        language, _ = result
-        assert language == "markdown"
+@pytest.fixture
+def python_project_with_ruff(tmp_path):
+    """Create a Python project with ruff config."""
+    (tmp_path / "pyproject.toml").write_text("[tool.ruff]\nline-length = 88\n")
+    (tmp_path / "main.py").write_text("x = 1\n")
+    return tmp_path
 
-    def test_python(self):
-        result = lint_on_write.get_linter_config("/path/to/script.py")
-        assert result is not None
-        language, config = result
-        assert language == "python"
-        assert "pipeline_resolver" in config
 
-    def test_javascript(self):
-        result = lint_on_write.get_linter_config("/path/to/app.js")
-        assert result is not None
-        language, _ = result
-        assert language == "javascript"
+@pytest.fixture
+def python_project_with_black(tmp_path):
+    """Create a Python project with black config."""
+    (tmp_path / "pyproject.toml").write_text("[tool.black]\nline-length = 88\n")
+    (tmp_path / "main.py").write_text("x = 1\n")
+    return tmp_path
 
-    def test_typescript(self):
-        result = lint_on_write.get_linter_config("/path/to/app.tsx")
-        assert result is not None
-        language, _ = result
-        assert language == "typescript"
 
-    def test_shell_sh(self):
-        result = lint_on_write.get_linter_config("/path/to/script.sh")
-        assert result is not None
-        language, _ = result
-        assert language == "shell"
+@pytest.fixture
+def python_project_with_isort_and_black(tmp_path):
+    """Create a Python project with isort and black config."""
+    (tmp_path / "pyproject.toml").write_text('[tool.isort]\nprofile = "black"\n\n[tool.black]\nline-length = 88\n')
+    (tmp_path / "main.py").write_text("x = 1\n")
+    return tmp_path
 
-    def test_shell_bash(self):
-        result = lint_on_write.get_linter_config("/path/to/script.bash")
-        assert result is not None
-        language, _ = result
-        assert language == "shell"
 
-    def test_unknown_extension(self):
-        result = lint_on_write.get_linter_config("/path/to/file.xyz")
-        assert result is None
+@pytest.fixture
+def js_project_with_biome(tmp_path):
+    """Create a JS project with biome config."""
+    (tmp_path / "package.json").write_text('{"devDependencies": {"@biomejs/biome": "^1.0.0"}}')
+    (tmp_path / "biome.json").write_text("{}")
+    (tmp_path / "index.js").write_text("const x = 1;\n")
+    return tmp_path
 
-    def test_no_extension(self):
-        result = lint_on_write.get_linter_config("/path/to/Makefile")
-        assert result is None
+
+@pytest.fixture
+def js_project_with_eslint(tmp_path):
+    """Create a JS project with eslint config."""
+    (tmp_path / "package.json").write_text('{"devDependencies": {"eslint": "^8.0.0"}}')
+    (tmp_path / "eslint.config.js").write_text("module.exports = {};\n")
+    (tmp_path / "index.js").write_text("const x = 1;\n")
+    return tmp_path
+
+
+@pytest.fixture
+def js_project_with_prettier(tmp_path):
+    """Create a JS project with prettier config."""
+    (tmp_path / "package.json").write_text('{"devDependencies": {"prettier": "^3.0.0"}}')
+    (tmp_path / ".prettierrc").write_text("{}")
+    (tmp_path / "index.js").write_text("const x = 1;\n")
+    return tmp_path
+
+
+@pytest.fixture
+def shell_project(tmp_path):
+    """Create a project with shell scripts."""
+    (tmp_path / ".git").mkdir()
+    (tmp_path / "script.sh").write_text('#!/bin/bash\necho "hello"\n')
+    return tmp_path
+
+
+@pytest.fixture
+def markdown_project(tmp_path):
+    """Create a project with markdown files."""
+    (tmp_path / ".git").mkdir()
+    (tmp_path / "README.md").write_text("# Title\n\nContent here.\n")
+    return tmp_path
+
+
+# =============================================================================
+# Tests: find_project_root
+# =============================================================================
 
 
 class TestFindProjectRoot:
-    """Tests for find_project_root() - locating project root directory."""
+    def test_finds_pyproject_toml(self, tmp_path):
+        (tmp_path / "pyproject.toml").write_text("")
+        subdir = tmp_path / "src"
+        subdir.mkdir()
+        file_path = subdir / "main.py"
+        file_path.write_text("")
+
+        result = low.find_project_root(str(file_path))
+        assert result == tmp_path
 
     def test_finds_package_json(self, tmp_path):
-        # Create nested structure with package.json at root
-        project = tmp_path / "project"
-        project.mkdir()
-        (project / "package.json").write_text("{}")
-        subdir = project / "src" / "components"
-        subdir.mkdir(parents=True)
-        target_file = subdir / "App.tsx"
-        target_file.write_text("")
+        (tmp_path / "package.json").write_text("{}")
+        subdir = tmp_path / "src"
+        subdir.mkdir()
+        file_path = subdir / "index.js"
+        file_path.write_text("")
 
-        result = lint_on_write.find_project_root(str(target_file))
-        assert result == project
-
-    def test_finds_pyproject_toml(self, tmp_path):
-        project = tmp_path / "project"
-        project.mkdir()
-        (project / "pyproject.toml").write_text("[project]")
-        subdir = project / "src" / "mypackage"
-        subdir.mkdir(parents=True)
-        target_file = subdir / "main.py"
-        target_file.write_text("")
-
-        result = lint_on_write.find_project_root(str(target_file))
-        assert result == project
+        result = low.find_project_root(str(file_path))
+        assert result == tmp_path
 
     def test_finds_git_directory(self, tmp_path):
-        project = tmp_path / "project"
-        project.mkdir()
-        (project / ".git").mkdir()
-        subdir = project / "scripts"
+        (tmp_path / ".git").mkdir()
+        subdir = tmp_path / "src"
         subdir.mkdir()
-        target_file = subdir / "build.sh"
-        target_file.write_text("")
+        file_path = subdir / "script.sh"
+        file_path.write_text("")
 
-        result = lint_on_write.find_project_root(str(target_file))
-        assert result == project
+        result = low.find_project_root(str(file_path))
+        assert result == tmp_path
 
     def test_prefers_package_json_over_git(self, tmp_path):
-        # package.json should be found before .git
-        project = tmp_path / "project"
-        project.mkdir()
-        (project / ".git").mkdir()
-        (project / "package.json").write_text("{}")
-        target_file = project / "index.js"
-        target_file.write_text("")
+        """package.json found first when walking up."""
+        (tmp_path / ".git").mkdir()
+        subdir = tmp_path / "packages" / "frontend"
+        subdir.mkdir(parents=True)
+        (subdir / "package.json").write_text("{}")
+        file_path = subdir / "index.js"
+        file_path.write_text("")
 
-        result = lint_on_write.find_project_root(str(target_file))
-        assert result == project
+        result = low.find_project_root(str(file_path))
+        assert result == subdir
 
-    def test_no_project_root(self, tmp_path):
-        # Isolated file with no markers
-        isolated = tmp_path / "isolated"
-        isolated.mkdir()
-        target_file = isolated / "orphan.py"
-        target_file.write_text("")
+    def test_returns_none_when_no_markers(self, tmp_path):
+        file_path = tmp_path / "orphan.py"
+        file_path.write_text("")
 
-        result = lint_on_write.find_project_root(str(target_file))
-        # May find something in parent dirs or None
-        # Don't assert None since tmp_path parents may have markers
+        # May find something in parent directories, or None
+        # This depends on the actual filesystem - just verify it doesn't crash
+        low.find_project_root(str(file_path))
 
 
-class TestDetectTool:
-    """Tests for detect_tool() - detecting configured tools in projects."""
-
-    def test_detects_biome_config(self, tmp_path):
-        (tmp_path / "biome.json").write_text("{}")
-        assert lint_on_write.detect_tool(tmp_path, "biome") is True
-
-    def test_detects_biome_jsonc(self, tmp_path):
-        (tmp_path / "biome.jsonc").write_text("{}")
-        assert lint_on_write.detect_tool(tmp_path, "biome") is True
-
-    def test_detects_eslint_config(self, tmp_path):
-        (tmp_path / "eslint.config.js").write_text("export default []")
-        assert lint_on_write.detect_tool(tmp_path, "eslint") is True
-
-    def test_detects_prettier_config(self, tmp_path):
-        (tmp_path / ".prettierrc").write_text("{}")
-        assert lint_on_write.detect_tool(tmp_path, "prettier") is True
-
-    def test_detects_ruff_config(self, tmp_path):
-        (tmp_path / "ruff.toml").write_text("")
-        assert lint_on_write.detect_tool(tmp_path, "ruff") is True
-
-    def test_detects_biome_in_package_json(self, tmp_path):
-        pkg = {"devDependencies": {"@biomejs/biome": "^1.0.0"}}
-        (tmp_path / "package.json").write_text(json.dumps(pkg))
-        assert lint_on_write.detect_tool(tmp_path, "biome") is True
-
-    def test_detects_eslint_in_dependencies(self, tmp_path):
-        pkg = {"dependencies": {"eslint": "^8.0.0"}}
-        (tmp_path / "package.json").write_text(json.dumps(pkg))
-        assert lint_on_write.detect_tool(tmp_path, "eslint") is True
-
-    def test_no_tool_detected(self, tmp_path):
-        assert lint_on_write.detect_tool(tmp_path, "biome") is False
-        assert lint_on_write.detect_tool(tmp_path, "eslint") is False
-
-    def test_unknown_tool(self, tmp_path):
-        assert lint_on_write.detect_tool(tmp_path, "nonexistent") is False
+# =============================================================================
+# Tests: check_pyproject_key
+# =============================================================================
 
 
 class TestCheckPyprojectKey:
-    """Tests for check_pyproject_key() - checking pyproject.toml sections."""
+    def test_finds_existing_key(self, tmp_path):
+        (tmp_path / "pyproject.toml").write_text("[tool.ruff]\nline-length = 88\n")
+        assert low.check_pyproject_key(tmp_path, "tool.ruff") is True
 
-    def test_finds_tool_ruff(self, tmp_path):
-        pyproject = tmp_path / "pyproject.toml"
-        pyproject.write_text("[tool.ruff]\nline-length = 100\n")
-        assert lint_on_write.check_pyproject_key(tmp_path, "tool.ruff") is True
+    def test_finds_nested_key(self, tmp_path):
+        (tmp_path / "pyproject.toml").write_text("[tool.black]\nline-length = 88\n")
+        assert low.check_pyproject_key(tmp_path, "tool.black") is True
 
-    def test_finds_tool_black(self, tmp_path):
-        pyproject = tmp_path / "pyproject.toml"
-        pyproject.write_text("[tool.black]\nline-length = 88\n")
-        assert lint_on_write.check_pyproject_key(tmp_path, "tool.black") is True
+    def test_returns_false_for_missing_key(self, tmp_path):
+        (tmp_path / "pyproject.toml").write_text("[tool.black]\nline-length = 88\n")
+        assert low.check_pyproject_key(tmp_path, "tool.ruff") is False
 
-    def test_missing_key(self, tmp_path):
-        pyproject = tmp_path / "pyproject.toml"
-        pyproject.write_text("[project]\nname = 'test'\n")
-        assert lint_on_write.check_pyproject_key(tmp_path, "tool.ruff") is False
+    def test_returns_false_when_no_pyproject(self, tmp_path):
+        assert low.check_pyproject_key(tmp_path, "tool.ruff") is False
 
-    def test_no_pyproject(self, tmp_path):
-        assert lint_on_write.check_pyproject_key(tmp_path, "tool.ruff") is False
-
-    def test_invalid_toml(self, tmp_path):
-        pyproject = tmp_path / "pyproject.toml"
-        pyproject.write_text("not valid toml {{{{")
-        assert lint_on_write.check_pyproject_key(tmp_path, "tool.ruff") is False
+    def test_handles_invalid_toml(self, tmp_path):
+        (tmp_path / "pyproject.toml").write_text("invalid [ toml")
+        assert low.check_pyproject_key(tmp_path, "tool.ruff") is False
 
 
-class TestGetPipeline:
-    """Tests for get_pipeline() - retrieving linter pipeline stages."""
+# =============================================================================
+# Tests: has_project_config
+# =============================================================================
 
-    def test_static_pipeline_markdown(self):
-        config = lint_on_write.LINTER_CONFIG["markdown"]
-        pipeline = lint_on_write.get_pipeline("/any/file.md", config)
-        assert len(pipeline) == 1
-        assert pipeline[0]["name"] == "markdownlint"
 
-    def test_static_pipeline_shell(self):
-        config = lint_on_write.LINTER_CONFIG["shell"]
-        pipeline = lint_on_write.get_pipeline("/any/file.sh", config)
-        assert len(pipeline) == 2
-        assert pipeline[0]["name"] == "shfmt"
-        assert pipeline[1]["name"] == "shellcheck"
+class TestHasProjectConfig:
+    def test_detects_ruff_in_pyproject(self, python_project_with_ruff):
+        assert low.has_project_config("ruff", python_project_with_ruff) is True
 
-    def test_dynamic_pipeline_python(self, tmp_path):
-        # With ruff configured
+    def test_detects_ruff_toml_file(self, tmp_path):
         (tmp_path / "ruff.toml").write_text("")
-        target = tmp_path / "test.py"
-        target.write_text("")
+        assert low.has_project_config("ruff", tmp_path) is True
 
-        config = lint_on_write.LINTER_CONFIG["python"]
-        pipeline = lint_on_write.get_pipeline(str(target), config)
-        assert len(pipeline) == 2  # ruff check + ruff format
-        assert all(s["name"] == "ruff" for s in pipeline)
+    def test_detects_dot_ruff_toml(self, tmp_path):
+        (tmp_path / ".ruff.toml").write_text("")
+        assert low.has_project_config("ruff", tmp_path) is True
 
-    def test_dynamic_pipeline_js_biome(self, tmp_path):
-        # With biome configured
+    def test_detects_black_in_pyproject(self, python_project_with_black):
+        assert low.has_project_config("black", python_project_with_black) is True
+
+    def test_detects_biome_in_package_json(self, js_project_with_biome):
+        assert low.has_project_config("biome", js_project_with_biome) is True
+
+    def test_detects_biome_json_file(self, tmp_path):
+        (tmp_path / "package.json").write_text("{}")
         (tmp_path / "biome.json").write_text("{}")
-        target = tmp_path / "app.js"
-        target.write_text("")
+        assert low.has_project_config("biome", tmp_path) is True
 
-        config = lint_on_write.LINTER_CONFIG["javascript"]
-        pipeline = lint_on_write.get_pipeline(str(target), config)
-        assert len(pipeline) == 1
-        assert pipeline[0]["name"] == "biome"
+    def test_detects_eslint_config(self, js_project_with_eslint):
+        assert low.has_project_config("eslint", js_project_with_eslint) is True
 
-    def test_dynamic_pipeline_js_eslint_prettier(self, tmp_path):
-        # With both eslint and prettier
-        pkg = {"devDependencies": {"eslint": "^8.0", "prettier": "^3.0"}}
-        (tmp_path / "package.json").write_text(json.dumps(pkg))
-        target = tmp_path / "app.js"
-        target.write_text("")
+    def test_detects_prettier_config(self, js_project_with_prettier):
+        assert low.has_project_config("prettier", js_project_with_prettier) is True
 
-        config = lint_on_write.LINTER_CONFIG["javascript"]
-        pipeline = lint_on_write.get_pipeline(str(target), config)
-        assert len(pipeline) == 2
-        names = [s["name"] for s in pipeline]
-        assert "eslint" in names
-        assert "prettier" in names
+    def test_returns_false_when_no_config(self, tmp_path):
+        (tmp_path / "package.json").write_text("{}")
+        assert low.has_project_config("ruff", tmp_path) is False
+        assert low.has_project_config("biome", tmp_path) is False
+
+    def test_returns_false_when_no_project_root(self):
+        assert low.has_project_config("ruff", None) is False
+
+    def test_detects_isort_in_setup_cfg(self, tmp_path):
+        (tmp_path / "setup.cfg").write_text("[isort]\nprofile = black\n")
+        assert low.has_project_config("isort", tmp_path) is True
+
+    def test_detects_pylint_in_pylintrc(self, tmp_path):
+        (tmp_path / ".pylintrc").write_text("[MESSAGES CONTROL]\ndisable = C0114\n")
+        assert low.has_project_config("pylint", tmp_path) is True
+
+    def test_detects_pylint_in_setup_cfg(self, tmp_path):
+        (tmp_path / "setup.cfg").write_text("[pylint]\nmax-line-length = 100\n")
+        assert low.has_project_config("pylint", tmp_path) is True
+
+    def test_detects_pylint_in_pyproject(self, tmp_path):
+        (tmp_path / "pyproject.toml").write_text("[tool.pylint]\nmax-line-length = 100\n")
+        assert low.has_project_config("pylint", tmp_path) is True
 
 
-class TestFormatSummaryLine:
-    """Tests for format_summary_line() - formatting linter results."""
+# =============================================================================
+# Tests: has_ini_section
+# =============================================================================
 
-    def test_all_ok(self):
-        results = [
-            lint_on_write.StageResult("ruff", lint_on_write.Status.OK),
-        ]
-        summary, context = lint_on_write.format_summary_line("/path/test.py", results)
-        assert "ruff" in summary
-        assert "test.py" in summary
-        assert "OK" in summary
-        assert context is None
 
-    def test_warning_status(self):
-        results = [
-            lint_on_write.StageResult(
-                "markdownlint",
-                lint_on_write.Status.WARNING,
-                output="MD001: Heading levels"
-            ),
-        ]
-        summary, context = lint_on_write.format_summary_line("/path/doc.md", results)
-        assert "markdownlint" in summary
-        assert "Lint errors!" in summary
-        assert context is not None
-        assert "MD001" in context
+class TestHasIniSection:
+    def test_finds_section_in_setup_cfg(self, tmp_path):
+        (tmp_path / "setup.cfg").write_text("[isort]\nprofile = black\n")
+        tool_def = {"ini_sections": [{"file": "setup.cfg", "section": "isort"}]}
+        assert low.has_ini_section(tool_def, tmp_path) is True
 
-    def test_error_status(self):
-        results = [
-            lint_on_write.StageResult(
-                "biome",
-                lint_on_write.Status.ERROR,
-                output="Parse error: unexpected token"
-            ),
-        ]
-        summary, context = lint_on_write.format_summary_line("/path/bad.js", results)
-        assert "biome" in summary
-        assert "bad.js" in summary
-        assert context is not None
+    def test_returns_false_when_section_missing(self, tmp_path):
+        (tmp_path / "setup.cfg").write_text("[metadata]\nname = myproject\n")
+        tool_def = {"ini_sections": [{"file": "setup.cfg", "section": "isort"}]}
+        assert low.has_ini_section(tool_def, tmp_path) is False
 
-    def test_skipped_not_shown(self):
-        results = [
-            lint_on_write.StageResult("shfmt", lint_on_write.Status.SKIPPED),
-            lint_on_write.StageResult("shellcheck", lint_on_write.Status.OK),
-        ]
-        summary, _ = lint_on_write.format_summary_line("/path/script.sh", results)
-        assert "shfmt" not in summary
-        assert "shellcheck" in summary
+    def test_returns_false_when_file_missing(self, tmp_path):
+        tool_def = {"ini_sections": [{"file": "setup.cfg", "section": "isort"}]}
+        assert low.has_ini_section(tool_def, tmp_path) is False
 
-    def test_all_skipped_empty(self):
-        results = [
-            lint_on_write.StageResult("shfmt", lint_on_write.Status.SKIPPED),
-        ]
-        summary, context = lint_on_write.format_summary_line("/path/script.sh", results)
+    def test_returns_false_when_no_ini_sections_defined(self, tmp_path):
+        tool_def = {}
+        assert low.has_ini_section(tool_def, tmp_path) is False
+
+    def test_handles_invalid_ini_file(self, tmp_path):
+        (tmp_path / "setup.cfg").write_text("not valid ini {{{{")
+        tool_def = {"ini_sections": [{"file": "setup.cfg", "section": "isort"}]}
+        assert low.has_ini_section(tool_def, tmp_path) is False
+
+
+# =============================================================================
+# Tests: select_tools
+# =============================================================================
+
+
+class TestSelectTools:
+    def test_python_with_ruff_config(self, python_project_with_ruff):
+        tools = low.select_tools("python", python_project_with_ruff)
+        assert tools == ["ruff"]
+
+    def test_python_with_black_config(self, python_project_with_black):
+        tools = low.select_tools("python", python_project_with_black)
+        assert tools == ["black"]
+
+    def test_python_with_isort_and_black(self, python_project_with_isort_and_black):
+        tools = low.select_tools("python", python_project_with_isort_and_black)
+        assert tools == ["isort", "black"]
+
+    def test_python_with_pylint(self, tmp_path):
+        """pylint configured -> uses traditional toolchain."""
+        (tmp_path / ".pylintrc").write_text("[MESSAGES CONTROL]\ndisable = C0114\n")
+        tools = low.select_tools("python", tmp_path)
+        assert tools == ["pylint"]
+
+    def test_python_with_pylint_and_black(self, tmp_path):
+        """pylint + black configured -> both run."""
+        (tmp_path / ".pylintrc").write_text("[MESSAGES CONTROL]\n")
+        (tmp_path / "pyproject.toml").write_text("[tool.black]\nline-length = 88\n")
+        tools = low.select_tools("python", tmp_path)
+        assert tools == ["pylint", "black"]
+
+    def test_python_with_full_traditional_toolchain(self, tmp_path):
+        """pylint + isort + black all configured."""
+        (tmp_path / "setup.cfg").write_text("[pylint]\n\n[isort]\nprofile = black\n")
+        (tmp_path / "pyproject.toml").write_text("[tool.black]\nline-length = 88\n")
+        tools = low.select_tools("python", tmp_path)
+        assert tools == ["pylint", "isort", "black"]
+
+    def test_python_fallback_to_ruff(self, tmp_path):
+        """No config -> fallback to first tool in first group (ruff)."""
+        tools = low.select_tools("python", tmp_path)
+        assert tools == ["ruff"]
+
+    def test_js_with_biome(self, js_project_with_biome):
+        tools = low.select_tools("js_ts", js_project_with_biome)
+        assert tools == ["biome"]
+
+    def test_js_with_eslint_only(self, js_project_with_eslint):
+        """eslint config but no prettier -> only eslint."""
+        tools = low.select_tools("js_ts", js_project_with_eslint)
+        assert tools == ["eslint"]
+
+    def test_js_with_eslint_and_prettier(self, tmp_path):
+        """Both eslint and prettier configured."""
+        (tmp_path / "package.json").write_text('{"devDependencies": {"eslint": "^8", "prettier": "^3"}}')
+        (tmp_path / ".eslintrc.json").write_text("{}")
+        (tmp_path / ".prettierrc").write_text("{}")
+
+        tools = low.select_tools("js_ts", tmp_path)
+        assert tools == ["eslint", "prettier"]
+
+    def test_js_fallback_to_biome(self, tmp_path):
+        """No config -> fallback to biome."""
+        tools = low.select_tools("js_ts", tmp_path)
+        assert tools == ["biome"]
+
+    def test_shell_fallback(self, tmp_path):
+        """Shell tools fallback to entire first group (shfmt + shellcheck)."""
+        tools = low.select_tools("shell", tmp_path)
+        assert tools == ["shfmt", "shellcheck"]
+
+    def test_markdown_fallback(self, tmp_path):
+        """Markdown fallback to markdownlint."""
+        tools = low.select_tools("markdown", tmp_path)
+        assert tools == ["markdownlint"]
+
+
+# =============================================================================
+# Tests: run_tool
+# =============================================================================
+
+
+class TestRunTool:
+    def test_returns_none_when_binary_not_found(self, tmp_path):
+        file_path = tmp_path / "test.py"
+        file_path.write_text("")
+
+        with patch("shutil.which", return_value=None):
+            result = low.run_tool(str(file_path), "ruff", tmp_path)
+        assert result is None
+
+    def test_returns_result_on_success(self, tmp_path):
+        file_path = tmp_path / "test.py"
+        file_path.write_text("x = 1\n")
+
+        mock_result = MagicMock()
+        mock_result.returncode = 0
+        mock_result.stdout = ""
+        mock_result.stderr = ""
+
+        with patch("shutil.which", return_value="/usr/bin/ruff"):
+            with patch("subprocess.run", return_value=mock_result):
+                result = low.run_tool(str(file_path), "ruff", tmp_path)
+
+        assert result is not None
+        assert result.name == "ruff"
+        assert result.status == low.Status.OK
+
+    def test_returns_warning_on_lint_errors(self, tmp_path):
+        file_path = tmp_path / "test.py"
+        file_path.write_text("x = 1\n")
+
+        mock_result = MagicMock()
+        mock_result.returncode = 1
+        mock_result.stdout = "Found 1 error"
+        mock_result.stderr = ""
+
+        with patch("shutil.which", return_value="/usr/bin/ruff"):
+            with patch("subprocess.run", return_value=mock_result):
+                result = low.run_tool(str(file_path), "ruff", tmp_path)
+
+        assert result is not None
+        assert result.status == low.Status.WARNING
+        assert "Found 1 error" in result.output
+
+    def test_returns_error_on_timeout(self, tmp_path):
+        file_path = tmp_path / "test.py"
+        file_path.write_text("x = 1\n")
+
+        with patch("shutil.which", return_value="/usr/bin/ruff"):
+            with patch("subprocess.run", side_effect=subprocess.TimeoutExpired("ruff", 60)):
+                result = low.run_tool(str(file_path), "ruff", tmp_path)
+
+        assert result is not None
+        assert result.status == low.Status.ERROR
+        assert "timed out" in result.output
+
+    def test_skips_markdownlint_without_global_config(self, tmp_path):
+        """When no project config, markdownlint needs global_config_location to exist."""
+        file_path = tmp_path / "README.md"
+        file_path.write_text("# Test\n")
+
+        # No project config exists, so has_project_config returns False
+        # Mock user_config path to not exist
+        with patch("shutil.which", return_value="/usr/bin/markdownlint-cli2"):
+            with patch.object(Path, "expanduser", return_value=Path("/fake/.markdownlint-cli2.jsonc")):
+                with patch.object(Path, "is_file", return_value=False):
+                    result = low.run_tool(str(file_path), "markdownlint", tmp_path)
+
+        assert result is None
+
+
+# =============================================================================
+# Tests: format_results
+# =============================================================================
+
+
+class TestFormatResults:
+    def test_empty_results(self):
+        summary, context = low.format_results("/path/to/file.py", [])
         assert summary == ""
         assert context is None
 
-    def test_multiple_tools(self):
+    def test_all_skipped(self):
+        results = [low.ToolResult("ruff", low.Status.SKIPPED)]
+        summary, context = low.format_results("/path/to/file.py", results)
+        assert summary == ""
+
+    def test_success_formatting(self):
+        results = [low.ToolResult("ruff", low.Status.OK)]
+        summary, context = low.format_results("/path/to/file.py", results)
+        assert "ruff" in summary
+        assert "file.py" in summary
+        assert "OK" in summary
+        # OK status now surfaces context to Claude so it knows linting ran
+        assert context == "ruff file.py: OK"
+
+    def test_warning_formatting(self):
+        results = [low.ToolResult("ruff", low.Status.WARNING, "line 1: error")]
+        summary, context = low.format_results("/path/to/file.py", results)
+        assert "Lint errors" in summary
+        assert context == "line 1: error"
+
+    def test_error_formatting(self):
+        results = [low.ToolResult("ruff", low.Status.ERROR, "execution failed")]
+        summary, context = low.format_results("/path/to/file.py", results)
+        assert "execution failed" in summary
+
+    def test_multiple_tools_formatting(self):
         results = [
-            lint_on_write.StageResult("eslint", lint_on_write.Status.OK),
-            lint_on_write.StageResult("prettier", lint_on_write.Status.OK),
+            low.ToolResult("isort", low.Status.OK),
+            low.ToolResult("black", low.Status.OK),
         ]
-        summary, _ = lint_on_write.format_summary_line("/path/app.tsx", results)
-        assert "eslint" in summary
-        assert "prettier" in summary
+        summary, context = low.format_results("/path/to/file.py", results)
+        assert "isort" in summary
+        assert "black" in summary
 
 
-class TestMakeStage:
-    """Tests for make_stage() - creating pipeline stage configs."""
-
-    def test_basic_stage(self):
-        stage = lint_on_write.make_stage("biome", None, ["biome", "check", "--fix"])
-        assert stage["name"] == "biome"
-        assert stage["command"] == ["biome", "check", "--fix"]
-        assert stage["check_installed"] == "biome"
-        assert stage["unfixable_exit_code"] == 1
-
-    def test_stage_with_project_root(self, tmp_path):
-        stage = lint_on_write.make_stage("eslint", tmp_path, ["eslint", "--fix"])
-        assert stage["cwd"] == str(tmp_path)
-
-    def test_prefers_local_binary(self, tmp_path):
-        # Create local node_modules binary
-        bin_dir = tmp_path / "node_modules" / ".bin"
-        bin_dir.mkdir(parents=True)
-        local_eslint = bin_dir / "eslint"
-        local_eslint.write_text("#!/bin/bash\necho 'local'")
-
-        stage = lint_on_write.make_stage("eslint", tmp_path, ["eslint", "--fix"])
-        assert stage["command"][0] == str(local_eslint)
-        assert stage["check_installed"] == str(local_eslint)
+# =============================================================================
+# Tests: extract_file_path
+# =============================================================================
 
 
-class TestOutputJsonResponse:
-    """Tests for output_json_response() - JSON output formatting."""
+class TestExtractFilePath:
+    def test_extracts_file_path(self):
+        hook_input = {"tool_input": {"file_path": "/path/to/file.py"}}
+        assert low.extract_file_path(hook_input) == "/path/to/file.py"
 
+    def test_returns_none_for_missing_tool_input(self):
+        assert low.extract_file_path({}) is None
+
+    def test_returns_none_for_missing_file_path(self):
+        assert low.extract_file_path({"tool_input": {}}) is None
+
+    def test_returns_none_for_non_string_file_path(self):
+        assert low.extract_file_path({"tool_input": {"file_path": 123}}) is None
+
+    def test_returns_none_for_empty_string(self):
+        assert low.extract_file_path({"tool_input": {"file_path": ""}}) is None
+
+    def test_returns_none_for_null_file_path(self):
+        assert low.extract_file_path({"tool_input": {"file_path": None}}) is None
+
+
+# =============================================================================
+# Tests: Extension mapping
+# =============================================================================
+
+
+class TestExtensionMapping:
+    @pytest.mark.parametrize(
+        "ext,expected",
+        [
+            (".py", "python"),
+            (".md", "markdown"),
+            (".markdown", "markdown"),
+            (".js", "js_ts"),
+            (".jsx", "js_ts"),
+            (".ts", "js_ts"),
+            (".tsx", "js_ts"),
+            (".mjs", "js_ts"),
+            (".cjs", "js_ts"),
+            (".mts", "js_ts"),
+            (".cts", "js_ts"),
+            (".sh", "shell"),
+            (".bash", "shell"),
+            (".zsh", "shell"),
+        ],
+    )
+    def test_extension_maps_to_toolset(self, ext, expected):
+        assert low.EXTENSION_TO_TOOLSET.get(ext) == expected
+
+    def test_unknown_extension_returns_none(self):
+        assert low.EXTENSION_TO_TOOLSET.get(".unknown") is None
+
+
+# =============================================================================
+# Tests: Toolset structure validation
+# =============================================================================
+
+
+class TestToolsetStructure:
+    def test_all_toolsets_have_groups(self):
+        for name, groups in low.TOOLSETS.items():
+            assert isinstance(groups, list), f"{name} should be a list"
+            assert len(groups) > 0, f"{name} should have at least one group"
+            for group in groups:
+                assert isinstance(group, list), f"{name} groups should be lists"
+                assert len(group) > 0, f"{name} groups should not be empty"
+
+    def test_all_tools_in_toolsets_are_defined(self):
+        for toolset_name, groups in low.TOOLSETS.items():
+            for group in groups:
+                for tool_name in group:
+                    assert tool_name in low.TOOLS, f"{tool_name} in {toolset_name} not defined in TOOLS"
+
+    def test_all_tools_have_required_fields(self):
+        for name, tool in low.TOOLS.items():
+            assert "binary" in tool, f"{name} missing 'binary'"
+            assert "commands" in tool, f"{name} missing 'commands'"
+            assert isinstance(tool["commands"], list), f"{name} commands should be list"
+
+
+# =============================================================================
+# Tests: output_response
+# =============================================================================
+
+
+class TestOutputResponse:
     def test_system_message_only(self, capsys):
-        lint_on_write.output_json_response(system_message="Test message")
+        low.output_response(system_message="Test message")
         captured = capsys.readouterr()
         data = json.loads(captured.out)
         assert data["systemMessage"] == "Test message"
 
     def test_with_additional_context(self, capsys):
-        lint_on_write.output_json_response(
-            system_message="Warning",
-            additional_context="Details here"
-        )
+        low.output_response(system_message="Warning", additional_context="Details here")
         captured = capsys.readouterr()
         data = json.loads(captured.out)
         assert "hookSpecificOutput" in data
         assert data["hookSpecificOutput"]["additionalContext"] == "Details here"
 
-    def test_with_decision(self, capsys):
-        lint_on_write.output_json_response(decision="approve", reason="All good")
+    def test_empty_response_outputs_nothing(self, capsys):
+        low.output_response()
         captured = capsys.readouterr()
-        data = json.loads(captured.out)
-        assert data["decision"] == "approve"
-        assert data["reason"] == "All good"
+        assert captured.out == ""
+
+
+# =============================================================================
+# Integration Tests
+# =============================================================================
+
+
+class TestIntegration:
+    """End-to-end tests for the main flow."""
+
+    def test_python_file_with_ruff_project(self, python_project_with_ruff):
+        """Python file in project with ruff config uses ruff."""
+        file_path = python_project_with_ruff / "main.py"
+        project_root = low.find_project_root(str(file_path))
+
+        assert project_root == python_project_with_ruff
+        assert low.has_project_config("ruff", project_root) is True
+
+        tools = low.select_tools("python", project_root)
+        assert tools == ["ruff"]
+
+    def test_js_file_with_biome_project(self, js_project_with_biome):
+        """JS file in project with biome config uses biome."""
+        file_path = js_project_with_biome / "index.js"
+        project_root = low.find_project_root(str(file_path))
+
+        assert project_root == js_project_with_biome
+        assert low.has_project_config("biome", project_root) is True
+
+        tools = low.select_tools("js_ts", project_root)
+        assert tools == ["biome"]
+
+    def test_biome_takes_priority_over_eslint(self, tmp_path):
+        """When both biome and eslint are configured, biome wins (first group)."""
+        (tmp_path / "package.json").write_text('{"devDependencies": {"@biomejs/biome": "^1", "eslint": "^8"}}')
+        (tmp_path / "biome.json").write_text("{}")
+        (tmp_path / ".eslintrc.json").write_text("{}")
+
+        tools = low.select_tools("js_ts", tmp_path)
+        # biome group comes first, so biome wins
+        assert tools == ["biome"]

@@ -1,5 +1,23 @@
 .claude/settings.local.json
+tmp
 .tmp
+
+# Python
 __pycache__/
-node_modules/
+*.pyc
 .ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# JS/TS
+node_modules/
+.eslintcache
+.prettiercache
+
+# OS
+.DS_Store
+
+# Editors
+.idea/

@@ -380,7 +380,21 @@ Located at `.claude-plugin/marketplace.json`:
 
 - **name**: Marketplace identifier (kebab-case)
 - **owner**: Maintainer information object
+- **metadata.pluginRoot**: Base path for resolving plugin sources (use `".."` since marketplace.json is in `.claude-plugin/`)
 - **plugins**: Array of plugin entries
+
+**Example marketplace:**
+
+```json
+{
+  "name": "marketplace-name",
+  "owner": { "name": "owner-name", "url": "https://..." },
+  "metadata": {
+    "pluginRoot": ".."
+  },
+  "plugins": [...]
+}
+```
 
 **Plugin entry fields:**
 
@@ -392,6 +406,8 @@ Located at `.claude-plugin/marketplace.json`:
   "strict": true
 }
 ```
+
+**Path resolution:** Plugin source paths are resolved relative to `pluginRoot`. Since marketplace.json lives in `.claude-plugin/`, the `".."` tells Claude Code to go up one level to the repository root before resolving `./plugins/...` paths.
 
 ### Source Types
 
