@@ -423,6 +423,7 @@ def setup_shell_config():
     """
     d = BASE / "shell-config"
     d.mkdir()
+    (d / ".git").mkdir()  # Project root marker
 
     (d / ".editorconfig").write_text(
         """\
