@@ -5,11 +5,11 @@ description: Interpretive guidance for designing Claude Code agents. Helps apply
 
 # Agent Design Skill
 
-This skill provides interpretive guidance for creating Claude Code agents. **ALWAYS fetch current official documentation before creating agents** - this skill helps you understand what the docs mean, not replace them.
+This skill provides interpretive guidance for creating Claude Code agents. It helps you understand what the docs mean and how to create excellent agents.
 
-## Required Reading Before Creating Agents
+## Official Documentation
 
-Fetch these docs with WebFetch every time:
+Fetch these docs when you need to verify syntax or check current options:
 
 - **<https://code.claude.com/docs/en/sub-agents.md>** - Core specification and examples
 - **<https://code.claude.com/docs/en/settings#tools-available-to-claude>** - Verify tool names
@@ -229,7 +229,7 @@ When writing agents:
 
 ## Documentation References
 
-Authoritative sources to fetch before creating agents:
+Authoritative sources for agent specifications:
 
 **Core specifications:**
 

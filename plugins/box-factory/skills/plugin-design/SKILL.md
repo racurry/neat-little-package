@@ -5,11 +5,11 @@ description: Interpretive guidance for designing Claude Code plugins. Helps you 
 
 # Plugin Design Skill
 
-This skill provides interpretive guidance and best practices for creating Claude Code plugins. **ALWAYS fetch current official documentation before creating plugins** - this skill helps you understand what the docs mean and how to create excellent plugins.
+This skill provides interpretive guidance and best practices for creating Claude Code plugins. It helps you understand what the docs mean and how to create excellent plugins.
 
-## Required Reading Before Creating Plugins
+## Official Documentation
 
-Fetch these docs with WebFetch every time:
+Fetch these docs when you need to verify syntax or check current options:
 
 - **<https://code.claude.com/docs/en/plugins>** - Plugin overview and quickstart
 - **<https://code.claude.com/docs/en/plugins-reference>** - Complete specifications
@@ -782,7 +782,7 @@ Before publishing:
 
 ## Documentation References
 
-These are the authoritative sources. Fetch them before creating plugins:
+Authoritative sources for plugin specifications:
 
 **Plugin creation:**
 

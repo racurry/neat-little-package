@@ -5,15 +5,15 @@ description: Interpretive guidance for designing Claude Code slash commands. Hel
 
 # Slash Command Design Skill
 
-This skill provides interpretive guidance and best practices for creating Claude Code slash commands. **ALWAYS fetch current official documentation before creating commands** - this skill helps you understand what the docs mean and how to create excellent commands.
+This skill provides interpretive guidance and best practices for creating Claude Code slash commands. It helps you understand what the docs mean and how to create excellent commands.
 
-## Required Reading Before Creating Commands
+## Official Documentation
 
-Fetch these docs with WebFetch every time:
+Fetch these docs when you need to verify syntax or check current options:
 
-- **https://code.claude.com/docs/en/slash-commands.md** - Core specification and examples
-- **https://code.claude.com/docs/en/settings#tools-available-to-claude** - Verify tool names
-- **https://code.claude.com/docs/en/model-config.md** - Model selection guidance
+- **<https://code.claude.com/docs/en/slash-commands.md>** - Core specification and examples
+- **<https://code.claude.com/docs/en/settings#tools-available-to-claude>** - Verify tool names
+- **<https://code.claude.com/docs/en/model-config.md>** - Model selection guidance
 
 ## Core Understanding
 
@@ -487,18 +487,18 @@ Follow project conventions:
 
 ## Documentation References
 
-These are the authoritative sources. Fetch them before creating commands:
+Authoritative sources for command specifications:
 
 **Core specifications:**
 
-- https://code.claude.com/docs/en/slash-commands.md - Command structure, examples, patterns
+- <https://code.claude.com/docs/en/slash-commands.md> - Command structure, examples, patterns
 
 **Tool verification:**
 
-- https://code.claude.com/docs/en/settings#tools-available-to-claude - Current tool list
+- <https://code.claude.com/docs/en/settings#tools-available-to-claude> - Current tool list
 
 **Model selection:**
 
-- https://code.claude.com/docs/en/model-config.md - Model guidance
+- <https://code.claude.com/docs/en/model-config.md> - Model guidance
 
 **Remember:** Official docs provide structure and features. This skill provides best practices and patterns for creating excellent commands.

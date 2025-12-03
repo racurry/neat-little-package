@@ -5,11 +5,11 @@ description: Interpretive guidance for designing Claude Code hooks. Helps you un
 
 # Hooks Design Skill
 
-This skill provides interpretive guidance and best practices for creating Claude Code hooks. **ALWAYS fetch current official documentation before creating hooks** - this skill helps you understand what the docs mean and how to create excellent hooks.
+This skill provides interpretive guidance and best practices for creating Claude Code hooks. It helps you understand what the docs mean and how to create excellent hooks.
 
-## Required Reading Before Creating Hooks
+## Official Documentation
 
-Fetch these docs with WebFetch every time:
+Fetch these docs when you need to verify syntax or check current options:
 
 - **<https://code.claude.com/docs/en/hooks>** - Complete hook reference
 
@@ -1024,7 +1024,7 @@ Before deploying hooks:
 
 ## Documentation References
 
-These are the authoritative sources. Fetch them before creating hooks:
+Authoritative sources for hook specifications:
 
 **Core specifications:**
 

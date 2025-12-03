@@ -7,11 +7,11 @@ description: UV-specific patterns for single-file Python scripts using inline me
 
 This skill documents UV-specific patterns for single-file Python scripts with inline dependency metadata. For general Python knowledge, Claude relies on base training.
 
-## Required Reading Before Creating UV Scripts
+## Official Documentation
 
-Fetch this documentation with WebFetch:
+Fetch when you need current UV script syntax:
 
-- **https://docs.astral.sh/uv/guides/scripts/** - Official UV scripts guide with current syntax
+- **<https://docs.astral.sh/uv/guides/scripts/>** - Official UV scripts guide with current syntax
 
 ## Core Understanding
 
@@ -63,6 +63,7 @@ uv run script.py
 ```
 
 UV automatically:
+
 - Parses inline metadata
 - Creates isolated environment
 - Installs dependencies
@@ -180,12 +181,14 @@ This creates `script.lock` alongside `script.py`.
 Before finalizing a UV script:
 
 **Format (official requirements):**
+
 - Script starts with `# /// script` comment block
 - `dependencies` field present (even if empty)
 - Comment block closed with `# ///`
 - No syntax errors in TOML metadata
 
 **Best practices:**
+
 - Shebang uses `-S` flag for executables
 - Dependencies pinned appropriately (exact versions for reproducibility, ranges for flexibility)
 - Script made executable with `chmod +x` if intended for direct execution
@@ -268,9 +271,11 @@ if __name__ == "__main__":
 ## Documentation References
 
 **Official UV documentation:**
-- https://docs.astral.sh/uv/guides/scripts/ - Current syntax and features
-- https://peps.python.org/pep-0723/ - PEP 723 specification for inline metadata
+
+- <https://docs.astral.sh/uv/guides/scripts/> - Current syntax and features
+- <https://peps.python.org/pep-0723/> - PEP 723 specification for inline metadata
 
 **Related patterns:**
+
 - Fetch box-factory:hooks-design skill for hook lifecycle and execution patterns
 - UV project documentation for multi-file Python projects

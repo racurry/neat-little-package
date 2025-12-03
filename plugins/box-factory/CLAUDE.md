@@ -34,7 +34,7 @@
 
 **Structure:**
 
-- Fetch-first: Always include "Required Reading" with WebFetch URLs
+- Doc references: Point to official docs for things Claude might not know (not basics)
 - Progressive disclosure: Core concepts → Advanced features
 - Mark sections: "(Official Specification)" vs "(Best Practices)"
 - Include: Decision frameworks, common pitfalls, quality checklists
@@ -56,7 +56,7 @@
 **Quality Checklist:**
 
 - ✓ Applies knowledge delta filter (only documents what Claude doesn't know)
-- ✓ Includes "Required Reading Before..." section with WebFetch URLs
+- ✓ Points to docs for things Claude might not know (not common tools/workflows)
 - ✓ Uses two-layer approach with clear section headings
 - ✓ Defers to official docs (no hardcoded version-specific details)
 - ✓ Includes decision frameworks and common pitfalls
@@ -89,8 +89,10 @@
 1. **Load design skills (REQUIRED)** - Use Skill tool to load both skills BEFORE proceeding
 
    ```
+
    Use Skill tool: skill="box-factory:box-factory-architecture"
    Use Skill tool: skill="box-factory:agent-design"
+
    ```
 
    **Do NOT use Read tool** - The Skill tool ensures proper loading and context integration.
@@ -290,7 +292,7 @@ All Box Factory components are self-documenting examples of the patterns they te
 
 ## Component Creation Best Practices
 
-### Writer Agents Must:
+### Writer Agents Must
 
 1. Load both box-factory-architecture AND component-specific design skill
 2. Use Skill tool (never Read tool) for loading skills
@@ -298,7 +300,7 @@ All Box Factory components are self-documenting examples of the patterns they te
 4. Self-validate against quality checklist
 5. Delegate component creation to specialized agents (never create directly)
 
-### Quality Agents Must:
+### Quality Agents Must
 
 1. Load box-factory-architecture AND relevant design skills
 2. Fetch current official documentation
@@ -308,7 +310,7 @@ All Box Factory components are self-documenting examples of the patterns they te
 
 ## Knowledge Delta Examples
 
-### Bad (480-line git-workflow skill):
+### Bad (480-line git-workflow skill)
 
 ```markdown
 # Git Workflow Skill
@@ -321,12 +323,14 @@ git status  # Shows staged, unstaged, and untracked files
 ```
 
 **See detailed diff:**
+
 ```bash
 git diff  # Unstaged changes
 git diff --staged  # Staged changes
 ```
 
 [... 450+ lines documenting standard git commands ...]
+
 ```
 
 **Why it fails:** Claude already knows all standard git commands. 95% redundant content.

@@ -7,14 +7,14 @@ description: Interpretive guidance for understanding Claude Code component archi
 
 This meta-skill teaches the Claude Code ecosystem architecture - how components interact, when to use each type, and how to design cohesive multi-component solutions. **This applies to both Main Claude (choosing what to create) and sub-agents (understanding their role).**
 
-## Required Reading Before Designing Components
+## Official Documentation
 
-Fetch these docs with WebFetch to understand the official ecosystem:
+Fetch these docs when you need to verify component specifications:
 
-- **https://code.claude.com/docs/en/sub-agents.md** - Agent architecture and isolation model
-- **https://code.claude.com/docs/en/slash-commands.md** - Command structure and triggering
-- **https://code.claude.com/docs/en/hooks** - Hook lifecycle and execution
-- **https://code.claude.com/docs/en/plugins** - Plugin packaging and distribution
+- **<https://code.claude.com/docs/en/sub-agents.md>** - Agent architecture and isolation model
+- **<https://code.claude.com/docs/en/slash-commands.md>** - Command structure and triggering
+- **<https://code.claude.com/docs/en/hooks>** - Hook lifecycle and execution
+- **<https://code.claude.com/docs/en/plugins>** - Plugin packaging and distribution
 
 ## Core Architectural Understanding
 
@@ -89,6 +89,7 @@ What each component IS according to official documentation:
 **Official definition:** Specialized AI instances that run in isolated contexts with specific tools and prompts.
 
 **Official structure:**
+
 - YAML frontmatter with `name`, `description`, `model`, `tools`
 - Markdown system prompt
 - Return results to delegating agent
@@ -100,6 +101,7 @@ What each component IS according to official documentation:
 **Official definition:** User-triggered prompts with optional argument substitution.
 
 **Official structure:**
+
 - Optional YAML frontmatter
 - Markdown prompt with `$1`, `$2` or `$ARGUMENTS` placeholders
 - Triggered explicitly by user typing `/command-name`
@@ -111,6 +113,7 @@ What each component IS according to official documentation:
 **Official definition:** Knowledge loaded when relevant topics arise.
 
 **Official structure:**
+
 - YAML frontmatter with `name`, `description`
 - Markdown content in `SKILL.md` file
 - Lives in `skills/[name]/SKILL.md` subdirectory
@@ -122,6 +125,7 @@ What each component IS according to official documentation:
 **Official definition:** Deterministic execution at lifecycle events.
 
 **Official structure:**
+
 - JSON configuration in settings
 - Command-based (bash scripts) or prompt-based (Claude Haiku queries)
 - Fire at specific events (PreToolUse, PostToolUse, SessionStart, etc.)
@@ -144,6 +148,7 @@ Decision framework for choosing the right component type:
 - Task is part of larger workflows
 
 **Examples:**
+
 - `test-runner` - Executes tests and analyzes failures autonomously
 - `code-reviewer` - Provides feedback without modifying code
 - `documentation-generator` - Creates docs from code
@@ -157,6 +162,7 @@ Decision framework for choosing the right component type:
 - Wrapping bash scripts or tool sequences
 
 **Examples:**
+
 - `/add-agent` - User explicitly requests creating an agent
 - `/deploy` - User controls deployment timing
 - `/analyze-security` - User-triggered analysis
@@ -171,6 +177,7 @@ Decision framework for choosing the right component type:
 - Teaching "how to think about" something
 
 **Examples:**
+
 - `agent-design` - Guidance for creating agents
 - `api-standards` - Team API conventions
 - `testing-strategy` - Testing philosophy and patterns
@@ -185,6 +192,7 @@ Decision framework for choosing the right component type:
 - "Always" matters more than "usually"
 
 **Examples:**
+
 - Format code after every write
 - Security validation before bash commands
 - Load project context at session start
@@ -219,6 +227,7 @@ Agent: agent-writer.md
 - Clear separation of concerns
 
 **Examples in Box Factory:**
+
 - `/add-agent` → `agent-writer`
 - `/add-command` → `slash-command-writer`
 - `/add-skill` → `skill-writer`
@@ -246,6 +255,7 @@ Agent: agent-writer
 - Two-layer approach (specs + guidance)
 
 **Examples in Box Factory:**
+
 - Creating agents → loads `agent-design`
 - Creating skills → loads `skill-design`
 - Creating commands → loads `slash-command-design`
@@ -431,23 +441,27 @@ Main Claude:
 **Core principle:** Each component has one focused responsibility.
 
 **Command responsibilities:**
+
 - Argument handling
 - User-facing description
 - Delegation to agent
 
 **Agent responsibilities:**
+
 - Complex logic
 - File operations
 - Tool orchestration
 - Result synthesis
 
 **Skill responsibilities:**
+
 - Interpretive guidance
 - Best practices
 - Decision frameworks
 - Progressive knowledge
 
 **Hook responsibilities:**
+
 - Deterministic enforcement
 - Lifecycle integration
 - External tool execution
@@ -592,6 +606,7 @@ Use the test-runner agent to execute all tests and provide detailed failure anal
 ```
 
 **Agent handles:**
+
 - Framework detection
 - Configuration parsing
 - Test execution
@@ -1047,10 +1062,10 @@ These are the authoritative sources for the ecosystem:
 
 **Core architecture:**
 
-- https://code.claude.com/docs/en/sub-agents.md - Isolation model, delegation patterns
-- https://code.claude.com/docs/en/slash-commands.md - User-triggered operations
-- https://code.claude.com/docs/en/hooks - Lifecycle integration
-- https://code.claude.com/docs/en/plugins - Component packaging
+- <https://code.claude.com/docs/en/sub-agents.md> - Isolation model, delegation patterns
+- <https://code.claude.com/docs/en/slash-commands.md> - User-triggered operations
+- <https://code.claude.com/docs/en/hooks> - Lifecycle integration
+- <https://code.claude.com/docs/en/plugins> - Component packaging
 
 **Component-specific:**
 

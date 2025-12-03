@@ -7,12 +7,14 @@ description: Meta-skill that teaches how to design Claude Code skills following 
 
 This meta-skill teaches you how to design excellent Claude Code skills. **Skills are unique among Claude Code components** - they provide progressive knowledge disclosure and interpretive guidance that loads when relevant.
 
-## Required Reading Before Creating Skills
+## Official Documentation
 
-**Official documentation:** Skills are part of the agent system but don't have dedicated documentation. Their purpose and structure are inferred from:
+Skills are part of the agent system but don't have dedicated documentation. Their purpose and structure are inferred from:
 
 - **<https://code.claude.com/docs/en/sub-agents.md>** - Skills mentioned as knowledge loaded when relevant
 - Existing skills in the wild - Examine high-quality skills for patterns
+
+Fetch these docs when you need specifics about skill loading behavior or want to see current examples.
 
 ## Core Understanding
 
@@ -61,36 +63,42 @@ This meta-skill teaches you how to design excellent Claude Code skills. **Skills
 **INCLUDE in skills (the delta):**
 
 ✅ **User-specific preferences and conventions**
+
 - "This user wants commit messages terse, single-line, no emojis, no attribution"
 - "This team uses specific naming conventions not found in standard docs"
 - "This project requires custom workflow steps"
 - Example: User's preference for no "Generated with Claude Code" messages
 
 ✅ **Edge cases and gotchas Claude would miss**
+
 - "Pre-commit hooks that modify files require retry with --amend"
 - "This API has undocumented rate limiting behavior"
 - "File system paths need special escaping in this environment"
 - Example: Specific retry logic for linter hooks that auto-fix
 
 ✅ **Decision frameworks for ambiguous situations**
+
 - "When to use gh CLI vs GitHub MCP server in this project"
 - "Tool selection hierarchy when multiple options exist"
 - "Which pattern to prefer when standards conflict"
 - Example: Prefer gh CLI when available, fall back to MCP
 
 ✅ **Things Claude gets wrong without guidance**
+
 - "Claude invents unsupported frontmatter in slash commands"
 - "Claude uses deprecated syntax for Tool X without this guidance"
 - "Claude doesn't know about this project-specific integration pattern"
 - Example: Claude making up `skills: git-workflow` frontmatter that doesn't exist
 
 ✅ **New or rapidly-changing technology (post-training)**
+
 - Claude Code itself (released after training cutoff)
 - New framework versions with breaking changes
 - Emerging tools not well-represented in training data
 - Example: Claude Code plugin system specifics
 
 ✅ **Integration patterns between tools (project-specific)**
+
 - "How this project connects Tool A with Tool B"
 - "Custom workflow orchestration"
 - "Project-specific toolchain configuration"
@@ -99,24 +107,28 @@ This meta-skill teaches you how to design excellent Claude Code skills. **Skills
 **EXCLUDE from skills (Claude already knows):**
 
 ❌ **Basic commands for well-known tools**
+
 - Don't document: git status, git commit, git push, git diff
 - Don't document: npm install, pip install, docker run
 - Don't document: Standard CLI flags and options Claude knows
 - Claude learned this in training and doesn't need reminders
 
 ❌ **Standard workflows Claude knows**
+
 - Don't document: Basic git branching workflow
 - Don't document: Standard PR review process
 - Don't document: Common testing patterns
 - These are well-established practices in Claude's training
 
 ❌ **General best practices (not project-specific)**
+
 - Don't document: "Write clear commit messages"
 - Don't document: "Test your code before committing"
 - Don't document: "Use semantic versioning"
 - Claude already knows these principles
 
 ❌ **Well-established patterns for common tools**
+
 - Don't document: REST API design basics
 - Don't document: Standard design patterns (MVC, etc.)
 - Don't document: Common security practices Claude knows
@@ -145,6 +157,7 @@ Before including content in a skill, ask:
 **Example: git-workflow skill**
 
 ❌ **Bad (includes base knowledge):**
+
 ```
 480 lines including:
 - How to use git status, git diff, git commit
@@ -152,32 +165,41 @@ Before including content in a skill, ask:
 - Standard commit message formats
 - Common git commands
 ```
+
 95% redundant, 5% valuable
 
 ✅ **Good (only includes delta):**
+
 ```
 ~80 lines including:
 - User's specific commit format preferences
 - Edge case: pre-commit hook retry logic
 - User requirement: no attribution text
 ```
+
 100% valuable, focused on what Claude doesn't know
 
 ## The Box Factory Philosophy for Skills
 
 ### 1. Low-Maintenance by Design
 
-**Defer to official documentation via WebFetch:**
+**Point to official documentation for details Claude might not know:**
 
 ```markdown
-## Required Reading Before Creating Agents
+## Official Documentation
 
-Fetch these docs with WebFetch every time:
+For syntax details or recent changes, fetch:
 
-- **https://code.claude.com/docs/en/sub-agents.md** - Core specification
+- **https://code.claude.com/docs/en/sub-agents.md** - Agent specification
 ```
 
 **Why:** Documentation changes; skills that defer stay valid.
+
+**Critical nuance:** Don't tell Claude to fetch docs for things it already knows. Claude knows how to use git, black, isort, pytest, etc. Point to docs only for:
+
+- Syntax Claude might get wrong (new/changed APIs)
+- Edge cases not covered in training
+- Project-specific configuration details
 
 **Don't hardcode:**
 
@@ -253,10 +275,10 @@ description: What this skill teaches and when to use it
 
 [Opening paragraph explaining purpose and value]
 
-## Required Reading Before [Task]
+## Official Documentation
 
-Fetch these docs with WebFetch every time:
-- [Official doc URLs with descriptions]
+For details Claude might not know, fetch:
+- [Official doc URLs - only for things Claude might get wrong]
 
 ## Core Understanding
 
@@ -548,6 +570,7 @@ git branch  # List branches
 ```
 
 [... 400 more lines documenting standard git commands, branching workflows, merge strategies, rebase operations, standard commit message formats, general best practices ...]
+
 ```
 
 **Why it fails:**
@@ -583,17 +606,21 @@ This skill documents workflow preferences and edge cases specific to this user. 
 
 **Examples:**
 ```
+
 fix: prevent race condition in session cleanup
 add: rate limiting middleware
+
 ```
 
 **Avoid:**
 ```
+
 ❌ ✨ add: new feature (emoji)
 ❌ fix: thing
 
 🤖 Generated with Claude Code
 (attribution this user doesn't want)
+
 ```
 
 ## Pre-Commit Hook Edge Case (Critical)
@@ -643,7 +670,7 @@ Before finalizing a skill:
 
 **Content quality:**
 
-- ✓ Includes "Required Reading" section with official doc URLs
+- ✓ Includes documentation references (for things Claude might not know)
 - ✓ Distinguishes official specs from best practices
 - ✓ Avoids hardcoding version-specific details
 - ✓ Uses examples effectively (before/after, ❌/✅)
@@ -701,13 +728,15 @@ description: Interpretive guidance for test-driven development, test design, and
 
 This skill provides guidance for effective testing across languages and frameworks.
 
-## Required Reading
+## Official Documentation
 
-Fetch language/framework-specific testing docs:
+For framework-specific syntax or advanced features, fetch:
 
 - **Python/pytest**: https://docs.pytest.org/
 - **JavaScript/Jest**: https://jestjs.io/docs/getting-started
 - **Go**: https://go.dev/doc/tutorial/add-a-test
+
+Note: Claude knows basic testing patterns. Fetch docs only for framework-specific syntax or advanced features.
 
 ## Core Testing Philosophy (Best Practices)
 
