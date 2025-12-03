@@ -496,7 +496,7 @@ def format_json_output(file_path: str, toolset: str, results: list[ToolResult]) 
     return json.dumps(output, indent=2), exit_code
 
 
-def format_hook_output(file_path: str, results: list[ToolResult]) -> tuple[str, int]:
+def format_hook_output(file_path: str, results: list[ToolResult], verbose: bool = False) -> tuple[str, int]:
     """Format results as hook-compatible JSON. Returns (output, exit_code)."""
     filename = Path(file_path).name
     ran = [r for r in results if r.status != Status.SKIPPED]
@@ -531,17 +531,16 @@ def format_hook_output(file_path: str, results: list[ToolResult]) -> tuple[str, 
         summary = f"{GREEN}✓ {tools_str} {filename}: OK{RESET}"
         exit_code = 0
 
-    # Build additional context
-    context_parts = [r.output for r in results if r.output and r.status in (Status.WARNING, Status.ERROR)]
-    if context_parts:
-        additional_context = "\n".join(context_parts)
-    elif ran:
-        additional_context = f"{tools_str} {filename}: OK"
-    else:
-        additional_context = None
-
     response: dict = {"systemMessage": summary}
-    if additional_context:
+
+    # Only include additionalContext when verbose
+    if verbose:
+        context_parts = [r.output for r in results if r.output]
+        if context_parts:
+            additional_context = "\n".join(context_parts)
+        else:
+            additional_context = f"{tools_str} {filename}: OK"
+
         response["hookSpecificOutput"] = {
             "hookEventName": "PostToolUse",
             "additionalContext": additional_context,
@@ -558,6 +557,7 @@ def format_hook_output(file_path: str, results: list[ToolResult]) -> tuple[str, 
 def lint_file(
     file_path: str,
     output_format: str = "text",
+    verbose: bool = False,
 ) -> tuple[str, int]:
     """
     Lint a file and return formatted output.
@@ -565,6 +565,7 @@ def lint_file(
     Args:
         file_path: Path to file to lint
         output_format: One of "text", "json", "hook"
+        verbose: Include detailed output in hook mode
 
     Returns:
         Tuple of (formatted_output, exit_code)
@@ -595,7 +596,7 @@ def lint_file(
     if output_format == "json":
         return format_json_output(file_path, toolset, results)
     elif output_format == "hook":
-        return format_hook_output(file_path, results)
+        return format_hook_output(file_path, results, verbose=verbose)
     else:
         return format_text_output(file_path, results)
 
@@ -629,6 +630,11 @@ Examples:
         action="store_true",
         help="Read hook JSON from stdin (for hooks.json integration)",
     )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Include detailed output in hook mode (default: summary only)",
+    )
 
     args = parser.parse_args()
 
@@ -644,7 +650,7 @@ Examples:
         if not file_path or not isinstance(file_path, str):
             sys.exit(0)
 
-        output, exit_code = lint_file(file_path, output_format="hook")
+        output, exit_code = lint_file(file_path, output_format="hook", verbose=args.verbose)
         if output:
             print(output, flush=True)
         sys.exit(0)  # Hooks should not block

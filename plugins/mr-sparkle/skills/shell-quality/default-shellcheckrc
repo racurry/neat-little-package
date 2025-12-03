@@ -1,0 +1,26 @@
+# Example .shellcheckrc
+#
+# This is a baseline shellcheck configuration following best practices.
+# Copy to project root as `.shellcheckrc` and customize as needed.
+#
+# Documentation: https://www.shellcheck.net/wiki/
+
+# Default shell to assume when not specified in shebang
+shell=bash
+
+# Disable specific warnings (use sparingly and document why)
+# Common disables:
+# - SC1091: Can't follow source - for runtime-provided files
+# - SC2034: Variable unused - for exported/sourced variables
+#
+# Example:
+# disable=SC1091
+
+# Enable all optional checks (recommended)
+# enable=all
+
+# Source path for resolving 'source' directives
+# source-path=SCRIPTDIR
+
+# Minimum severity of errors to consider (error, warning, info, style)
+# severity=style

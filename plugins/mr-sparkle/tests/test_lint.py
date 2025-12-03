@@ -239,9 +239,16 @@ class TestFormatHookOutput:
         assert "ruff" in data["systemMessage"]
         assert code == 0
 
-    def test_warning_includes_hook_specific_output(self):
+    def test_warning_excludes_hook_specific_output_by_default(self):
         results = [lint.ToolResult("ruff", lint.Status.WARNING, "error details")]
         output, code = lint.format_hook_output("/path/to/file.py", results)
+        data = json.loads(output)
+        assert "hookSpecificOutput" not in data
+        assert code == 1
+
+    def test_verbose_includes_hook_specific_output(self):
+        results = [lint.ToolResult("ruff", lint.Status.WARNING, "error details")]
+        output, code = lint.format_hook_output("/path/to/file.py", results, verbose=True)
         data = json.loads(output)
         assert "hookSpecificOutput" in data
         assert data["hookSpecificOutput"]["hookEventName"] == "PostToolUse"

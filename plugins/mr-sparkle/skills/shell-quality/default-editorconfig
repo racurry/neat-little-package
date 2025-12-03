@@ -1,0 +1,46 @@
+# Example .editorconfig for shell scripts
+#
+# This is a baseline shfmt configuration following best practices.
+# Copy to project root as `.editorconfig` and customize as needed.
+#
+# EditorConfig spec: https://editorconfig.org/
+# shfmt documentation: https://github.com/mvdan/sh
+
+# Top-level .editorconfig file
+root = true
+
+# Shell scripts (bash, sh, zsh)
+[*.{sh,bash,zsh}]
+
+# Indentation
+indent_style = space
+indent_size = 2
+
+# Line endings
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Character encoding
+charset = utf-8
+
+# shfmt-specific options (optional, uncomment to enable)
+
+# Binary operators (&&, ||) may start a line
+# binary_next_line = true
+
+# Indent switch cases
+# switch_case_indent = true
+
+# Add space after redirect operators (>, <, >>)
+# space_redirects = true
+
+# Keep column alignment padding
+# keep_padding = true
+
+# Function opening brace on next line (Allman style)
+# function_next_line = true
+
+# Alternative: Tab indentation
+# [scripts/legacy/*.sh]
+# indent_style = tab
