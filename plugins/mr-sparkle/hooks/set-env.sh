@@ -23,7 +23,6 @@ fi
 # We can remove this once the claude bug is fixed
 cat <<EOF
 {
-  "systemMessage": "I am Mr. Sparkle.",
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
     "additionalContext": "MR_SPARKLE_ROOT=$PLUGIN_ROOT - Use this path for mr-sparkle plugin scripts and config files."
