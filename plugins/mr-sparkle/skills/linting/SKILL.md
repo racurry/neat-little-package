@@ -1,6 +1,6 @@
 ---
 name: linting
-description: Universal polyglot linting capabilities for Python, JavaScript/TypeScript, Markdown, and Shell files. Use when you need to lint files programmatically, understand tool selection logic, or invoke linting from commands/agents.
+description: Universal polyglot linting capabilities for Python, JavaScript/TypeScript, Markdown, Shell, and Ruby files. Use when you need to lint files programmatically, understand tool selection logic, or invoke linting from commands/agents.
 ---
 
 # Linting Skill
@@ -15,6 +15,7 @@ This skill provides universal polyglot linting through a CLI script that detects
 | JavaScript/TypeScript | `biome` OR `eslint`+`prettier` | biome.json, eslint.config.*, package.json |
 | Markdown | `markdownlint-cli2` | .markdownlint-cli2.*, ~/.markdownlint-cli2.jsonc |
 | Shell | `shfmt`+`shellcheck` | .editorconfig, .shellcheckrc |
+| Ruby | `standard` OR `rubocop` | .standard.yml, .rubocop.yml, Gemfile |
 
 ## Tool Selection Logic
 
@@ -89,7 +90,8 @@ The script finds project root by walking up from the file looking for:
 
 1. `package.json`
 2. `pyproject.toml`
-3. `.git` directory
+3. `Gemfile`
+4. `.git` directory
 
 Config detection happens relative to project root.
 
@@ -126,6 +128,18 @@ If no config found, uses skill's `../markdown-quality/default-config.jsonc`.
 |------|--------------|
 | shfmt | `.editorconfig` |
 | shellcheck | `.shellcheckrc` |
+
+### Ruby Tools
+
+| Tool | Config Files | Gemfile |
+|------|--------------|---------|
+| standard | `.standard.yml` | `gem "standard"` or `gem "standardrb"` |
+| rubocop | `.rubocop.yml`, `.rubocop_todo.yml` | `gem "rubocop"` |
+
+**Tool selection:**
+
+- Standard (zero-config, opinionated) runs `standardrb --fix`
+- RuboCop (configurable) runs `rubocop -a` (safe auto-correct only)
 
 ## Integration Patterns
 

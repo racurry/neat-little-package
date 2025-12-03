@@ -1,0 +1,111 @@
+# Sensible Default RuboCop Configuration
+#
+# This config provides reasonable defaults for Ruby projects.
+# Customize as needed for your team's preferences.
+
+AllCops:
+  # Target Ruby version - adjust to your project
+  TargetRubyVersion: 3.2
+
+  # Enable new cops by default (good for staying current)
+  NewCops: enable
+
+  # Exclude common paths
+  Exclude:
+    - 'vendor/**/*'
+    - 'db/schema.rb'
+    - 'node_modules/**/*'
+    - 'tmp/**/*'
+    - 'bin/**/*'
+
+# Style cops - code style preferences
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: single_quotes
+
+Style/Documentation:
+  # Don't require class/module documentation everywhere
+  # Enable on a per-project basis if needed
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  # Frozen string literals are good practice but not always necessary
+  # Enable if you want to enforce them
+  Enabled: false
+
+# Layout cops - formatting and indentation
+Layout/LineLength:
+  Max: 120  # Common modern default (was 80)
+
+Layout/HashAlignment:
+  EnforcedHashRocketStyle: key
+  EnforcedColonStyle: key
+
+# Metrics cops - code complexity
+Metrics/MethodLength:
+  Max: 20
+  Exclude:
+    - 'spec/**/*'  # Tests can have longer methods
+
+Metrics/BlockLength:
+  Max: 25
+  Exclude:
+    - 'spec/**/*'  # RSpec blocks can be long
+    - 'config/routes.rb'  # Rails routes blocks
+    - 'config/environments/*.rb'
+
+Metrics/ClassLength:
+  Max: 200
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/ModuleLength:
+  Max: 200
+
+Metrics/AbcSize:
+  Max: 20
+
+# Lint cops - code quality and potential bugs
+Lint/UnusedMethodArgument:
+  # Allow unused args (common in interface implementations)
+  AllowUnusedKeywordArguments: true
+  IgnoreEmptyMethods: true
+
+# Naming cops
+Naming/VariableNumber:
+  # Allow numbers in variable names without underscores
+  # (e.g., `user1` instead of requiring `user_1`)
+  EnforcedStyle: normalcase
+
+# Performance cops (if using rubocop-performance gem)
+# Performance/StringInclude:
+#   Enabled: true
+
+# Rails cops (if using rubocop-rails gem)
+# require:
+#   - rubocop-rails
+#
+# Rails:
+#   Enabled: true
+#
+# Rails/UnknownEnv:
+#   Environments:
+#     - production
+#     - development
+#     - test
+#     - staging
+
+# RSpec cops (if using rubocop-rspec gem)
+# require:
+#   - rubocop-rspec
+#
+# RSpec:
+#   Enabled: true
+#
+# RSpec/ExampleLength:
+#   Max: 15
+#
+# RSpec/MultipleExpectations:
+#   Max: 5

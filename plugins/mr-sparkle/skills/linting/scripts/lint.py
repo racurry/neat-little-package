@@ -57,6 +57,9 @@ EXTENSION_TO_TOOLSET = {
     ".sh": "shell",
     ".bash": "shell",
     ".zsh": "shell",
+    ".rb": "ruby",
+    ".rake": "ruby",
+    ".gemspec": "ruby",
 }
 
 # Groups are in PRIORITY ORDER (first group with project config wins)
@@ -67,6 +70,7 @@ TOOLSETS = {
     "js_ts": [["biome"], ["eslint", "prettier"]],
     "markdown": [["markdownlint"]],
     "shell": [["shfmt", "shellcheck"]],
+    "ruby": [["standard"], ["rubocop"]],
 }
 
 TOOLS = {
@@ -160,6 +164,18 @@ TOOLS = {
         "commands": [["shellcheck"]],
         "config_indicators": [".shellcheckrc"],
     },
+    "standard": {
+        "binary": "standardrb",
+        "commands": [["standardrb", "--fix"]],
+        "config_indicators": [".standard.yml"],
+        "gemfile_gems": ["standard", "standardrb"],
+    },
+    "rubocop": {
+        "binary": "rubocop",
+        "commands": [["rubocop", "-a"]],
+        "config_indicators": [".rubocop.yml", ".rubocop_todo.yml"],
+        "gemfile_gems": ["rubocop"],
+    },
 }
 
 
@@ -193,6 +209,8 @@ def find_project_root(file_path: str) -> Optional[Path]:
         if (parent / "package.json").is_file():
             return parent
         if (parent / "pyproject.toml").is_file():
+            return parent
+        if (parent / "Gemfile").is_file():
             return parent
         if (parent / ".git").exists():
             return parent
@@ -252,6 +270,28 @@ def has_npm_package(tool_def: dict, project_root: Path) -> bool:
         return False
 
 
+def has_gemfile_gem(tool_def: dict, project_root: Path) -> bool:
+    """Check if tool is declared as a gem in Gemfile."""
+    gems = tool_def.get("gemfile_gems", [])
+    if not gems:
+        return False
+
+    gemfile = project_root / "Gemfile"
+    if not gemfile.is_file():
+        return False
+
+    try:
+        content = gemfile.read_text()
+        # Match gem declarations: gem "name" or gem 'name'
+        for gem_name in gems:
+            # Pattern matches: gem "name" or gem 'name' with optional version specs
+            if f'gem "{gem_name}"' in content or f"gem '{gem_name}'" in content:
+                return True
+        return False
+    except Exception:
+        return False
+
+
 def has_pyproject_config(tool_def: dict, project_root: Path) -> bool:
     """Check if tool has config in pyproject.toml."""
     for key in tool_def.get("pyproject_keys", []):
@@ -294,6 +334,8 @@ def has_project_config(tool_name: str, project_root: Optional[Path]) -> bool:
     if has_config_file(tool_def, project_root):
         return True
     if has_npm_package(tool_def, project_root):
+        return True
+    if has_gemfile_gem(tool_def, project_root):
         return True
     if has_pyproject_config(tool_def, project_root):
         return True

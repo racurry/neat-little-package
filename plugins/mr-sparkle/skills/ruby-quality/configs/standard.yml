@@ -1,0 +1,20 @@
+# Minimal StandardRB Configuration
+#
+# StandardRB's philosophy is zero-config. This file shows what minimal
+# configuration looks like, but in most cases you shouldn't need it at all.
+#
+# Only create .standard.yml if you absolutely need to ignore certain paths.
+# For everything else, trust StandardRB's curated defaults.
+
+# Ignore patterns (only common exclusions that make sense for any project)
+ignore:
+  - 'vendor/**/*'      # Third-party dependencies
+  - 'db/schema.rb'     # Auto-generated Rails schema
+  - 'node_modules/**/*' # JavaScript dependencies (if present)
+  - 'tmp/**/*'         # Temporary files
+
+# That's it! StandardRB intentionally doesn't support more configuration.
+# If you need to customize cop settings, use RuboCop instead.
+#
+# StandardRB's value is in its opinionated, zero-config approach.
+# Don't fight it - either accept the defaults or switch to RuboCop for full control.

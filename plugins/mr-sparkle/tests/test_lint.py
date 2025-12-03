@@ -59,6 +59,23 @@ def shell_project(tmp_path):
     return tmp_path
 
 
+@pytest.fixture
+def ruby_project_with_standard(tmp_path):
+    """Create a Ruby project with standard config."""
+    (tmp_path / "Gemfile").write_text('source "https://rubygems.org"\ngem "standard"\n')
+    (tmp_path / "main.rb").write_text("x = 1\n")
+    return tmp_path
+
+
+@pytest.fixture
+def ruby_project_with_rubocop(tmp_path):
+    """Create a Ruby project with rubocop config."""
+    (tmp_path / "Gemfile").write_text('source "https://rubygems.org"\ngem "rubocop"\n')
+    (tmp_path / ".rubocop.yml").write_text("AllCops:\n  TargetRubyVersion: 3.0\n")
+    (tmp_path / "main.rb").write_text("x = 1\n")
+    return tmp_path
+
+
 # =============================================================================
 # Tests: Core config detection (same as lint_on_write)
 # =============================================================================
@@ -95,6 +112,16 @@ class TestFindProjectRoot:
         result = lint.find_project_root(str(file_path))
         assert result == tmp_path
 
+    def test_finds_gemfile(self, tmp_path):
+        (tmp_path / "Gemfile").write_text('source "https://rubygems.org"')
+        subdir = tmp_path / "lib"
+        subdir.mkdir()
+        file_path = subdir / "main.rb"
+        file_path.write_text("")
+
+        result = lint.find_project_root(str(file_path))
+        assert result == tmp_path
+
 
 class TestSelectTools:
     def test_python_with_ruff_config(self, python_project_with_ruff):
@@ -116,6 +143,18 @@ class TestSelectTools:
     def test_js_fallback_to_biome(self, tmp_path):
         tools = lint.select_tools("js_ts", tmp_path)
         assert tools == ["biome"]
+
+    def test_ruby_with_standard_config(self, ruby_project_with_standard):
+        tools = lint.select_tools("ruby", ruby_project_with_standard)
+        assert tools == ["standard"]
+
+    def test_ruby_with_rubocop_config(self, ruby_project_with_rubocop):
+        tools = lint.select_tools("ruby", ruby_project_with_rubocop)
+        assert tools == ["rubocop"]
+
+    def test_ruby_fallback_to_standard(self, tmp_path):
+        tools = lint.select_tools("ruby", tmp_path)
+        assert tools == ["standard"]
 
 
 # =============================================================================
@@ -355,6 +394,9 @@ class TestExtensionMapping:
             (".tsx", "js_ts"),
             (".sh", "shell"),
             (".bash", "shell"),
+            (".rb", "ruby"),
+            (".rake", "ruby"),
+            (".gemspec", "ruby"),
         ],
     )
     def test_extension_maps_to_toolset(self, ext, expected):
@@ -362,6 +404,47 @@ class TestExtensionMapping:
 
     def test_unknown_extension_returns_none(self):
         assert lint.EXTENSION_TO_TOOLSET.get(".unknown") is None
+
+
+# =============================================================================
+# Tests: Gemfile gem detection
+# =============================================================================
+
+
+class TestHasGemfileGem:
+    def test_detects_gem_with_double_quotes(self, tmp_path):
+        (tmp_path / "Gemfile").write_text('gem "rubocop"')
+        tool_def = {"gemfile_gems": ["rubocop"]}
+        assert lint.has_gemfile_gem(tool_def, tmp_path) is True
+
+    def test_detects_gem_with_single_quotes(self, tmp_path):
+        (tmp_path / "Gemfile").write_text("gem 'standard'")
+        tool_def = {"gemfile_gems": ["standard"]}
+        assert lint.has_gemfile_gem(tool_def, tmp_path) is True
+
+    def test_detects_gem_with_version(self, tmp_path):
+        (tmp_path / "Gemfile").write_text('gem "rubocop", "~> 1.0"')
+        tool_def = {"gemfile_gems": ["rubocop"]}
+        assert lint.has_gemfile_gem(tool_def, tmp_path) is True
+
+    def test_returns_false_when_gem_not_present(self, tmp_path):
+        (tmp_path / "Gemfile").write_text('gem "rails"')
+        tool_def = {"gemfile_gems": ["rubocop"]}
+        assert lint.has_gemfile_gem(tool_def, tmp_path) is False
+
+    def test_returns_false_without_gemfile(self, tmp_path):
+        tool_def = {"gemfile_gems": ["rubocop"]}
+        assert lint.has_gemfile_gem(tool_def, tmp_path) is False
+
+    def test_returns_false_when_no_gemfile_gems_key(self, tmp_path):
+        (tmp_path / "Gemfile").write_text('gem "rubocop"')
+        tool_def = {}
+        assert lint.has_gemfile_gem(tool_def, tmp_path) is False
+
+    def test_checks_multiple_gem_names(self, tmp_path):
+        (tmp_path / "Gemfile").write_text('gem "standardrb"')
+        tool_def = {"gemfile_gems": ["standard", "standardrb"]}
+        assert lint.has_gemfile_gem(tool_def, tmp_path) is True
 
 
 # =============================================================================

@@ -54,12 +54,16 @@ def main():
     setup_python_no_config()
     setup_shell_config()
     setup_shell_no_config()
+    setup_ruby_standard()
+    setup_ruby_rubocop()
+    setup_ruby_no_config()
 
     # Warning and error cases
     setup_python_unfixable_warnings()
     setup_shell_warnings()
     setup_python_syntax_error()
     setup_js_syntax_error()
+    setup_ruby_warnings()
 
     print(f"Created manual test directories in {BASE}")
     print("\nTest by having Claude edit files and observing hook feedback.")
@@ -464,6 +468,89 @@ def setup_shell_no_config():
 
 
 # =============================================================================
+# Ruby Test Cases
+# =============================================================================
+
+
+def setup_ruby_standard():
+    """
+    ruby-standard/: Ruby project with Standard (standardrb) configuration.
+
+    EXPECTED WHEN CLAUDE EDITS test.rb:
+    - Hook detects Standard via gem "standard" in Gemfile
+    - Runs: `standardrb --fix test.rb`
+    - Claude receives: "standardrb test.rb: OK"
+    - Auto-fixes: spacing around operators, trailing whitespace
+
+    PURPOSE:
+    Verifies StandardRB (zero-config, opinionated) detection and auto-fix.
+    Standard is the modern "just works" Ruby linter, like ruff for Python.
+    """
+    d = BASE / "ruby-standard"
+    d.mkdir()
+
+    (d / "Gemfile").write_text('source "https://rubygems.org"\ngem "standard"\n')
+
+    # Intentional issues: missing spaces around =, extra spaces
+    (d / "test.rb").write_text('x=1\ny =  2\nputs  "hello"\n')
+
+
+def setup_ruby_rubocop():
+    """
+    ruby-rubocop/: Ruby project with RuboCop configuration.
+
+    EXPECTED WHEN CLAUDE EDITS test.rb:
+    - Hook detects RuboCop via .rubocop.yml config file
+    - Runs: `rubocop -a test.rb` (safe auto-correct only)
+    - Claude receives: "rubocop test.rb: OK"
+    - Auto-fixes: spacing, style issues
+
+    PURPOSE:
+    Verifies RuboCop (configurable, traditional) detection and auto-fix.
+    Uses -a flag for safe corrections only, not -A (unsafe).
+    """
+    d = BASE / "ruby-rubocop"
+    d.mkdir()
+
+    (d / "Gemfile").write_text('source "https://rubygems.org"\ngem "rubocop"\n')
+
+    (d / ".rubocop.yml").write_text(
+        """\
+AllCops:
+  TargetRubyVersion: 3.0
+  NewCops: enable
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+"""
+    )
+
+    # Intentional issues: missing spaces
+    (d / "test.rb").write_text('x=1\ny=2\nputs "hello"\n')
+
+
+def setup_ruby_no_config():
+    """
+    ruby-no-config/: Ruby with NO linter configuration.
+
+    EXPECTED WHEN CLAUDE EDITS test.rb:
+    - No project config detected for any Ruby tool
+    - Falls back to first group: ["standard"]
+    - Runs: `standardrb --fix test.rb`
+    - Claude receives: "standardrb test.rb: OK"
+
+    PURPOSE:
+    Verifies fallback to StandardRB for unconfigured Ruby projects.
+    Standard works without config, making it ideal as default.
+    """
+    d = BASE / "ruby-no-config"
+    d.mkdir()
+
+    # Clean file to verify OK feedback
+    (d / "test.rb").write_text('x = 1\ny = 2\nputs "hello"\n')
+
+
+# =============================================================================
 # Warning Cases (unfixable lint issues)
 # =============================================================================
 
@@ -534,6 +621,35 @@ def setup_shell_warnings():
 filename=$1
 # SC2086: $filename should be quoted
 cat $filename
+"""
+    )
+
+
+def setup_ruby_warnings():
+    """
+    ruby-warnings/: Ruby file with lint issues that cannot be auto-fixed.
+
+    EXPECTED WHEN CLAUDE EDITS test.rb:
+    - Falls back to standardrb (no config)
+    - StandardRB finds issues that cannot be auto-fixed
+    - Claude receives WARNING status with lint details
+
+    PURPOSE:
+    Verifies Ruby lint warnings are surfaced to Claude.
+    """
+    d = BASE / "ruby-warnings"
+    d.mkdir()
+
+    # Lint issues: unused variable, method too long pattern
+    (d / "test.rb").write_text(
+        """\
+def example
+  unused_var = "this variable is never used"
+  used_var = "this one is used"
+  puts used_var
+end
+
+example
 """
     )
 
