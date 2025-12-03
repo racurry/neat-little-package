@@ -1,0 +1,86 @@
+name: Claude Issue Triage
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Triage Issue
+        uses: anthropics/claude-code-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            ISSUE #${{ github.event.issue.number }}
+            TITLE: ${{ github.event.issue.title }}
+            BODY: ${{ github.event.issue.body }}
+
+            ## Repository Context
+
+            This is neat-little-package, a collection of Claude Code plugins:
+            - **box-factory**: Toolkit for creating Claude Code components
+            - **dmv**: Git and GitHub workflow preferences
+            - **mr-sparkle**: Linting and autoformatting
+
+            Read @CLAUDE.md to understand repository standards.
+
+            ## Triage Decision
+
+            Analyze this issue and determine if you can solve it AUTONOMOUSLY.
+
+            You CAN auto-solve if:
+            - Implementation plan is clear, requires no additional info
+            - You have access to all tools needed to complete the task
+            - For box-factory: Changes follow the philosophy (defer to docs, knowledge delta filter)
+
+            You CANNOT auto-solve if:
+            - Needs clarification (vague, missing details)
+            - Missing reproduction steps for bugs
+            - Requires external system access you don't have
+            - Would require breaking Box Factory philosophy
+
+            ## Decision Process
+
+            1. Read the issue carefully
+            2. Search codebase with Grep/Glob to understand scope
+            3. Determine confidence level:
+               - HIGH (80%+): Clear requirements, straightforward, low risk
+               - LOW: Vague, complex, risky, or philosophy-breaking
+
+            ## Actions
+
+            If HIGH confidence:
+            - Add "claude" label: `gh issue edit ${{ github.event.issue.number }} --add-label "claude"`
+            - Comment: "I can handle this automatically. Starting work now..."
+
+            If LOW confidence:
+            - Add appropriate labels:
+              * "bug" - for bug reports
+              * "enhancement" - for feature requests
+              * "documentation" - for docs changes
+              * "box-factory" - if affects box-factory plugin
+              * "dmv" - if affects dmv plugin
+              * "mr-sparkle" - if affects mr-sparkle plugin
+              * "needs-more-info" - if details are missing
+            - Comment with:
+              * Summary of what you understand
+              * What information is missing
+              * Suggested approach for human review
+
+            Keep analysis brief and to the point.
+
+          claude_args: '--allowed-tools "Bash(gh issue *),Read(**),Glob(**),Grep(**)" --model sonnet'
