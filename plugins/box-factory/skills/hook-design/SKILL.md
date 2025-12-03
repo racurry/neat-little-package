@@ -9,7 +9,7 @@ This skill provides interpretive guidance and best practices for creating Claude
 
 ## Official Documentation
 
-Fetch these docs when you need to verify syntax or check current options:
+**Claude Code changes rapidly and is post-training knowledge.** Fetch these docs when creating hooks to ensure current syntax:
 
 - **<https://code.claude.com/docs/en/hooks>** - Complete hook reference
 

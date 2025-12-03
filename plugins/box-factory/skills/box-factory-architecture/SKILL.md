@@ -9,7 +9,7 @@ This meta-skill teaches the Claude Code ecosystem architecture - how components 
 
 ## Official Documentation
 
-Fetch these docs when you need to verify component specifications:
+**Claude Code changes rapidly and is post-training knowledge.** Fetch these docs when designing components to ensure current specifications:
 
 - **<https://code.claude.com/docs/en/sub-agents.md>** - Agent architecture and isolation model
 - **<https://code.claude.com/docs/en/slash-commands.md>** - Command structure and triggering

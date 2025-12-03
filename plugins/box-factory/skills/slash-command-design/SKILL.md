@@ -9,7 +9,7 @@ This skill provides interpretive guidance and best practices for creating Claude
 
 ## Official Documentation
 
-Fetch these docs when you need to verify syntax or check current options:
+**Claude Code changes rapidly and is post-training knowledge.** Fetch these docs when creating commands to ensure current syntax:
 
 - **<https://code.claude.com/docs/en/slash-commands.md>** - Core specification and examples
 - **<https://code.claude.com/docs/en/settings#tools-available-to-claude>** - Verify tool names

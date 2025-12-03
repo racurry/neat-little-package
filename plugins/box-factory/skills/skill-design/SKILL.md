@@ -195,11 +195,31 @@ For syntax details or recent changes, fetch:
 
 **Why:** Documentation changes; skills that defer stay valid.
 
-**Critical nuance:** Don't tell Claude to fetch docs for things it already knows. Claude knows how to use git, black, isort, pytest, etc. Point to docs only for:
+**Critical nuance - doc fetching depends on knowledge reliability:**
 
-- Syntax Claude might get wrong (new/changed APIs)
-- Edge cases not covered in training
-- Project-specific configuration details
+| Topic Type | Claude's Knowledge | Doc Fetching Guidance |
+|------------|-------------------|----------------------|
+| **Post-training tech** (Claude Code, new frameworks) | Unreliable - not in training | Fetch when creating/using to ensure current syntax |
+| **Established tools** (git, ruff, black, pytest) | Reliable - extensive training | Fetch only for edge cases, specific errors |
+
+**For post-training topics** (like Claude Code itself):
+
+```markdown
+**Claude Code changes rapidly and is post-training knowledge.** Fetch these docs when creating X:
+```
+
+**For established tools** (like Python linters):
+
+```markdown
+Claude knows how to use ruff, black, isort. Fetch these docs only when you need:
+- Specific rule codes or error messages you don't recognize
+- Advanced configuration options
+```
+
+The key question: **Would Claude get this wrong without looking it up?**
+
+- Yes (new/changing tech) → recommend fetching
+- No (stable, well-known tools) → fetch only for edge cases
 
 **Don't hardcode:**
 
