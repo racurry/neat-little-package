@@ -1,0 +1,93 @@
+name: Check Documentation for Updates
+
+on:
+  schedule:
+    # Run every 2 weeks on Monday at 9am UTC
+    - cron: '0 9 1,15 * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Analyze only, do not create PR'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            # Box Factory Documentation Maintenance
+
+            You are maintaining Box Factory, a toolkit for creating Claude Code components. Your job is to ensure skills stay current with Claude Code's evolving documentation.
+
+            ## Box Factory Philosophy (Critical Context)
+
+            **Low-Maintenance First:** Skills defer to official docs via WebFetch - they never hardcode model names, tool lists, or syntax. Documentation changes; principles don't.
+
+            **Two-Layer Approach:**
+            - Layer 1: Official specs (what docs explicitly say)
+            - Layer 2: Best practices (interpretive guidance, gotchas, anti-patterns)
+            - Skills mark sections clearly: "(Official Specification)" vs "(Best Practices)"
+
+            **Knowledge Delta Filter:** Skills only document what Claude doesn't already know:
+            - ✅ Include: Edge cases, decision frameworks, things Claude gets wrong, new features
+            - ❌ Exclude: Basic commands, standard workflows, general best practices
+            - Result: Focused skills (~50-150 lines) that add real value
+
+            **Evidence-Based:** Claims must be grounded in official docs OR clearly marked as opinions.
+
+            ## Your Task
+
+            1. **Fetch current Claude Code documentation:**
+               - https://code.claude.com/docs/en/sub-agents
+               - https://code.claude.com/docs/en/slash-commands
+               - https://code.claude.com/docs/en/hooks
+               - https://code.claude.com/docs/en/plugins
+               - https://code.claude.com/docs/en/plugins-reference
+
+            2. **Read Box Factory skills** in `plugins/box-factory/skills/`:
+               - agent-design/SKILL.md
+               - slash-command-design/SKILL.md
+               - hook-design/SKILL.md
+               - plugin-design/SKILL.md
+               - box-factory-architecture/SKILL.md
+
+            3. **Identify discrepancies** - but remember the philosophy:
+               - Skills should NOT duplicate official docs - they provide interpretive guidance
+               - Look for: new features that change decision frameworks, deprecated patterns still recommended, changed architecture that affects best practices
+               - Do NOT flag: minor syntax changes (skills should defer to docs anyway), new features that don't affect guidance
+
+            4. **Search the web** for recent Claude Code announcements (last 2 months) that might affect architectural patterns or best practices.
+
+            5. **If updates are needed:**
+               - Create a new branch `docs/update-YYYY-MM-DD`
+               - Make surgical edits to affected skills - preserve the two-layer structure
+               - Update decision frameworks and gotchas, not syntax examples
+               - Create a PR with clear description of what changed and why
+
+            ## What NOT to do
+
+            - Don't add syntax examples to skills (they should say "fetch docs for current syntax")
+            - Don't expand skills beyond ~150 lines (apply knowledge delta filter)
+            - Don't duplicate official documentation
+            - Don't remove best practices just because docs don't mention them (Layer 2 is interpretive)
+
+            ## Output
+
+            If no meaningful updates needed, just summarize what you checked.
+
+            If updates needed, create the PR and output the PR URL.
+
+            ${{ inputs.dry_run == true && 'NOTE: This is a dry run. Do NOT create branches or PRs - just report what you would change and why.' || '' }}
+          claude_args: "--max-turns 50"
