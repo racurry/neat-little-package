@@ -14,5 +14,6 @@ Lint a file using the universal linting script.
 ## Implementation
 
 Run: `${MR_SPARKLE_ROOT}/skills/linting/scripts/lint.py <file_path>`
+Note that you MUST replace the env var with the value you were told earlier.
 
 Output shows colored status: `✓ tool file: OK` or `⚠ tool file: Lint errors!`

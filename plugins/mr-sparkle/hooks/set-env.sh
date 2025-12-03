@@ -21,6 +21,7 @@ fi
 # - additionalContext becomes Claude's context
 # - systemMessage shows warning to user
 # We can remove this once the claude bug is fixed
+
 cat <<EOF
 {
   "hookSpecificOutput": {
