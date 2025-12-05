@@ -95,6 +95,7 @@ target-path/plugin-name/
 ```
 
 **Critical:**
+
 - Create component directories at plugin root, NEVER inside `.claude-plugin/`
 - ALWAYS create the `assets/` directory for storing plugin-related files (images, templates, etc.)
 
@@ -131,29 +132,42 @@ Create metadata at `.claude-plugin/plugin.json`:
 
 ### 6. Write README.md
 
-Create focused documentation at plugin root. **Minimal by default:**
+**REQUIRED:** Load the readme-style skill before writing:
+
+```
+Use Skill tool: skill="box-factory:readme-style"
+```
+
+Follow the ultra-terse style from that skill. Target ~20 lines:
 
 ```markdown
 # Plugin Name
 
-Brief description (1-2 sentences).
+One-liner description.
 
-## Components
+## Overview
 
-- `/command-name` - What it does
-- `agent-name` - When it's used
-- `skill-name` - What knowledge it provides
+- What it tells Claude to do (bullet 1)
+- What it tells Claude to do (bullet 2)
 
-## Installation
+## Commands
 
-[Only if external tools required]
+Setup
 ```
 
-**Never include:**
-- Future roadmap or planned features
-- Extensibility sections
-- Verbose error handling documentation
-- Troubleshooting (unless there are known issues)
+/plugin:setup     # walks through configuration
+
+```
+
+Actions
+```
+
+/plugin:command   # what it does
+
+```
+```
+
+**Never include:** Components sections, features lists, philosophy, troubleshooting, file structure, or prose explanations.
 
 ### 7. Delegate Component Creation (MANDATORY)
 

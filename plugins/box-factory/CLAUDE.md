@@ -414,26 +414,22 @@ Run `/box-factory:validate-plugin` on:
 
 ### Plugin README.md (General Guidance)
 
-**Minimal by default.** Only document what users need to know:
+**Ultra-terse.** Load the `readme-style` skill for full guidance. Key points:
 
-1. Brief description (1-2 sentences)
-2. Components list (commands, agents, skills, hooks)
-3. Installation (if non-obvious)
-4. Basic usage examples
-
-**Add sections only when needed:**
-
-- Troubleshooting: Only if there are known issues
-- Configuration: Only if plugin has settings
-- Dependencies: Only if external tools required
+- Target ~20 lines total (not 50-100)
+- One-liner description at top
+- 2-3 terse bullets in Overview
+- Commands in code blocks with inline `#` comments
+- NO prose explanations - action-focused only
 
 **Anti-patterns (forbidden in plugin READMEs):**
 
-- ❌ "Future Roadmap" or "Planned Features" (don't document what doesn't exist)
-- ❌ "Extensibility" sections (unless user asked for extensible design)
-- ❌ Detailed error handling documentation (Claude knows error handling)
-- ❌ Verbose explanations of obvious behavior
-- ❌ Sections copied from Box Factory's README (it's a meta-plugin, not a template)
+- ❌ "Components" sections listing agents/skills
+- ❌ "Features" sections with prose descriptions
+- ❌ "Philosophy", "How It Works", or design explanations
+- ❌ Troubleshooting, file structure, version history
+- ❌ Verbose installation beyond setup command
+- ❌ Any section that explains rather than shows actions
 
 ### Box Factory's Own README (Special Case)
 
