@@ -464,7 +464,7 @@ Located at `.claude-plugin/marketplace.json`:
 
 **Good plugin scope:**
 
-- Focused purpose (testing suite, security scanner, docs generator)
+- Focused purpose (testing suite, 3D printing workflows, home automation, recipe management)
 - Related components work together
 - Clear value proposition
 - Composable with other plugins

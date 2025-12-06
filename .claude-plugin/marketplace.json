@@ -20,6 +20,11 @@
       "name": "dmv",
       "source": "./plugins/dmv",
       "description": "Streamline git and GitHub workflows with integrated CLI tools and MCP server support"
+    },
+    {
+      "name": "spirograph",
+      "source": "./plugins/spirograph",
+      "description": "3D-printed home organization: system selection and OpenSCAD code generation"
     }
   ]
 }
