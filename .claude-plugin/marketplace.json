@@ -25,6 +25,11 @@
       "name": "spirograph",
       "source": "./plugins/spirograph",
       "description": "3D-printed home organization: system selection and OpenSCAD code generation"
+    },
+    {
+      "name": "ultrahouse3000",
+      "source": "./plugins/ultrahouse3000",
+      "description": "Smart homing with Home Assistant MCP integration"
     }
   ]
 }
