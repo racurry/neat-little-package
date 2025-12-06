@@ -353,6 +353,126 @@ For details Claude might not know, fetch:
 - Build to advanced features
 - Don't overwhelm with details upfront
 
+## Skill Types and Size Patterns
+
+### Teaching Skills vs Reference Skills
+
+**Teaching Skills** (like `agent-design`, `skill-design`, `plugin-design`):
+
+- Explain philosophy, patterns, how to think about a domain
+- Loaded once when learning an approach or creating components
+- Agent needs full context to understand the approach
+- **Can be longer** (500-1000+ lines) because content is interconnected
+- Examples: design skills, workflow skills, architecture skills
+
+**Reference Skills** (like `home-assistant`, `api-patterns`, `docker-commands`):
+
+- Provide syntax examples, lookup patterns, cheat sheets
+- Multiple independent domains within one tool/technology
+- Agent only needs ONE section at a time for current task
+- **Should be split** into atomic subpages
+- Examples: tool-specific syntax, framework patterns, configuration references
+
+### When to Split into Subpages
+
+**Split a skill when ALL of these are true:**
+
+1. **Multiple independent domains** - Sections don't depend on each other
+   - ✅ Automations, Services, Dashboards (independent HA domains)
+   - ❌ Core concepts, Advanced patterns (builds on each other)
+
+2. **Agent only needs one section** - Current task uses subset of content
+   - ✅ "Create an automation" only needs automation syntax
+   - ❌ "Design an agent" needs full agent-design philosophy
+
+3. **Total content exceeds ~200 lines** - Enough to justify splitting
+   - ✅ 750 lines across 6 domains → split
+   - ❌ 150 lines across 3 small sections → keep together
+
+**Decision test:** Would loading the full skill waste context on irrelevant sections for most tasks?
+
+- Yes → Split into subpages
+- No → Keep monolithic
+
+### Subpage Structure Pattern
+
+**Main SKILL.md** (~50-100 lines):
+
+```markdown
+---
+name: tool-name
+description: Guidance for [tool]. Use when [conditions].
+---
+
+# Tool Name Skill
+
+Brief overview of the tool and what this skill provides.
+
+## Quick Reference
+
+| Task | Reference |
+|------|-----------|
+| Do X | [x-reference.md](./x-reference.md) |
+| Do Y | [y-reference.md](./y-reference.md) |
+| Do Z | [z-reference.md](./z-reference.md) |
+
+## Core Concepts
+
+[Essential concepts that apply across all domains - keep brief]
+
+## Quality Checklist
+
+[Universal validation items]
+```
+
+**Subpages** (~100-200 lines each):
+
+```markdown
+# Tool Name: X Reference
+
+Focused reference for X domain only.
+
+## [Pattern 1]
+
+[Syntax and examples]
+
+## [Pattern 2]
+
+[Syntax and examples]
+```
+
+**Key principles:**
+
+- Main skill has **navigation table** with descriptive links
+- Agent reads main skill, follows only the link they need
+- Subpages are **self-contained** (don't require reading other subpages)
+- Subpage names describe content clearly (`automations.md`, `services.md`)
+
+### Example: Reference Skill Split
+
+**Before (monolithic 750 lines):**
+
+```
+skills/home-assistant/
+└── SKILL.md  # 750 lines covering automations, services,
+              # dashboards, integrations, MCP setup, troubleshooting
+```
+
+**After (atomic subpages):**
+
+```
+skills/home-assistant/
+├── SKILL.md           # 77 lines - core concepts + navigation
+├── automations.md     # 180 lines - trigger, condition, action patterns
+├── services.md        # 120 lines - service call syntax
+├── dashboards.md      # 150 lines - Lovelace card types
+├── integrations.md    # 130 lines - template sensors, MQTT, add-ons
+├── mcp-setup.md       # 100 lines - MCP server configuration
+└── troubleshooting.md # 150 lines - pitfalls, debugging
+```
+
+**Result:** Agent working on automations loads ~250 lines (main + automations.md) instead of 750.
+
 ## When to Create Skills
 
 ### Skill vs Agent vs Command
@@ -675,6 +795,80 @@ add: rate limiting middleware
 
 **The delta principle:** Skills should only contain knowledge that bridges the gap between what Claude knows and what Claude needs to know for this specific context.
 
+### Pitfall #7: Monolithic Reference Skills
+
+**Problem:** Reference skill covers multiple independent domains in a single file, forcing agents to load irrelevant content.
+
+**Bad example (750-line home-assistant skill):**
+
+```markdown
+---
+name: home-assistant
+description: Home Assistant guidance
+---
+
+# Home Assistant Skill
+
+## Automation Patterns
+[200 lines of automation syntax...]
+
+## Service Calls
+[150 lines of service call syntax...]
+
+## Dashboard Configuration
+[200 lines of Lovelace card types...]
+
+## Integrations
+[100 lines of integration patterns...]
+
+## MCP Setup
+[100 lines of MCP configuration...]
+```
+
+**Why it fails:**
+
+- Agent working on automations loads 550 lines of irrelevant content
+- Wastes context window on dashboard syntax when only needing services
+- Independent domains don't benefit from being together
+- This is a reference skill (lookup patterns), not a teaching skill (philosophy)
+
+**Better (split into atomic subpages):**
+
+```
+skills/home-assistant/
+├── SKILL.md           # 77 lines - core concepts + navigation table
+├── automations.md     # 180 lines - trigger, condition, action patterns
+├── services.md        # 120 lines - service call syntax
+├── dashboards.md      # 150 lines - Lovelace card types
+├── integrations.md    # 130 lines - template sensors, MQTT
+├── mcp-setup.md       # 100 lines - MCP server configuration
+└── troubleshooting.md # 150 lines - pitfalls, debugging
+```
+
+**Main SKILL.md provides navigation:**
+
+```markdown
+## Quick Reference
+
+| Task | Reference |
+|------|-----------|
+| Create/edit automations | [automations.md](./automations.md) |
+| Call services | [services.md](./services.md) |
+| Build dashboards | [dashboards.md](./dashboards.md) |
+```
+
+**Key improvements:**
+
+- ✅ Agent loads ~250 lines (main + one subpage) instead of 750
+- ✅ Each subpage is self-contained
+- ✅ Navigation table helps agent choose what to load
+- ✅ Subpages can be updated independently
+
+**Decision test:** Is this a teaching skill or reference skill?
+
+- Teaching skill (interconnected philosophy) → keep monolithic
+- Reference skill (independent domains) → split into subpages
+
 ## Skill Quality Checklist
 
 Before finalizing a skill:
@@ -707,6 +901,13 @@ Before finalizing a skill:
 - ✓ Focused scope, not kitchen sink
 - ✓ Interpretive, not duplicative
 - ✓ Progressive disclosure structure
+
+**Skill type validation:**
+
+- ✓ Identified as teaching skill OR reference skill
+- ✓ Teaching skills: interconnected content, monolithic OK
+- ✓ Reference skills: independent domains split into subpages
+- ✓ Reference skills >200 lines with multiple domains → MUST split
 
 ## Example: High-Quality Skill Design
 

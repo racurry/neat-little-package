@@ -16,6 +16,7 @@ When creating a skill:
 1. **Load design skills (REQUIRED)** - Use Skill tool to load both skills BEFORE proceeding
 
    **CRITICAL:** You MUST load both skills:
+
    ```
    Use Skill tool: skill="box-factory:box-factory-architecture"
    Use Skill tool: skill="box-factory:skill-design"
@@ -48,7 +49,39 @@ When creating a skill:
    - Strong frontmatter with directive description
    - Progressive disclosure structure
 
-5. **Apply Knowledge Delta Filter (CRITICAL)** - Skills should only document what Claude doesn't already know:
+5. **Determine skill type and structure (CRITICAL)**:
+
+   **Teaching Skills** (philosophy, patterns, how to think):
+   - Content is interconnected, agent needs full context
+   - Keep as single monolithic file (500-1000+ lines acceptable)
+   - Examples: `agent-design`, `skill-design`, `plugin-design`
+
+   **Reference Skills** (syntax examples, lookup patterns, cheat sheets):
+   - Multiple independent domains within one tool/technology
+   - Agent only needs one section at a time
+   - **MUST split into subpages** if >200 lines across domains
+
+   **Decision test:** Would loading the full skill waste context on irrelevant sections for most tasks?
+   - Yes → Reference skill, split into subpages
+   - No → Teaching skill, keep monolithic
+
+   **If splitting (reference skill):**
+   - Create main SKILL.md (~50-100 lines) with navigation table
+   - Create subpages for each domain (~100-200 lines each)
+   - Subpages are self-contained, don't require other subpages
+   - Navigation table describes what's in each subpage
+
+   **Subpage structure:**
+
+   ```
+   skills/tool-name/
+   ├── SKILL.md           # Core concepts + navigation table
+   ├── domain-one.md      # Focused reference for domain one
+   ├── domain-two.md      # Focused reference for domain two
+   └── domain-three.md    # Focused reference for domain three
+   ```
+
+6. **Apply Knowledge Delta Filter (CRITICAL)** - Skills should only document what Claude doesn't already know:
 
    **Before including any content, ask:**
 
@@ -77,7 +110,7 @@ When creating a skill:
 
    **Result:** Skills should be focused (~50-100 lines of delta knowledge), not comprehensive (~500 lines of redundant documentation).
 
-6. **Structure the skill** following established patterns:
+7. **Structure the skill** following established patterns:
    - YAML frontmatter with `name` and `description`
    - Main heading matching skill name
    - "Required Reading Before..." section with WebFetch URLs
@@ -87,33 +120,42 @@ When creating a skill:
    - Quality checklists
    - Documentation references section
 
-7. **Write the skill file** to the determined path with filename `SKILL.md`
+8. **Write the skill file** to the determined path with filename `SKILL.md`
 
-8. **Verify creation** by reading the file back
+9. **Verify creation** by reading the file back
 
-9. **Validate Box Factory compliance (REQUIRED)** - Before completing, verify the skill follows ALL Box Factory principles:
+10. **Validate Box Factory compliance (REQUIRED)** - Before completing, verify the skill follows ALL Box Factory principles:
 
    **MUST have:**
-   - ✓ "Required Reading Before..." section with WebFetch URLs to official docs
-   - ✓ Two-layer approach: Sections ending with "(Official Specification)" and "(Best Practices)"
-   - ✓ Fetch-first pattern (defers to docs, no hardcoded version-specific details)
-   - ✓ Progressive disclosure structure (scannable headers, organized content)
-   - ✓ Decision frameworks (when to use, when not to use)
-   - ✓ Common pitfalls section with before/after examples
-   - ✓ Quality checklist
-   - ✓ Documentation references section
+
+- ✓ "Required Reading Before..." section with WebFetch URLs to official docs
+- ✓ Two-layer approach: Sections ending with "(Official Specification)" and "(Best Practices)"
+- ✓ Fetch-first pattern (defers to docs, no hardcoded version-specific details)
+- ✓ Progressive disclosure structure (scannable headers, organized content)
+- ✓ Decision frameworks (when to use, when not to use)
+- ✓ Common pitfalls section with before/after examples
+- ✓ Quality checklist
+- ✓ Documentation references section
 
    **MUST NOT have:**
-   - ❌ Hardcoded model names, tool lists, or version-specific syntax
-   - ❌ Opinions presented as official requirements
-   - ❌ Duplication of official documentation
-   - ❌ Kitchen sink scope (too broad)
-   - ❌ Documentation of Claude's base knowledge (basic commands, standard workflows, general best practices for well-known tools)
+
+- ❌ Hardcoded model names, tool lists, or version-specific syntax
+- ❌ Opinions presented as official requirements
+- ❌ Duplication of official documentation
+- ❌ Kitchen sink scope (too broad)
+- ❌ Documentation of Claude's base knowledge (basic commands, standard workflows, general best practices for well-known tools)
+- ❌ Monolithic reference skills (>200 lines with independent domains that should be split)
 
    **Knowledge delta validation:**
-   - ✓ Every section should add value Claude doesn't have from training
-   - ✓ Focus on user-specific, edge cases, new tech, or things Claude gets wrong
-   - ✓ Skills should be focused (~50-150 lines), not comprehensive (>300 lines usually indicates redundant content)
+
+- ✓ Every section should add value Claude doesn't have from training
+- ✓ Focus on user-specific, edge cases, new tech, or things Claude gets wrong
+
+   **Size validation (depends on skill type):**
+
+- Teaching skills: 500-1000+ lines acceptable (interconnected philosophy)
+- Reference skills: Split if >200 lines across independent domains
+- Any skill: >300 lines of redundant base knowledge = too much
 
    **If validation fails:** Report specific violations with line references and refuse to complete until fixed
 
