@@ -2,11 +2,17 @@
 
 ![My boy is a box!](./assets/box-factory.png)
 
-A comprehensive toolkit for creating and managing Claude Code components. Box Factory provides specialized agents, slash commands, and design skills to streamline plugin development with production-ready quality and best practices built in.
+A comprehensive toolkit for creating and managing Claude Code components. Box Factory provides specialized agents, slash commands, and design skills for building agents, commands, skills, and hooks—whether for plugins or standalone projects.
 
 ## Overview
 
-Box Factory is both a plugin creation toolkit and a living example of Claude Code best practices. Every component in Box Factory follows the patterns it teaches, creating a self-documenting, self-consistent ecosystem for building high-quality Claude Code plugins.
+Box Factory creates Claude Code components for **both plugins and standalone projects**. It automatically detects your context and puts files in the right place:
+
+- **Marketplace context** (`marketplace.json` exists): Lists plugins to choose from
+- **Plugin context** (`.claude-plugin/plugin.json` exists): Uses current plugin's directories
+- **Standalone project**: Uses `.claude/` directories (agents, commands, skills, settings.json)
+
+Every component in Box Factory follows the patterns it teaches, creating a self-documenting, self-consistent ecosystem.
 
 **Core capabilities:**
 
@@ -36,13 +42,14 @@ Create a new Claude Code plugin with complete scaffolding.
 
 #### `/box-factory:add-agent`
 
-Add a new agent to a plugin.
+Create a new Claude Code agent.
 
 **What it does:**
 
+- Detects context (marketplace, plugin, or standalone project)
 - Loads agent-design and box-factory-architecture skills for guidance
 - Fetches current official agent documentation
-- Creates agent with proper frontmatter and structure
+- Creates agent with proper frontmatter and structure in the appropriate directory
 - Validates tool selection matches responsibilities
 - Ensures no user interaction language in prompt
 
@@ -50,12 +57,13 @@ Add a new agent to a plugin.
 
 #### `/box-factory:add-command`
 
-Add a new slash command to a plugin.
+Create a new Claude Code slash command.
 
 **What it does:**
 
+- Detects context (marketplace, plugin, or standalone project)
 - Loads slash-command-design and box-factory-architecture skills
-- Creates command following thin wrapper delegation pattern
+- Creates command following thin wrapper delegation pattern in the appropriate directory
 - Includes proper frontmatter with description
 - Validates against command design best practices
 
@@ -63,12 +71,13 @@ Add a new slash command to a plugin.
 
 #### `/box-factory:add-skill`
 
-Add a new skill to a plugin.
+Create a new Claude Code skill.
 
 **What it does:**
 
+- Detects context (marketplace, plugin, or standalone project)
 - Loads skill-design and box-factory-architecture skills
-- Creates skill with fetch-first, two-layer structure
+- Creates skill with fetch-first, two-layer structure in the appropriate directory
 - Applies knowledge delta filter (only documents what Claude doesn't know)
 - Validates progressive disclosure and proper subdirectory structure
 
@@ -76,12 +85,13 @@ Add a new skill to a plugin.
 
 #### `/box-factory:add-hook`
 
-Add a new hook configuration to a plugin.
+Create a new Claude Code hook.
 
 **What it does:**
 
+- Detects context (marketplace, plugin, or standalone project)
 - Loads hook-design and box-factory-architecture skills
-- Creates hooks.json or updates existing configuration
+- Creates hooks configuration in the appropriate location (plugin hooks.json or .claude/settings.json)
 - Provides bash or Python+UV hook implementation
 - Validates security, performance, and exit code patterns
 

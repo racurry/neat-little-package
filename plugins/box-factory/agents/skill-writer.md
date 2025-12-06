@@ -161,12 +161,29 @@ When creating a skill:
 
 ## Path Resolution
 
-Skills use subdirectory structure:
+Skills use subdirectory structure. **Detect context using these rules:**
 
-- If caller specifies path: use that exact path
-- If in plugin context: use `plugins/[name]/skills/[skill-name]/SKILL.md`
-- Default: `.claude/skills/[skill-name]/SKILL.md` (project-level)
-- User-level (`~/.claude/skills/`): only when explicitly requested
+1. **Caller specifies path:** Use that exact path
+2. **Marketplace context:** If `marketplace.json` exists at project root → Ask which plugin, then use `plugins/[plugin-name]/skills/[skill-name]/SKILL.md`
+3. **Plugin context:** If `.claude-plugin/plugin.json` exists in current directory → Use `skills/[skill-name]/SKILL.md` relative to current directory
+4. **Standalone project:** Otherwise → Use `.claude/skills/[skill-name]/SKILL.md` (project-level)
+5. **User-level:** `~/.claude/skills/` only when explicitly requested
+
+**Detection implementation:**
+
+```bash
+# Check for marketplace context
+if [ -f "$PROJECT_ROOT/marketplace.json" ]; then
+  # Marketplace mode: list plugins and ask which one
+fi
+
+# Check for plugin context
+if [ -f ".claude-plugin/plugin.json" ]; then
+  # Plugin mode: use current plugin
+fi
+
+# Otherwise: standalone project mode
+```
 
 **Important:** Skills require a subdirectory with `SKILL.md` file:
 

@@ -16,6 +16,7 @@ When asked to create an agent:
 1. **Load design skills (REQUIRED)** - Use Skill tool to load both skills BEFORE proceeding
 
    **CRITICAL:** You MUST load both skills:
+
    ```
    Use Skill tool: skill="box-factory:box-factory-architecture"
    Use Skill tool: skill="box-factory:agent-design"
@@ -111,9 +112,12 @@ When asked to create an agent:
 
 ## Path Resolution
 
-- If caller specifies path: use that exact path
-- If current working directory contains `.claude/agents/`: use that directory
-- Otherwise: use `.claude/agents/` as default
+**Detect context using these rules:**
+
+1. **Caller specifies path:** Use that exact path
+2. **Marketplace context:** If `marketplace.json` exists at project root → Ask which plugin, then use `plugins/[plugin-name]/agents/`
+3. **Plugin context:** If `.claude-plugin/plugin.json` exists in current directory → Use `agents/` relative to current directory
+4. **Standalone project:** Otherwise → Use `.claude/agents/` (project-level)
 
 ## Name Normalization
 

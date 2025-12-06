@@ -16,6 +16,7 @@ When asked to create a slash command:
 1. **Load design skills (REQUIRED)** - Use Skill tool to load both skills BEFORE proceeding
 
    **CRITICAL:** You MUST load both skills:
+
    ```
    Use Skill tool: skill="box-factory:box-factory-architecture"
    Use Skill tool: skill="box-factory:slash-command-design"
@@ -93,14 +94,18 @@ Transform provided names to kebab-case:
 
 ## Path Resolution Rules
 
-1. **Explicit path provided**: Use exact path specified by caller
-2. **Plugin context detected**: Use `plugins/[plugin-name]/commands/`
-3. **Default**: Use `.claude/commands/`
+**Detect context using these rules:**
+
+1. **Caller specifies path:** Use that exact path
+2. **Marketplace context:** If `marketplace.json` exists at project root → Ask which plugin, then use `plugins/[plugin-name]/commands/`
+3. **Plugin context:** If `.claude-plugin/plugin.json` exists in current directory → Use `commands/` relative to current directory
+4. **Standalone project:** Otherwise → Use `.claude/commands/` (project-level)
 
 Examples:
 
 - Caller says "create in `.custom/commands/`" → use `.custom/commands/`
-- Working in `plugins/my-plugin/` → use `plugins/my-plugin/commands/`
+- In marketplace with `marketplace.json` → list plugins and ask which one
+- In plugin directory with `.claude-plugin/plugin.json` → use `commands/`
 - Standard project → use `.claude/commands/`
 
 ## Error Handling
