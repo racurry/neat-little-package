@@ -55,13 +55,16 @@ Use this decision tree to select pattern:
 | User wants to store | Primary pattern | Alternative | Read module |
 |---------------------|----------------|-------------|-------------|
 | Small hardware (screws, bits) | Basic Bin | Shallow Tray (if flat) | basic_bin.md |
-| Writing tools (pens, markers) | Vertical Holder | Basic Bin (if few items) | vertical_holder.md |
-| Hand tools (screwdrivers, pliers) | Tool Holder with Hooks | Hook Array (if lightweight) | tool_holder_with_hooks.md |
-| Bottles, spray cans | Basic Bin (deep) | Angled Storage (if visibility needed) | basic_bin.md, angled_storage.md |
+| Writing tools (pens, markers) | Vertical Holder | Angled Storage Row (if visibility needed) | vertical_holder.md, angled_storage_row.md |
+| Hand tools (screwdrivers, pliers) | Tool Holder with Hooks | Angled Storage Row | tool_holder_with_hooks.md, angled_storage_row.md |
+| Bottles, spray cans | Round Item Holder | Advanced Bin (if accessibility needed) | round_item_holder.md, advanced_bin.md |
 | Mixed items in sections | Divided Bin | Multiple basic bins | divided_bin.md |
 | Light shelving needs | Shelf Bracket | N/A | shelf_bracket.md |
-| Easy-access items (cables, tape) | Open Basket | Basic Bin with finger scoop | open_basket.md |
-| Keys, lightweight hangables | Hook Array | Tool Holder | hook_array.md |
+| Easy-access items (cables, tape) | Open Basket | Multi-Access Holder | open_basket.md, multi_access_holder.md |
+| Keys, lightweight hangables | Hook Array | Curved Hook (for smooth finish) | hook_array.md, curved_hook.md |
+| Phone/charger/electronics | Multi-Access Holder | Advanced Bin | multi_access_holder.md, advanced_bin.md |
+| Items needing angled visibility | Angled Storage Row | Basic Bin | angled_storage_row.md |
+| Professional-quality bins | Advanced Bin | Basic Bin | advanced_bin.md |
 
 ### When Pattern Is Unclear
 
@@ -71,8 +74,107 @@ Use this decision tree to select pattern:
 2. **Item orientation**: Vertical storage or horizontal?
 3. **Item count**: Single type or mixed organization?
 4. **Visibility**: Need to see contents from front?
+5. **Quality level**: Quick prototype (basic patterns) or production quality (advanced patterns with BOSL2)?
 
 **Default**: When unclear, use Basic Bin - most versatile, user can refine.
+
+## Tolerance Tuning (Printer Calibration)
+
+QuackWorks patterns provide calibration parameters for perfect fit across different printers:
+
+| Parameter | Range | Default | Purpose |
+|-----------|-------|---------|---------|
+| slotTolerance | 0.925-1.075 | 1.00 | Scale slot width (tight/loose fit) |
+| dimpleScale | 0.5-1.5 | 1.0 | Scale dimple size (snap strength) |
+| slotDepthMicroadjustment | -0.5 to +0.5 | 0 | Fine-tune slot depth |
+
+**Calibration Process:**
+
+1. Print test piece with default values (`slotTolerance=1.00`)
+2. If slots too loose (item slides off): decrease by 0.01-0.02
+3. If slots too tight (hard to mount): increase by 0.01-0.02
+4. Adjust `dimpleScale` for snap strength (v1) or triangle lock (v2)
+5. Use `slotDepthMicroadjustment` for final fine-tuning
+
+**When to tune:**
+
+- New printer or filament type
+- Temperature changes affecting dimensional accuracy
+- Switching between PLA/PETG/ABS
+- First print on a new OpenGrid system
+
+## On-Ramp System
+
+On-ramps are conical guides that ease mounting of heavy or tall items onto MultiConnect slots:
+
+| Parameter | Default | Purpose |
+|-----------|---------|---------|
+| onRampEnabled | true | Add guide cones to slots |
+| On_Ramp_Every_X_Slots | 2 | Frequency (1=every slot, 2=every 2nd slot) |
+| onRampHalfOffset | false | Stagger ramps between grid points for better grip |
+
+**When to enable:**
+
+- Large/heavy items needing positioning help
+- Tall items that are hard to align while lifting
+- Items mounted high on wall (harder to see slots)
+
+**When to disable:**
+
+- Small, lightweight items
+- Frequently repositioned items (ramps add friction)
+- Minimal profile needed (ramps add material)
+
+**Visual:**
+
+```text
+Without ramps:     With ramps:
+    ║                  ║▲
+    ║                  ║ ▲
+────╫────         ────╫──▲────
+    ║                  ║   ▲
+```
+
+Ramps guide item onto slots, especially helpful when you can't see the back of the item.
+
+## Mounting Options Beyond Basic MultiConnect
+
+QuackWorks supports multiple mounting systems. Choose based on your wall setup:
+
+| Option | Back Thickness | Grid | Use Case |
+|--------|----------------|------|----------|
+| Multiconnect V1 | 6.5mm | 25/28mm | Standard, dimple-based hold |
+| Multiconnect V2 | 6.5mm | 25/28mm | Triangle snap, stronger hold |
+| Multipoint | 4.8mm | 25mm | Thinner profile, Multiboard system |
+| GOEWS | 7mm | Custom | Alternative slot design |
+| Command Strip | N/A | N/A | Adhesive mount, rental-friendly |
+
+### Multiconnect V2 vs V1
+
+**V2 advantages:**
+
+- Triangle cutouts in slots create mechanical lock
+- Stronger hold for heavier items
+- More positive "snap" feedback when mounted
+
+**V2 parameter:**
+
+```openscad
+multiConnectVersion = "v2";  // or "v1"
+slotQuickRelease = false;    // Set true to disable triangle locks
+```
+
+**When to use V2:**
+
+- Heavy items (>500g)
+- Items that vibrate or move (power tools, fans)
+- Production designs (better user experience)
+
+**When to use V1:**
+
+- Existing V1 connector infrastructure
+- Frequently repositioned items (easier release)
+- Prototyping (simpler geometry)
 
 ## Code Generation Best Practices
 
@@ -160,6 +262,92 @@ basic_bin();  // Call the module
 - **Adapt dimensions**: User needs different size (pass parameters)
 - **Enhance**: User wants label recess, drainage, etc. (use ./enhancements.md)
 - **Hybrid**: Combine patterns (divided_bin calls basic_bin)
+
+## BOSL2 Integration (Advanced Patterns)
+
+QuackWorks uses BOSL2 library heavily for advanced geometry. Key patterns:
+
+### rect_tube() for bins (vs manual cube subtraction)
+
+**Instead of manual operations:**
+
+```openscad
+// Old way (basic_bin.md)
+difference() {
+    cube([width, depth, height]);
+    translate([wall, wall, base])
+        cube([width-wall*2, depth-wall, height]);
+}
+```
+
+**Use BOSL2:**
+
+```openscad
+include <BOSL2/std.scad>
+
+rect_tube(
+    size = [width, depth],
+    h = height,
+    wall = 2,
+    chamfer = [5, 0, 0, 0],    // Front, back, left, right
+    ichamfer = [2, 0, 0, 0]    // Interior chamfers
+)
+```
+
+**Benefits**: Cleaner code, automatic chamfering, consistent wall thickness, better performance.
+
+### hull() for curved supports
+
+Creates smooth transitions between shapes:
+
+```openscad
+hull() {
+    // Item rim (curved holder)
+    cylinder(d=30, h=10);
+
+    // Back anchor (mounting plate)
+    translate([0, -20, 0])
+        cube([30, 5, 10]);
+}
+```
+
+Generates smooth curve connecting rim to backplate.
+
+### offset3d() for edge rounding
+
+**Instead of manual chamfers:**
+
+```openscad
+offset3d(r = 0.5)  // Rounds ALL edges by 0.5mm
+    cube([100, 50, 60]);
+```
+
+Used in `multi_access_holder.md` for professional finish.
+
+### When to use BOSL2 patterns
+
+**Use BOSL2 (advanced_bin, multi_access_holder, curved_hook) when:**
+
+- User requests production-quality design
+- Need professional finish (chamfers, rounded edges)
+- Complex geometry (curved hooks, angled bins)
+- BOSL2 already installed in environment
+
+**Use basic patterns (basic_bin, vertical_holder) when:**
+
+- Quick prototyping
+- User unfamiliar with BOSL2
+- Simple geometry sufficient
+- Minimal dependencies preferred
+
+**Installing BOSL2:**
+
+```openscad
+// Add to top of file:
+include <BOSL2/std.scad>
+```
+
+User must have BOSL2 library installed. Provide link: <https://github.com/BelfrySCAD/BOSL2>
 
 ## Enhancement Integration (When Requested)
 
@@ -257,6 +445,19 @@ internal_width = 80;
 module customizable_bin(width=80, depth=60, height=60) { ... }
 ```
 
+### Pitfall #5: Wrong Pattern for Use Case
+
+**Problem**: User wants angled storage for screwdrivers, code generates basic vertical_holder.
+
+**Why it fails**: Missed opportunity to suggest better pattern (angled_storage_row provides visibility).
+
+**Better approach**: Use decision framework, suggest alternatives:
+
+```text
+"I'll create an angled_storage_row for your screwdrivers - this tilts them 30° for better visibility.
+If you prefer vertical storage (more compact), I can use vertical_holder instead."
+```
+
 ## Quality Checklist
 
 **Before delivering OpenSCAD code:**
@@ -265,7 +466,7 @@ module customizable_bin(width=80, depth=60, height=60) { ... }
 
 - ✓ Parameters clearly defined (internal dimensions, wall thickness, mounting parameters)
 - ✓ MultiConnect backplate integrated via `multiconnectBack()`
-- ✓ `distanceBetweenSlots = 28` (never other value)
+- ✓ `distanceBetweenSlots = 28` (never other value for OpenGrid)
 - ✓ Clearances added where items fit into holes/slots
 - ✓ Comments explain key calculations (slot count, dimensions)
 
@@ -274,6 +475,7 @@ module customizable_bin(width=80, depth=60, height=60) { ... }
 - ✓ Used appropriate pattern from decision framework
 - ✓ Read module from ./common_items/ (didn't reinvent from scratch)
 - ✓ Enhancements only included if requested/clearly needed
+- ✓ BOSL2 patterns used when appropriate (production quality, complex geometry)
 
 **Dimensional sanity:**
 
@@ -295,25 +497,31 @@ module customizable_bin(width=80, depth=60, height=60) { ... }
 - ✓ Stated assumed dimensions if user was vague
 - ✓ Noted grid alignment if relevant
 - ✓ Mentioned enhancements if applicable to use case
+- ✓ Suggested QuackWorks advanced features if production quality needed
 
 ## Module Reference Structure
 
 **Pattern modules** are organized as:
 
-```
+```text
 ./common_items/
-├── backplate_mount.md     - multiconnectBack() module (ALWAYS needed)
-├── basic_bin.md           - Open-top bin (most common)
-├── vertical_holder.md     - Cylindrical holes for pens/bits/etc.
-├── tool_holder_with_hooks.md - Horizontal cantilever hooks
-├── divided_bin.md         - Bin with internal dividers
-├── shallow_tray.md        - Low-profile bin variant
-├── shelf_bracket.md       - Triangular shelf support
-├── open_basket.md         - Bin without front wall
-├── angled_storage.md      - Forward-tilting bin
-└── hook_array.md          - Simple hook row
+├── backplate_mount.md            - multiconnectBack() module (ALWAYS needed)
+├── basic_bin.md                  - Open-top bin (most common)
+├── advanced_bin.md               - BOSL2 bin with angled front, chamfers
+├── vertical_holder.md            - Cylindrical holes for pens/bits/etc.
+├── angled_storage_row.md         - Tilted multi-item storage for visibility
+├── round_item_holder.md          - Single round/rectangular item with rim
+├── tool_holder_with_hooks.md     - Horizontal cantilever hooks
+├── curved_hook.md                - BOSL2 curved hook with rounded edges
+├── divided_bin.md                - Bin with internal dividers
+├── shallow_tray.md               - Low-profile bin variant
+├── shelf_bracket.md              - Triangular shelf support
+├── open_basket.md                - Bin without front wall
+├── multi_access_holder.md        - BOSL2 box with customizable cutouts
+├── angled_storage.md             - Forward-tilting bin (deprecated, use angled_storage_row)
+└── hook_array.md                 - Simple hook row
 
-./enhancements.md          - Optional features (labels, drainage, etc.)
+./enhancements.md                 - Optional features (labels, drainage, etc.)
 ```
 
 **Workflow**:
@@ -332,6 +540,23 @@ module customizable_bin(width=80, depth=60, height=60) { ... }
 - OpenGrid: 28mm grid system for wall organization
 - MultiConnect: Slotted mounting system (tool-free repositioning)
 - This skill focuses on CODE GENERATION for these systems
+
+**QuackWorks Repository (Advanced Patterns)**:
+
+- **GitHub**: <https://github.com/AndyLevesque/QuackWorks>
+- **VerticalMountingSeries**: Advanced bins, hooks, holders with BOSL2
+- **Modules**: Core generators (multiconnectGenerator, snapConnector)
+- **License**: CC BY-NC-SA 4.0
+
+**When generating advanced patterns**, fetch current QuackWorks code for latest parameters and features. Patterns evolve with community contributions.
+
+**Key QuackWorks files referenced**:
+
+- `MultiConnectRoundSingleHolder.scad` → round_item_holder.md
+- `MultiConnectRoundRow.scad` → angled_storage_row.md
+- `MultiConnectRoundHook.scad` → curved_hook.md
+- `MulticonnectBin.scad` → advanced_bin.md
+- `VerticalItemHolder.scad` → multi_access_holder.md
 
 **Related skills**:
 

@@ -1,6 +1,6 @@
 ---
 name: home-organization
-description: Decision framework for choosing between 3D-printed home organization systems (Gridfinity, OpenGrid, Neogrid, French Cleat, Underware). Provides interpretive guidance on system selection based on item size, mounting surface, and use case. Use when users ask which organization system to recommend or need help choosing between modular storage options.
+description: Decision framework for choosing between 3D-printed home organization systems (Gridfinity, OpenGrid, Neogrid, French Cleat, Underware, Deskware). Provides interpretive guidance on system selection based on item size, mounting surface, and use case. Use when users ask which organization system to recommend or need help choosing between modular storage options.
 ---
 
 # 3D-Printed Home Organization System Selection
@@ -14,6 +14,7 @@ Fetch these reference docs every time to verify current specifications:
 - **./neogrid-reference.md** - Large item drawer dividers (hybrid 3D-printed connectors)
 - **./french-cleat-reference.md** - Heavy-duty wall mounting (45° angled cleats)
 - **./underware-reference.md** - Cable management channels (OpenGrid-compatible)
+- **./deskware-reference.md** - Modular desk risers with Gridfinity/OpenGrid integration
 - **./cross-system-compatability.md** - Interoperability matrix between systems
 - **./frenchfinity-reference.md** - Modular French Cleat tool holders with Gridfinity integration
 
@@ -29,6 +30,7 @@ These systems form an **ecosystem** rather than competing alternatives:
 - Neogrid: Uses multiples of 42mm for Gridfinity compatibility
 - French Cleat: Dimension-agnostic (works with any system via adapters)
 - Underware: Parametric (sized to cable bundles, snaps into OpenGrid)
+- Deskware: Uses 84mm increments (aligns with both Gridfinity and OpenGrid)
 
 **Critical insight Claude might miss:** These systems are designed to **work together** in a unified home organization strategy. Users shouldn't choose "one system" - they should combine systems based on spatial context.
 
@@ -39,6 +41,7 @@ These systems form an **ecosystem** rather than competing alternatives:
 | Surface Type | System(s) | Why |
 |-------------|-----------|-----|
 | Desktop/shelf | Gridfinity | Magnetic or friction-fit baseplates, easy reconfiguration |
+| Desktop (elevated) | Deskware | Modular risers with Gridfinity/OpenGrid integration |
 | Drawer (small items) | Gridfinity | Bins organize loose parts, paperclips, screws, USB drives |
 | Drawer (large items) | Neogrid | Hybrid approach uses cheap divider material with 3D-printed connectors |
 | Wall (light items) | OpenGrid | 28mm grid with front-access snaps, living-room compatible |
@@ -86,6 +89,14 @@ These systems form an **ecosystem** rather than competing alternatives:
 - Want OpenGrid integration
 - Examples: power cables, USB hubs, cable routing, LED channels
 
+**Use Deskware when:**
+
+- Need elevated desk platforms (monitor risers, keyboard trays)
+- Want to combine horizontal surface with grid organization
+- Need curved desk sections (corner desks)
+- Integrating Gridfinity or OpenGrid into desk surface
+- Examples: monitor risers, keyboard platforms, corner desk organizers
+
 ### By Combination Strategy (Best Practices)
 
 **Common combinations that work well:**
@@ -107,6 +118,12 @@ These systems form an **ecosystem** rather than competing alternatives:
 4. **Kitchen drawer:**
    - Neogrid for utensil dividers
    - Mixed with Gridfinity for spice packets or bag clips
+
+5. **Elevated desk setup:**
+   - Deskware risers for monitor elevation
+   - Gridfinity recesses in top plate for desktop bins
+   - Underware under riser for cable management
+   - OpenGrid on wall behind desk for tools/supplies
 
 ## Common Pitfalls
 
@@ -165,13 +182,14 @@ Question: "What are you organizing and where will it be mounted?"
 
 ## System Interoperability Summary (Official Specification)
 
-| System | Gridfinity | Underware | OpenGrid | French Cleat | Neogrid |
-|--------|------------|-----------|----------|--------------|---------|
-| **Gridfinity** | — | ⚙️ | ✅ | ✅ | ⚙️ |
-| **Underware** | ⚙️ | — | ✅ | ⚙️ | ⚙️ |
-| **OpenGrid** | ✅ | ✅ | — | ✅ | ✅ |
-| **French Cleat** | ✅ | ⚙️ | ✅ | — | ⚙️ |
-| **Neogrid** | ⚙️ | ⚙️ | ✅ | ⚙️ | — |
+| System | Gridfinity | Underware | OpenGrid | French Cleat | Neogrid | Deskware |
+|--------|------------|-----------|----------|--------------|---------|----------|
+| **Gridfinity** | — | ⚙️ | ✅ | ✅ | ⚙️ | ✅ |
+| **Underware** | ⚙️ | — | ✅ | ⚙️ | ⚙️ | ✅ |
+| **OpenGrid** | ✅ | ✅ | — | ✅ | ✅ | ✅ |
+| **French Cleat** | ✅ | ⚙️ | ✅ | — | ⚙️ | ⚙️ |
+| **Neogrid** | ⚙️ | ⚙️ | ✅ | ⚙️ | — | ⚙️ |
+| **Deskware** | ✅ | ✅ | ✅ | ⚙️ | ⚙️ | — |
 
 **Legend:**
 
@@ -226,21 +244,45 @@ Before suggesting a system to users, verify:
 - Custom woodworking (one-off solutions)
 - Pegboard walls (non-3D-printed, widely available)
 
+## QuackWorks Repository
+
+For OpenSCAD code generation, the QuackWorks repository provides production-ready parametric implementations of several systems covered by this skill:
+
+| System | QuackWorks Path | Status |
+|--------|-----------------|--------|
+| Underware | `/Underware/` | Complete (9 channel types) |
+| NeoGrid | `/NeoGrid/` | Complete (6 connector types) |
+| OpenGrid Items | `/VerticalMountingSeries/` | Advanced patterns |
+| Deskware | `/Deskware/` | Complete desk system |
+
+**GitHub:** <https://github.com/AndyLevesque/QuackWorks>
+
+**License:** CC BY-NC-SA 4.0 (non-commercial)
+
+**When generating code:** Direct Claude to fetch current specifications from QuackWorks, as parameters and features are actively developed.
+
+**Related spirograph skills for code generation:**
+
+- `underware-openscad` - Generate Underware channel code
+- `neogrid-openscad` - Generate NeoGrid connector code
+- `opengrid-openscad` - Generate OpenGrid item code
+- `gridfinity-openscad` - Generate Gridfinity bin code
+
 ## Documentation References
 
 **Official sources:**
 
-- Gridfinity: https://gridfinity.xyz/specification/
-- OpenGrid: https://www.opengrid.world/
-- Neogrid: https://handsonkatie.com/neogrid-organise-your-big-items-with-this-free-and-open-source-system/
-- Underware: https://handsonkatie.com/underware-2-0-the-made-to-measure-collection/
-- Frenchfinity: https://frenchfinity.xyz/
+- Gridfinity: <https://gridfinity.xyz/specification/>
+- OpenGrid: <https://www.opengrid.world/>
+- Neogrid: <https://handsonkatie.com/neogrid-organise-your-big-items-with-this-free-and-open-source-system/>
+- Underware: <https://handsonkatie.com/underware-2-0-the-made-to-measure-collection/>
+- Frenchfinity: <https://frenchfinity.xyz/>
 
 **Community resources:**
 
-- MakerWorld designs: https://makerworld.com (search by system name)
-- Comprehensive guide: https://handsonkatie.com/the-ultimate-home-organisation-system/
-- Gridfinity generator: https://gridfinitygenerator.com/
+- MakerWorld designs: <https://makerworld.com> (search by system name)
+- Comprehensive guide: <https://handsonkatie.com/the-ultimate-home-organisation-system/>
+- Gridfinity generator: <https://gridfinitygenerator.com/>
 
 **Related spirograph plugin skills:**
 
