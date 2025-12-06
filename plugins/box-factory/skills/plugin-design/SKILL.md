@@ -146,7 +146,89 @@ Define hooks or MCP servers directly in plugin.json instead of separate files:
 
 ### MCP Server Configuration (Best Practices)
 
-**CRITICAL:** When configuring MCP servers in plugins, follow these security and maintainability patterns.
+**CRITICAL:** When configuring MCP servers in plugins, follow these security, transport, and maintainability patterns.
+
+**Note:** This section covers bundling MCP servers WITH plugins. For adding MCP servers to any project (not plugins), load the `mcp-config` skill instead.
+
+#### Official Documentation
+
+For current MCP configuration syntax, fetch:
+
+- **<https://code.claude.com/docs/en/mcp>** - Claude Code MCP configuration
+
+#### Transport Type Selection
+
+Claude Code supports three MCP transport types. Choose based on server location:
+
+| Transport | Use Case | Example |
+|-----------|----------|---------|
+| **HTTP** | Remote/cloud servers (preferred) | `https://mcp.notion.com/mcp` |
+| **Stdio** | Local processes | `npx -y @modelcontextprotocol/server-github` |
+| **SSE** | Legacy remote servers (deprecated) | Use HTTP instead |
+
+**Key insight:** Claude Code supports HTTP transport natively - no proxy needed for remote servers (unlike Claude Desktop which requires `mcp-proxy`).
+
+**For plugins bundling remote services:**
+
+```json
+{
+  "cloud-service": {
+    "type": "http",
+    "url": "${SERVICE_MCP_URL}",
+    "headers": {
+      "Authorization": "Bearer ${SERVICE_TOKEN}"
+    }
+  }
+}
+```
+
+**For plugins bundling local tools:**
+
+```json
+{
+  "local-tool": {
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-github"],
+    "env": {
+      "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+    }
+  }
+}
+```
+
+**Decision framework:**
+
+- Remote/cloud service → Use `type: http` with URL
+- Local tool/binary → Use `command` with stdio
+- Need OAuth → Document that users run `/mcp` after plugin install
+
+#### OAuth Authentication Pattern
+
+For MCP servers requiring OAuth (not API keys):
+
+1. Configure server WITHOUT credentials in plugin `.mcp.json`
+2. Document in README: "Run `/mcp` to authenticate"
+3. Claude Code handles OAuth flow via browser
+4. Tokens stored and refreshed automatically
+
+**Plugin config (no credentials needed):**
+
+```json
+{
+  "oauth-service": {
+    "type": "http",
+    "url": "https://mcp.service.com/mcp"
+  }
+}
+```
+
+**README instructions:**
+
+```markdown
+## Authentication
+
+After enabling plugin, run `/mcp` in Claude Code to authenticate with Service Name.
+```
 
 #### Always Use External Configuration Files
 

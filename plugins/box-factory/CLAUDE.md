@@ -365,11 +365,23 @@ This skill documents workflow preferences specific to this user. For standard gi
 
 ## MCP Server Configuration
 
+**Full guidance:**
+
+- Load `mcp-config` skill for project/user MCP setup (any project)
+- Load `plugin-design` skill for bundling MCP servers with plugins
+
+### Transport Selection
+
+- **HTTP transport** for remote/cloud MCP servers (Claude Code supports natively)
+- **Stdio transport** for local tools/binaries (npx, custom commands)
+- **Never use mcp-proxy** - Claude Code handles HTTP directly (unlike Claude Desktop)
+
 ### Structure (Best Practices)
 
 - ✓ Use external `.mcp.json` files (not inline in plugin.json)
 - ✓ All secrets use `${ENV_VAR}` references (never hardcoded)
 - ✓ README documents required environment variables
+- ✓ For OAuth servers: document "run `/mcp` to authenticate"
 - ✓ Clear instructions for obtaining credentials
 - ✓ Example export commands provided
 
@@ -379,6 +391,7 @@ This skill documents workflow preferences specific to this user. For standard gi
 - ❌ Hardcoded secrets or API keys
 - ❌ Empty string placeholders instead of ${ENV_VAR}
 - ❌ Undocumented environment variables
+- ❌ Using mcp-proxy for Claude Code (unnecessary)
 
 ## Testing Strategy
 
