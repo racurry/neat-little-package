@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "homeassistant": {
-      "type": "http",
-      "url": "${HOMEASSISTANT_URL}/api/mcp"
+      "command": "uvx",
+      "args": ["mcp-proxy", "--transport", "streamablehttp", "-H", "Authorization", "Bearer ${HOMEASSISTANT_TOKEN}", "${HOMEASSISTANT_URL}/api/mcp"]
     }
   }
 }

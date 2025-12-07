@@ -31,6 +31,60 @@ MCP servers connect Claude Code to external tools, databases, and APIs. They're 
 
 This skill covers project and user configuration. For plugin bundling, load `plugin-design` skill.
 
+## Plugin MCP Namespacing (Critical Knowledge)
+
+**Claude Code automatically namespaces plugin MCP servers:**
+
+```
+plugin:dmv:github
+plugin:ultrahouse3000:homeassistant
+```
+
+### The Duplication Trap
+
+If two plugins both define a `"github"` server, you get **two separate servers**:
+
+| Plugin A's .mcp.json | Plugin B's .mcp.json | Result |
+|---------------------|---------------------|--------|
+| `"github": {...}` | `"github": {...}` | `plugin:a:github` AND `plugin:b:github` |
+
+**Both run. Both consume context. Both provide duplicate tools.**
+
+### Guidance (Opinionated)
+
+**Don't bundle common MCP servers in plugins.** Instead:
+
+1. **Document as prerequisites** - README says "requires GitHub MCP server"
+2. **Let users configure once** - at project or user scope
+3. **Only bundle plugin-specific servers** - custom servers you wrote for that plugin
+
+**Why:** User-level config (`~/.claude.json`) or project config (`.mcp.json`) gives one shared server. Plugin bundling creates per-plugin duplicates.
+
+### Plugin HTTP Transport Bug (Temporary Workaround)
+
+**Bug:** [#9427](https://github.com/anthropics/claude-code/issues/9427) - `url` field env var interpolation broken for plugins.
+
+| Field | Plugin Interpolation |
+|-------|---------------------|
+| `url` | ❌ Broken - literal `${VAR}` passed |
+| `args` | ✅ Works |
+| `env` | ✅ Works (pass-through) |
+
+**Workaround:** For HTTP MCP servers needing env vars in plugins, use `mcp-proxy` via stdio:
+
+```json
+{
+  "mcpServers": {
+    "my-http-server": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-proxy", "http", "${MY_SERVER_URL}api/endpoint"]
+    }
+  }
+}
+```
+
+**Remove this workaround when #9427 is fixed.** Revert to native HTTP transport: `"type": "http", "url": "${VAR}..."`
+
 ## Configuration Scopes (Official Specification)
 
 ### Scope Hierarchy
@@ -134,7 +188,9 @@ claude mcp add db --env DATABASE_URL=${DATABASE_URL} \
 
 ### .mcp.json Format
 
-Create at project root for team-shared servers:
+Create at project root for team-shared servers.
+
+**Format note:** Official docs show wrapped format (`{ "mcpServers": {...} }`). Empirically, Claude Code also accepts flat format (`{ "server-name": {...} }`). Recommend wrapped format to match [official docs](https://code.claude.com/docs/en/plugins-reference).
 
 ```json
 {

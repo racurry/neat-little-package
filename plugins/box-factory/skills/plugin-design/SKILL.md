@@ -232,10 +232,10 @@ After enabling plugin, run `/mcp` in Claude Code to authenticate with Service Na
 
 #### Always Use External Configuration Files
 
-**✅ CORRECT - External file:**
+**CRITICAL:** The `.mcp.json` file alone does nothing. You MUST reference it in `plugin.json`:
 
 ```json
-// plugin.json
+// plugin.json - mcpServers field REQUIRED
 {
   "name": "my-plugin",
   "mcpServers": "./.mcp.json"
@@ -243,17 +243,59 @@ After enabling plugin, run `/mcp` in Claude Code to authenticate with Service Na
 ```
 
 ```json
-// .mcp.json (at plugin root)
+// .mcp.json (at plugin root) - wrapped format per official docs
 {
-  "github": {
-    "command": "npx",
-    "args": ["-y", "@modelcontextprotocol/server-github"],
-    "env": {
-      "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
     }
   }
 }
 ```
+
+**Format note:** Official docs show wrapped format. Empirically, Claude Code also accepts flat format (`{ "server-name": {...} }` without `mcpServers` wrapper). Recommend wrapped to match [official docs](https://code.claude.com/docs/en/plugins-reference).
+
+**Common mistake:** Creating `.mcp.json` without adding `"mcpServers": "./.mcp.json"` to plugin.json. The file will be ignored.
+
+#### HTTP Transport Env Var Bug (Temporary Workaround)
+
+**Bug:** [#9427](https://github.com/anthropics/claude-code/issues/9427) - `url` field doesn't interpolate `${VAR}` in plugin .mcp.json files.
+
+| Field | Plugin Interpolation |
+|-------|---------------------|
+| `url` | ❌ Broken |
+| `args` | ✅ Works |
+| `env` | ✅ Works |
+
+**Workaround:** Use `mcp-proxy` via stdio instead of native HTTP transport:
+
+```json
+// BROKEN
+{
+  "mcpServers": {
+    "my-server": {
+      "type": "http",
+      "url": "${SERVER_URL}api/mcp"
+    }
+  }
+}
+
+// WORKAROUND
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-proxy", "http", "${SERVER_URL}api/mcp"]
+    }
+  }
+}
+```
+
+**Remove this workaround when #9427 is fixed.** Revert to native HTTP transport: `"type": "http", "url": "${VAR}..."`
 
 **❌ WRONG - Inline configuration:**
 
@@ -557,6 +599,7 @@ Located at `.claude-plugin/marketplace.json`:
 - Unrelated utilities thrown together
 - Duplicates core functionality
 - Conflicts with other plugins
+- Bundles common MCP servers like GitHub (causes duplication—see `mcp-config` skill)
 
 ## Development Workflow (Best Practices)
 
