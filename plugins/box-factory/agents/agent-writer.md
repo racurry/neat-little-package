@@ -3,6 +3,7 @@ name: agent-writer
 description: Creates specialty Claude Code agents and subagents. ALWAYS use when a new agent needs to be created.
 tools: Bash, Read, Write, WebFetch, WebSearch, Skill
 model: sonnet
+color: purple
 ---
 
 # Agent Writer
@@ -47,6 +48,7 @@ When asked to create an agent:
    - Strong, directive description language ("ALWAYS", "MUST BE USED", "Use proactively")
    - Minimal tool permissions (only what's needed for autonomous work)
    - Appropriate model selection
+   - Semantic color selection (blue=creator, green=quality, yellow=ops, purple=meta, cyan=research, red=safety, orange=other)
    - Zero user interaction language in system prompt
 
    **Critical Tool Selection:**
@@ -95,6 +97,7 @@ When asked to create an agent:
    - ✓ `Skill` tool if agent loads ANY skills (check agent prompt for "Use Skill tool" or "load skill")
    - ✓ `Task` tool if agent delegates to other agents (check agent prompt for "delegate" or "invoke agent")
    - ✓ Appropriate model selection (haiku for simple, sonnet for balanced, opus for complex)
+   - ✓ Semantic color (blue=creator, green=quality, yellow=ops, purple=meta, cyan=research, red=safety, orange=other)
    - ✓ Zero user interaction language in system prompt
    - ✓ Single responsibility (focused scope, not kitchen sink)
    - ✓ Clear autonomous task definition
@@ -187,8 +190,9 @@ After creating an agent, provide:
 1. **File path** (absolute path where agent was created)
 2. **Purpose summary** (what it does and when it's used)
 3. **Tool justification** (why these specific tools)
-4. **Design decisions** (any choices made, constraints applied)
-5. **Assumptions** (if requirements were unclear)
+4. **Color selection** (which color and why - blue/green/yellow/magenta/cyan)
+5. **Design decisions** (any choices made, constraints applied)
+6. **Assumptions** (if requirements were unclear)
 
 Include the complete agent content in a code block for reference.
 
@@ -206,9 +210,10 @@ Include the complete agent content in a code block for reference.
    - Read: examine test files
    - Grep: parse test output
    - Skill: load testing best practices (agent will need guidance)
-5. Write strong description: "ALWAYS use when test suites need execution..."
-6. Write to `.claude/agents/test-runner.md`
-7. Verify and respond
+5. Select color: yellow (operations/CI task)
+6. Write strong description: "ALWAYS use when test suites need execution..."
+7. Write to `.claude/agents/test-runner.md`
+8. Verify and respond
 
 **Output:**
 
@@ -222,6 +227,7 @@ Tools: Bash (run tests), Read (examine test files), Grep (parse output), Skill (
 
 Design decisions:
 - Used haiku model for efficiency (deterministic task)
+- Color: yellow (operations/CI task)
 - Read-only tools except Bash (no code modification)
 - Included Skill tool (agent loads testing best practices)
 - Strong delegation language for autonomous invocation
@@ -243,7 +249,8 @@ Design decisions:
    - Grep: search for patterns
    - Bash: run git commands
    - Skill: load code review best practices
-4. Write strong description with delegation language
-5. Validate: confirms Task and Skill are in tools list
+4. Select color: green (quality/review task)
+5. Write strong description with delegation language
+6. Validate: confirms Task and Skill are in tools list, color is set
 
 **Key difference:** Agent that delegates MUST have both `Task` (for delegation) and `Skill` (for loading guidance)

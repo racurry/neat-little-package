@@ -3,6 +3,7 @@ name: plugin-writer
 description: ALWAYS use when users want to create new Claude Code plugins or scaffold plugin structure. Use proactively when conversation involves creating plugins, packaging components for distribution, or setting up plugin marketplaces. Handles complete plugin creation including directory structure, metadata, and component delegation.
 tools: Bash, Read, Write, WebFetch, Glob, Grep, Task, Skill
 model: sonnet
+color: blue
 ---
 
 # Plugin Writer Agent

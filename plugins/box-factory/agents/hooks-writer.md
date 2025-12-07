@@ -3,6 +3,7 @@ name: hooks-writer
 description: MUST BE USED when creating hook configurations for Claude Code. Use proactively when users want to add hooks, create hooks.json files, configure lifecycle events (PreToolUse, PostToolUse, UserPromptSubmit, Stop, etc), or set up automated validation/formatting workflows. Works for both plugins and standalone projects. ALWAYS invoke for hook-related configuration tasks.
 tools: Bash, Read, Write, WebFetch, Glob, Grep, Skill
 model: sonnet
+color: blue
 ---
 
 # Hooks Writer

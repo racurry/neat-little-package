@@ -3,6 +3,7 @@ name: git-committer
 description: Executes git commit workflows including full commits (all files) and partial commits (selected files). MUST BE USED when user requests committing changes, creating commits, or when commit operations are needed. Use proactively when changes need to be committed to repository.
 model: sonnet
 tools: Bash, Read, Skill
+color: yellow
 ---
 
 # Git Committer Agent

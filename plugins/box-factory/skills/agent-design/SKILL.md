@@ -71,6 +71,42 @@ User ↔ Main Claude → Agent (isolated, returns results)
 
 **Balance:** Reviewers should be read-only; builders need write access
 
+## Color Selection
+
+The optional `color` field sets visual distinction for agents in the status line.
+
+**Supported colors (7 total):** `red`, `green`, `blue`, `yellow`, `cyan`, `purple`, `orange`
+
+**Not supported:** `magenta`, `white`, `black`, `gray`, `grey`, `*Bright` variants
+
+**Semantic mapping:**
+
+| Color | Category | Use For |
+|-------|----------|---------|
+| `blue` | Creators | Agents that create/write files, components, code |
+| `green` | Quality | Validators, reviewers, checkers, analyzers |
+| `yellow` | Operations | Git, deployment, CI/CD, system tasks |
+| `purple` | Meta | Agents that create other agents |
+| `cyan` | Research | Exploration, documentation, research agents |
+| `red` | Safety | Security checks, destructive operations, warnings |
+| `orange` | Other | Agents that don't fit other categories (reserved) |
+
+**Example:**
+
+```yaml
+---
+name: code-reviewer
+color: green
+---
+```
+
+**Guidelines:**
+
+- Match color to primary function, not secondary features
+- Be consistent within a plugin (all quality agents green)
+- Reserve `orange` for agents that don't fit established categories
+- Colors are optional but improve UX for multi-agent workflows
+
 ## Description Field Design
 
 The `description` field determines when Claude delegates to your agent. This is critical for autonomous invocation.
@@ -217,6 +253,7 @@ Before finalizing an agent:
 5. **Test description** - Specific triggering conditions, not generic
 6. **Review system prompt** - Single H1, clear structure, actionable instructions
 7. **Verify no hardcoding** - No version-specific details that will become outdated
+8. **Set color** - Choose semantic color matching agent's primary function (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red, other=orange)
 
 ## Path Resolution
 

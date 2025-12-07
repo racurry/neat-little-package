@@ -3,6 +3,7 @@ name: slash-command-writer
 description: Creates custom Claude Code slash commands. ALWAYS use when creating new slash commands.
 tools: Bash, Read, Write, WebFetch, Grep, Glob, Skill
 model: sonnet
+color: blue
 ---
 
 # Slash Command Writer

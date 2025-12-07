@@ -3,6 +3,7 @@ name: skill-writer
 description: Creates Claude Code skills. ALWAYS use when creating or update Claude Code skills. Use proactively when detecting requests to document best practices, create interpretive guidance, or package expertise.
 tools: Bash, Read, Write, WebFetch, Glob, Grep, Skill
 model: sonnet
+color: blue
 ---
    
 # Skill Writer

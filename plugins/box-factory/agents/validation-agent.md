@@ -3,6 +3,7 @@ name: validation-agent
 description: MUST BE USED when validating Claude Code plugins, components (agents, commands, skills, hooks), or when debugging plugin installation/loading issues. Automatically invoked for validation requests, pre-publish checks, or component troubleshooting.
 allowed-tools: Bash, Read, Grep, Glob, WebFetch, Skill
 model: sonnet
+color: green
 ---
 
 # Plugin and Component Validator
@@ -48,16 +49,19 @@ Validate Claude Code plugins, agents, commands, skills, and hooks against offici
 ### MCP Server Configuration Issues
 
 **Security violations:**
+
 - Hardcoded secrets in `env` fields (actual API keys, tokens)
 - Empty string placeholders instead of `${ENV_VAR}` references
 - Credentials committed to git history
 
 **Structure violations:**
+
 - Inline MCP configuration in plugin.json (should use external file)
 - MCP configuration file doesn't exist at referenced path
 - Invalid JSON syntax in `.mcp.json` or custom MCP config file
 
 **Documentation violations:**
+
 - README missing MCP server setup section
 - Required environment variables not documented
 - Missing instructions for obtaining credentials
