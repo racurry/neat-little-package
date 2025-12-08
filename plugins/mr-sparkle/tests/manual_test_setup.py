@@ -47,6 +47,7 @@ def main():
     setup_ts_biome()
     setup_markdown_config()
     setup_markdown_no_config()
+    setup_markdown_mdformat()
     setup_python_ruff()
     setup_python_ruff_toml()
     setup_python_pylint_black()
@@ -251,6 +252,62 @@ def setup_markdown_no_config():
     d.mkdir()
 
     (d / "test.md").write_text("# Test\n\nSome text here\n\n\nExtra blank lines above\n")
+
+
+def setup_markdown_mdformat():
+    """
+    markdown-mdformat/: Markdown with mdformat configuration.
+
+    EXPECTED WHEN CLAUDE EDITS test.md:
+    - Hook detects mdformat via [tool.mdformat] in pyproject.toml
+    - Hook detects markdownlint via .markdownlint-cli2.jsonc
+    - Runs BOTH in order: `mdformat test.md` then `markdownlint-cli2 --fix test.md`
+    - Claude receives: "mdformat, markdownlint-cli2 test.md: OK"
+    - mdformat auto-fixes: rewraps text, normalizes bullet style
+    - markdownlint auto-fixes: multiple blank lines, trailing spaces
+
+    PURPOSE:
+    Verifies the mdformat + markdownlint combo works. mdformat handles
+    opinionated formatting (like black for Python), markdownlint handles
+    linting rules (like ruff check).
+    """
+    d = BASE / "markdown-mdformat"
+    d.mkdir()
+
+    (d / "pyproject.toml").write_text(
+        """\
+[tool.mdformat]
+wrap = 80
+number = true
+"""
+    )
+
+    (d / ".markdownlint-cli2.jsonc").write_text(
+        json.dumps(
+            {"config": {"default": True, "MD013": False}},
+            indent=2,
+        )
+        + "\n"
+    )
+
+    # Intentional issues:
+    # - Inconsistent list markers (* vs -)
+    # - Multiple blank lines
+    # - Trailing spaces
+    (d / "test.md").write_text(
+        """\
+# Test Document
+
+Some text here with trailing spaces
+
+* First item
+- Second item
+* Third item
+
+
+Extra blank lines above and inconsistent bullets.
+"""
+    )
 
 
 # =============================================================================

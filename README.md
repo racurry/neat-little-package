@@ -24,7 +24,7 @@ A collection of Claude Code plugins.
 
 - [box-factory](plugins/box-factory/README.md): A toolkit for creating and managing Claude Code components (plugins, commands, skills, hooks)
 - [dmv](plugins/dmv/README.md): Manage your git and github workflows and preferences
-- [mr-sparkle](plugins/mr-sparkle/README.md): Nice clean code.  Linting & autoformatting.
+- [mr-sparkle](plugins/mr-sparkle/README.md): Nice clean code. Linting & autoformatting.
 - [spirograph](plugins/spirograph/README.md): 3D-printed home organization (Gridfinity, OpenGrid, etc.)
 - [ultrahouse3000](plugins/ultrahouse3000/README.md): Smart homing with Home Assistant
 

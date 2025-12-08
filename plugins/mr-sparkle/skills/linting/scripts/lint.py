@@ -73,7 +73,7 @@ EXTENSION_TO_TOOLSET = {
 TOOLSETS = {
     "python": [["ruff"], ["pylint", "isort", "black"]],
     "js_ts": [["biome"], ["eslint", "prettier"]],
-    "markdown": [["markdownlint"]],
+    "markdown": [["mdformat", "markdownlint"]],
     "shell": [["shfmt", "shellcheck"]],
     "ruby": [["standard"], ["rubocop"]],
     "yaml": [["prettier"]],
@@ -164,6 +164,11 @@ TOOLS = {
         ],
         "config_flag": "--config",
         "global_config_location": "~/.markdownlint-cli2.jsonc",
+    },
+    "mdformat": {
+        "binary": "mdformat",
+        "commands": [["mdformat"]],
+        "pyproject_keys": ["tool.mdformat"],
     },
     "shfmt": {
         "binary": "shfmt",
