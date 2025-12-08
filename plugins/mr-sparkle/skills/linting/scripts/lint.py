@@ -60,6 +60,11 @@ EXTENSION_TO_TOOLSET = {
     ".rb": "ruby",
     ".rake": "ruby",
     ".gemspec": "ruby",
+    ".yaml": "yaml",
+    ".yml": "yaml",
+    ".json": "json",
+    ".json5": "json",
+    ".jsonc": "json",
 }
 
 # Groups are in PRIORITY ORDER (first group with project config wins)
@@ -71,6 +76,8 @@ TOOLSETS = {
     "markdown": [["markdownlint"]],
     "shell": [["shfmt", "shellcheck"]],
     "ruby": [["standard"], ["rubocop"]],
+    "yaml": [["prettier"]],
+    "json": [["prettier"]],
 }
 
 TOOLS = {
@@ -133,6 +140,7 @@ TOOLS = {
             ".prettierrc.js",
             ".prettierrc.cjs",
             ".prettierrc.json",
+            ".prettierrc.json5",
             ".prettierrc.yaml",
             ".prettierrc.yml",
             ".prettierrc.toml",
@@ -141,6 +149,9 @@ TOOLS = {
             "prettier.config.mjs",
         ],
         "packages": ["prettier"],
+        "config_flag": "--config",
+        "global_config_location": "~/.prettierrc.json5",
+        "ignore_flag": "--ignore-path",
     },
     "markdownlint": {
         "binary": "markdownlint-cli2",
@@ -360,13 +371,16 @@ def select_tools(toolset: str, project_root: Optional[Path]) -> list[str]:
 
 def get_skill_default_config(tool_name: str) -> Optional[Path]:
     """Get default config from skill directory if available."""
-    if tool_name != "markdownlint":
-        return None
-
     # Self-locate: this script is at <plugin>/skills/linting/scripts/lint.py
     plugin_dir = Path(__file__).resolve().parent.parent.parent.parent
-    skill_config = plugin_dir / "skills" / "markdown-quality" / "default-config.jsonc"
-    if skill_config.is_file():
+
+    config_map = {
+        "markdownlint": plugin_dir / "skills" / "markdown-quality" / "default-config.jsonc",
+        "prettier": plugin_dir / "skills" / "prettier-quality" / "default-config.json5",
+    }
+
+    skill_config = config_map.get(tool_name)
+    if skill_config and skill_config.is_file():
         return skill_config
     return None
 
@@ -416,6 +430,11 @@ def run_tool(
     if config_to_use:
         config_flag = tool_def.get("config_flag", "--config")
         config_args = [config_flag, str(config_to_use)]
+
+    # When using fallback config, disable ignore file to avoid picking up
+    # unrelated ignore patterns from parent directories
+    if needs_explicit_config and "ignore_flag" in tool_def:
+        config_args.extend([tool_def["ignore_flag"], "/dev/null"])
 
     cwd = str(project_root) if project_root and tool_def.get("needs_project_cwd") else None
 

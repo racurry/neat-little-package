@@ -1,6 +1,6 @@
 ---
 name: linting
-description: Universal polyglot linting capabilities for Python, JavaScript/TypeScript, Markdown, Shell, and Ruby files. Use when you need to lint files programmatically, understand tool selection logic, or invoke linting from commands/agents.
+description: Universal polyglot linting capabilities for Python, JavaScript/TypeScript, Markdown, Shell, Ruby, YAML, and JSON files. Use when you need to lint files programmatically, understand tool selection logic, or invoke linting from commands/agents.
 ---
 
 # Linting Skill
@@ -16,6 +16,8 @@ This skill provides universal polyglot linting through a CLI script that detects
 | Markdown | `markdownlint-cli2` | .markdownlint-cli2.*, ~/.markdownlint-cli2.jsonc |
 | Shell | `shfmt`+`shellcheck` | .editorconfig, .shellcheckrc |
 | Ruby | `standard` OR `rubocop` | .standard.yml, .rubocop.yml, Gemfile |
+| YAML | `prettier` | .prettierrc*, ~/.prettierrc.json5 |
+| JSON/JSON5/JSONC | `prettier` | .prettierrc*, ~/.prettierrc.json5 |
 
 ## Tool Selection Logic
 
@@ -141,6 +143,19 @@ If no config found, uses skill's `../markdown-quality/default-config.jsonc`.
 - Standard (zero-config, opinionated) runs `standardrb --fix`
 - RuboCop (configurable) runs `rubocop -a` (safe auto-correct only)
 
+### YAML/JSON Tools
+
+| Tool | Config Files | Global Fallback |
+|------|--------------|-----------------|
+| prettier | `.prettierrc*`, `prettier.config.*` | `~/.prettierrc.json5` |
+
+If no config found, uses skill's `../prettier-quality/default-config.json5`.
+
+**Supported extensions:**
+
+- YAML: `.yaml`, `.yml`
+- JSON: `.json`, `.json5`, `.jsonc`
+
 ## Integration Patterns
 
 ### From Commands
@@ -180,5 +195,6 @@ The script silently exits (code 0, no output) when:
 ## Related Skills
 
 - `markdown-quality` - Interpretive guidance for markdownlint rules
+- `prettier-quality` - Interpretive guidance for Prettier (YAML, JSON, JS/TS)
 - `python-quality` - Default ruff configuration
 - `js-quality` - Default biome configuration

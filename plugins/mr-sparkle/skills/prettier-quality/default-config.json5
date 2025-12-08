@@ -1,0 +1,33 @@
+{
+  // =============================================================================
+  // PRETTIER CONFIGURATION - Mr. Sparkle Defaults
+  // =============================================================================
+  //
+  // Opinionated code formatter configuration.
+  // See: https://prettier.io/docs/options
+  //
+  // Used as fallback when no project-level Prettier config exists.
+  //
+
+  // Effectively disable line wrapping (let content breathe)
+  "printWidth": 9999,
+
+  // JavaScript community standard
+  "tabWidth": 2,
+
+  // Single quotes for JS/TS (fewer keystrokes, leaves double for JSX/HTML)
+  "singleQuote": true,
+
+  // One attribute per line in multi-line JSX/HTML for cleaner diffs
+  "singleAttributePerLine": true,
+
+  // YAML files get a more reasonable line width
+  "overrides": [
+    {
+      "files": ["*.yaml", "*.yml"],
+      "options": {
+        "printWidth": 300
+      }
+    }
+  ]
+}

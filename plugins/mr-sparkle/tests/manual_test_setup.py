@@ -57,6 +57,10 @@ def main():
     setup_ruby_standard()
     setup_ruby_rubocop()
     setup_ruby_no_config()
+    setup_yaml_prettier()
+    setup_yaml_no_config()
+    setup_json_prettier()
+    setup_json_no_config()
 
     # Warning and error cases
     setup_python_unfixable_warnings()
@@ -548,6 +552,102 @@ def setup_ruby_no_config():
 
     # Clean file to verify OK feedback
     (d / "test.rb").write_text('x = 1\ny = 2\nputs "hello"\n')
+
+
+# =============================================================================
+# YAML Test Cases
+# =============================================================================
+
+
+def setup_yaml_prettier():
+    """
+    yaml-prettier/: YAML file with Prettier configuration.
+
+    EXPECTED WHEN CLAUDE EDITS config.yaml:
+    - Hook detects Prettier via .prettierrc
+    - Runs: `prettier --write config.yaml`
+    - Claude receives: "prettier config.yaml: OK"
+    - Auto-fixes: inconsistent spacing, indentation
+
+    PURPOSE:
+    Verifies Prettier handles YAML formatting with project config.
+    """
+    d = BASE / "yaml-prettier"
+    d.mkdir()
+
+    (d / ".prettierrc").write_text(json.dumps({"tabWidth": 2}, indent=2) + "\n")
+
+    # Intentional issues: extra spaces, inconsistent indentation
+    (d / "config.yaml").write_text("name:    test-app  \nversion:   1.0.0\nitems:\n    - first\n    -   second\n")
+
+
+def setup_yaml_no_config():
+    """
+    yaml-no-config/: YAML file with NO Prettier configuration.
+
+    EXPECTED WHEN CLAUDE EDITS config.yaml:
+    - No project config detected
+    - Falls back to global ~/.prettierrc.json5 or skill default
+    - Runs: `prettier --write --config <fallback> --ignore-path /dev/null`
+    - Claude receives: "prettier config.yaml: OK"
+
+    PURPOSE:
+    Verifies YAML fallback behavior uses global/skill config and
+    bypasses ignore files to format files outside projects.
+    """
+    d = BASE / "yaml-no-config"
+    d.mkdir()
+
+    # Intentional issues: extra spaces, inconsistent array formatting
+    (d / "config.yaml").write_text("name:    unformatted  \nitems: [ x, y,  z ]\nnested:\n       deep:\n          value: true\n")
+
+
+# =============================================================================
+# JSON Test Cases
+# =============================================================================
+
+
+def setup_json_prettier():
+    """
+    json-prettier/: JSON file with Prettier configuration.
+
+    EXPECTED WHEN CLAUDE EDITS data.json:
+    - Hook detects Prettier via .prettierrc.json
+    - Runs: `prettier --write data.json`
+    - Claude receives: "prettier data.json: OK"
+    - Auto-fixes: spacing, indentation
+
+    PURPOSE:
+    Verifies Prettier handles JSON formatting with project config.
+    """
+    d = BASE / "json-prettier"
+    d.mkdir()
+
+    (d / ".prettierrc.json").write_text(json.dumps({"tabWidth": 2}, indent=2) + "\n")
+
+    # Intentional issues: no spaces, single line
+    (d / "data.json").write_text('{"name":"test","items":[1,2,3],"nested":{"value":true}}\n')
+
+
+def setup_json_no_config():
+    """
+    json-no-config/: JSON file with NO Prettier configuration.
+
+    EXPECTED WHEN CLAUDE EDITS data.json:
+    - No project config detected
+    - Falls back to global ~/.prettierrc.json5 or skill default
+    - Runs: `prettier --write --config <fallback> --ignore-path /dev/null`
+    - Claude receives: "prettier data.json: OK"
+
+    PURPOSE:
+    Verifies JSON fallback behavior. JSON5 and JSONC files also use
+    this toolset.
+    """
+    d = BASE / "json-no-config"
+    d.mkdir()
+
+    # Compact JSON that needs formatting
+    (d / "data.json").write_text('{"key":"value","list":[1,2,3]}\n')
 
 
 # =============================================================================

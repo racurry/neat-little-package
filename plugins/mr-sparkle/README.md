@@ -18,6 +18,8 @@ Lints your code on write.
 | JavaScript/TypeScript | biome, eslint, prettier |
 | Shell | shfmt, shellcheck |
 | Ruby | standardrb, rubocop |
+| YAML | prettier |
+| JSON/JSON5/JSONC | prettier |
 
 ## Commands
 

@@ -1,0 +1,62 @@
+# =============================================================================
+# PRETTIER IGNORE - Mr. Sparkle Defaults
+# =============================================================================
+# Files and directories to exclude from Prettier formatting.
+# Uses .gitignore syntax.
+
+# Build & dependencies
+node_modules/
+dist/
+build/
+out/
+.next/
+.nuxt/
+.output/
+.svelte-kit/
+.vercel/
+.netlify/
+
+# Lock files (auto-generated)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lockb
+
+# Coverage & testing
+coverage/
+.nyc_output/
+__snapshots__/
+
+# Caches
+.cache/
+.parcel-cache/
+.turbo/
+.eslintcache
+*.tsbuildinfo
+
+# IDE & editor
+.idea/
+.vscode/
+
+# Version control
+.git/
+
+# Generated files
+*.generated.*
+*.gen.*
+
+# Vendor
+vendor/
+public/vendor/
+
+# Markdown (handled by markdownlint)
+*.md
+*.mdx
+
+# Minified
+*.min.js
+*.min.css
+*.bundle.js
+*.bundle.css
+
+LICENSE

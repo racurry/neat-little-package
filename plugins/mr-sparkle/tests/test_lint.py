@@ -76,6 +76,22 @@ def ruby_project_with_rubocop(tmp_path):
     return tmp_path
 
 
+@pytest.fixture
+def yaml_project_with_prettier(tmp_path):
+    """Create a project with prettier config for YAML."""
+    (tmp_path / ".prettierrc").write_text('{"tabWidth": 2}\n')
+    (tmp_path / "config.yaml").write_text("name: test\n")
+    return tmp_path
+
+
+@pytest.fixture
+def json_project_with_prettier(tmp_path):
+    """Create a project with prettier config for JSON."""
+    (tmp_path / ".prettierrc.json").write_text('{"tabWidth": 2}\n')
+    (tmp_path / "data.json").write_text('{"key": "value"}\n')
+    return tmp_path
+
+
 # =============================================================================
 # Tests: Core config detection (same as lint_on_write)
 # =============================================================================
@@ -155,6 +171,22 @@ class TestSelectTools:
     def test_ruby_fallback_to_standard(self, tmp_path):
         tools = lint.select_tools("ruby", tmp_path)
         assert tools == ["standard"]
+
+    def test_yaml_with_prettier(self, yaml_project_with_prettier):
+        tools = lint.select_tools("yaml", yaml_project_with_prettier)
+        assert tools == ["prettier"]
+
+    def test_yaml_fallback_to_prettier(self, tmp_path):
+        tools = lint.select_tools("yaml", tmp_path)
+        assert tools == ["prettier"]
+
+    def test_json_with_prettier(self, json_project_with_prettier):
+        tools = lint.select_tools("json", json_project_with_prettier)
+        assert tools == ["prettier"]
+
+    def test_json_fallback_to_prettier(self, tmp_path):
+        tools = lint.select_tools("json", tmp_path)
+        assert tools == ["prettier"]
 
 
 # =============================================================================
@@ -366,9 +398,10 @@ class TestLintFile:
 
 
 class TestGetSkillDefaultConfig:
-    def test_returns_none_for_non_markdownlint(self):
+    def test_returns_none_for_unsupported_tools(self):
         assert lint.get_skill_default_config("ruff") is None
         assert lint.get_skill_default_config("biome") is None
+        assert lint.get_skill_default_config("eslint") is None
 
     def test_returns_path_for_markdownlint_if_exists(self):
         # This tests the actual file structure - may need adjustment
@@ -376,6 +409,13 @@ class TestGetSkillDefaultConfig:
         if result is not None:
             assert "markdown-quality" in str(result)
             assert result.name == "default-config.jsonc"
+
+    def test_returns_path_for_prettier_if_exists(self):
+        # This tests the actual file structure
+        result = lint.get_skill_default_config("prettier")
+        if result is not None:
+            assert "prettier-quality" in str(result)
+            assert result.name == "default-config.json5"
 
 
 # =============================================================================
@@ -397,6 +437,11 @@ class TestExtensionMapping:
             (".rb", "ruby"),
             (".rake", "ruby"),
             (".gemspec", "ruby"),
+            (".yaml", "yaml"),
+            (".yml", "yaml"),
+            (".json", "json"),
+            (".json5", "json"),
+            (".jsonc", "json"),
         ],
     )
     def test_extension_maps_to_toolset(self, ext, expected):
@@ -548,3 +593,72 @@ class TestIntegration:
         assert result.returncode == 0
         data = json.loads(result.stdout)
         assert "systemMessage" in data
+
+    def test_lint_yaml_file_with_prettier_installed(self, yaml_project_with_prettier):
+        """Test linting a YAML file (if prettier is installed)."""
+        import shutil
+
+        if not shutil.which("prettier"):
+            pytest.skip("prettier not installed")
+
+        file_path = yaml_project_with_prettier / "config.yaml"
+        script_path = Path(__file__).parent.parent / "skills" / "linting" / "scripts" / "lint.py"
+
+        result = subprocess.run(
+            [sys.executable, str(script_path), str(file_path), "--format", "json"],
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 0
+        data = json.loads(result.stdout)
+        assert data["toolset"] == "yaml"
+        assert "prettier" in data["tools_run"]
+
+    def test_lint_json_file_with_prettier_installed(self, json_project_with_prettier):
+        """Test linting a JSON file (if prettier is installed)."""
+        import shutil
+
+        if not shutil.which("prettier"):
+            pytest.skip("prettier not installed")
+
+        file_path = json_project_with_prettier / "data.json"
+        script_path = Path(__file__).parent.parent / "skills" / "linting" / "scripts" / "lint.py"
+
+        result = subprocess.run(
+            [sys.executable, str(script_path), str(file_path), "--format", "json"],
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 0
+        data = json.loads(result.stdout)
+        assert data["toolset"] == "json"
+        assert "prettier" in data["tools_run"]
+
+    def test_lint_yaml_formats_file(self, tmp_path):
+        """Test that prettier actually formats YAML files."""
+        import shutil
+
+        if not shutil.which("prettier"):
+            pytest.skip("prettier not installed")
+
+        # Create a project with prettier config
+        (tmp_path / ".prettierrc").write_text("{}")
+        file_path = tmp_path / "test.yaml"
+        # Badly formatted YAML
+        file_path.write_text("name:    unformatted  \nitems: [ x, y,  z ]\n")
+
+        script_path = Path(__file__).parent.parent / "skills" / "linting" / "scripts" / "lint.py"
+
+        result = subprocess.run(
+            [sys.executable, str(script_path), str(file_path)],
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 0
+        # Check file was formatted
+        content = file_path.read_text()
+        assert "name: unformatted" in content  # Trailing spaces removed
+        assert "[x, y, z]" in content  # Array spacing normalized
