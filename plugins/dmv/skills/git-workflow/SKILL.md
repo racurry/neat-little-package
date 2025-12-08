@@ -65,6 +65,28 @@ fix: bug fix
 add: new feature
 ```
 
+## Staging Preference (User Preference)
+
+**Prefer atomic commits over convenience commits.**
+
+Don't reflexively `git add .` - consider whether changes should be split into logical commits. Use `git add -p` for hunk-level staging when a file contains multiple concerns.
+
+Bulk staging is fine when all changes are genuinely one logical unit.
+
+## Authorship Verification Before Amending (Critical)
+
+**ALWAYS check authorship before using `--amend`:**
+
+```bash
+git log -1 --format='%an <%ae>'
+```
+
+**Rules:**
+
+- ✓ Only amend YOUR OWN commits - never amend someone else's work
+- ✓ Check if pushed: `git status` should show "Your branch is ahead of..."
+- ✓ If not ahead, commit is already on remote → create new commit instead
+
 ## Pre-Commit Hook Edge Case (Critical)
 
 **Problem this user encounters:** Pre-commit hooks (formatters/linters) auto-modify files during commit, causing commit to fail.
@@ -105,62 +127,20 @@ git commit --amend --no-edit
 - ❌ If commit succeeded without errors - no retry needed
 - ❌ If you already retried once - stop and report failure
 
-## Common Pitfall: Hook Attribution Conflicts
-
-**Problem:** Some generic git workflows add attribution text this user doesn't want.
-
-**What to avoid:**
-
-```bash
-# Don't create commits with attribution like:
-git commit -m "$(cat <<'EOF'
-fix: correct validation logic
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-EOF
-)"
-```
-
-**This user's preference:**
-
-```bash
-# Simple, terse, single-line only:
-git commit -m "correct validation logic"
-```
-
 ## Quality Checklist
 
 Before committing for this user:
 
-**Message format:**
-
-- ✓ Terse, single-line format (max ~200 characters)
-- ✓ Pattern: `<brief specific description>`
-- ✓ No emojis or decorative elements
-- ✓ No attribution text (no "Generated with Claude Code", no "Co-Authored-By:")
-- ✓ Lowercase type, imperative mood, no period
-
-**Content quality:**
-
+- ✓ Terse, single-line message (no emojis, no attribution, no period)
+- ✓ Message is specific about what changed
 - ✓ No secrets in staged files (.env, credentials.json, etc.)
-- ✓ Message is specific about what changed (not vague)
-- ✓ Changes are reviewed (ran git status and git diff)
-
-**Pre-commit hooks:**
-
-- ✓ Prepared for potential hook retry (understand single-retry pattern)
-- ✓ Won't retry more than once if hooks keep modifying
+- ✓ Considered atomic commits vs bulk staging
+- ✓ If amending: verified authorship and not-pushed status
+- ✓ Prepared for pre-commit hook retry if needed
 
 ## Documentation References
 
-**Official Git documentation:**
+**Claude knows standard git.** Fetch docs only for edge cases or errors you don't recognize:
 
-- <https://git-scm.com/docs> - Complete Git reference for current syntax
-
-**Pre-commit hooks:**
-
-- <https://pre-commit.com/> - Pre-commit framework documentation
-
-**Remember:** This skill only documents user-specific preferences and edge cases. Claude already knows standard git commands, branching workflows, and general best practices from training.
+- <https://git-scm.com/docs> - Advanced git features
+- <https://pre-commit.com/> - Hook configuration issues
