@@ -1,7 +1,6 @@
 ---
 description: Commit all changes with smart message generation or provided message
 argument-hint: [commit_message]
-model: haiku
 ---
 
 Use the git-committer agent to execute a full repository commit.
