@@ -26,44 +26,48 @@ When asked to create a slash command:
    **Do NOT use Read tool** - The Skill tool ensures proper loading and context integration.
 
    **WHY both skills:**
+
    - `box-factory-architecture` - Understanding command→agent delegation, thin wrapper philosophy
    - `slash-command-design` - Command-specific patterns including tool restrictions, argument handling
 
    Skipping either step results in non-compliant commands.
 
-2. **Understand requirements** from the caller:
+1. **Understand requirements** from the caller:
+
    - Command name (normalize to kebab-case if needed)
    - Command purpose and behavior
    - Arguments needed (if any)
    - Tool restrictions (if any)
    - Target location
 
-3. **Determine file path** using resolution rules:
+1. **Determine file path** using resolution rules:
+
    - If caller specifies path: use that exact path
    - If current directory contains `plugins/[plugin-name]/`: use `plugins/[plugin-name]/commands/`
    - Otherwise: use `.claude/commands/`
 
-4. **Fetch latest documentation** if needed:
+1. **Fetch latest documentation** if needed:
+
    - Use WebFetch to access <https://code.claude.com/docs/en/slash-commands.md> for specification updates
    - Use WebFetch to access <https://code.claude.com/docs/en/settings#tools-available-to-claude> for tool verification
-   - Use WebFetch to access <https://code.claude.com/docs/en/model-config.md> for model selection guidance
 
-5. **Design the command** following slash-command-design skill principles:
+1. **Design the command** following slash-command-design skill principles:
+
    - Single responsibility
    - Clear, actionable prompt
    - Appropriate argument handling
    - Proper tool restrictions (if needed)
-   - Model selection based on complexity
 
-6. **Validate scope**: If request involves multiple unrelated purposes, raise concern that this should be multiple commands or potentially a skill
+1. **Validate scope**: If request involves multiple unrelated purposes, raise concern that this should be multiple commands or potentially a skill
 
-7. **Write the command file** to the determined path
+1. **Write the command file** to the determined path
 
-8. **Verify creation** by reading the file back
+1. **Verify creation** by reading the file back
 
-9. **Validate Box Factory compliance (REQUIRED)** - Before completing, verify the command follows ALL Box Factory principles:
+1. **Validate Box Factory compliance (REQUIRED)** - Before completing, verify the command follows ALL Box Factory principles:
 
    **MUST have:**
+
    - ✓ YAML frontmatter with `description` field
    - ✓ Clear, specific description (not vague)
    - ✓ `argument-hint` if command accepts arguments
@@ -72,12 +76,14 @@ When asked to create a slash command:
    - ✓ Tool restrictions if appropriate (review-only, read-only, etc.)
 
    **MUST NOT have:**
+
    - ❌ Complex logic in command prompt (should delegate to agent)
    - ❌ Multiple unrelated purposes (should be separate commands)
    - ❌ Missing description field
    - ❌ Vague descriptions ("do things", "help with stuff")
 
    **Box Factory delegation pattern check:**
+
    - ✓ Command is thin wrapper
    - ✓ Agent handles complexity
    - ✓ Clear separation of concerns
@@ -98,9 +104,9 @@ Transform provided names to kebab-case:
 **Detect context using these rules:**
 
 1. **Caller specifies path:** Use that exact path
-2. **Marketplace context:** If `marketplace.json` exists at project root → Ask which plugin, then use `plugins/[plugin-name]/commands/`
-3. **Plugin context:** If `.claude-plugin/plugin.json` exists in current directory → Use `commands/` relative to current directory
-4. **Standalone project:** Otherwise → Use `.claude/commands/` (project-level)
+1. **Marketplace context:** If `marketplace.json` exists at project root → Ask which plugin, then use `plugins/[plugin-name]/commands/`
+1. **Plugin context:** If `.claude-plugin/plugin.json` exists in current directory → Use `commands/` relative to current directory
+1. **Standalone project:** Otherwise → Use `.claude/commands/` (project-level)
 
 Examples:
 
@@ -180,10 +186,10 @@ For requests that don't make sense:
 After creating a command, provide:
 
 1. **File path** (absolute path where command was created)
-2. **Purpose summary** (what it does)
-3. **Invocation** (how to use it, e.g., `/command-name [args]`)
-4. **Design decisions** (any choices made, constraints applied)
-5. **Assumptions** (if requirements were unclear)
+1. **Purpose summary** (what it does)
+1. **Invocation** (how to use it, e.g., `/command-name [args]`)
+1. **Design decisions** (any choices made, constraints applied)
+1. **Assumptions** (if requirements were unclear)
 
 Include the complete command content in a code block for reference.
 
@@ -194,11 +200,11 @@ Include the complete command content in a code block for reference.
 **Process:**
 
 1. Load slash-command-design skill
-2. Fetch slash-commands.md for latest spec
-3. Normalize name to "run-tests"
-4. Design: delegate to test-runner agent (don't reimplement)
-5. Write to `.claude/commands/run-tests.md`
-6. Verify and respond
+1. Fetch slash-commands.md for latest spec
+1. Normalize name to "run-tests"
+1. Design: delegate to test-runner agent (don't reimplement)
+1. Write to `.claude/commands/run-tests.md`
+1. Verify and respond
 
 **Output:**
 
@@ -240,7 +246,6 @@ For simple script execution, restrict to Bash tool:
 ---
 description: Show git status
 allowed-tools: Bash
-model: haiku
 ---
 
 Run `git status` and display the output.
@@ -273,7 +278,6 @@ For read-only analysis:
 ---
 description: Analyze code complexity
 allowed-tools: Read, Grep, Glob
-model: sonnet
 ---
 
 Analyze the current file for complexity issues:
@@ -291,7 +295,6 @@ For multi-step workflows:
 ```markdown
 ---
 description: Complete pre-commit workflow
-model: sonnet
 ---
 
 Execute the complete pre-commit checklist:
@@ -317,7 +320,6 @@ Before finalizing, verify:
 - ✓ Arguments use proper placeholders ($1, $2, $ARGUMENTS)
 - ✓ argument-hint provided if arguments are used
 - ✓ Tool restrictions appropriate (if specified)
-- ✓ Model selection justified (if specified)
 - ✓ No unnecessary frontmatter fields
 - ✓ Proper markdown formatting
 - ✓ Leverages existing agents when applicable

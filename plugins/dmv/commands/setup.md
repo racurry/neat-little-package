@@ -1,7 +1,6 @@
 ---
 description: Set up the DMV plugin (install gh CLI and configure GitHub MCP server)
 allowed-tools: Bash, Read
-model: sonnet
 ---
 
 Set up everything needed for the DMV plugin to work properly.

@@ -13,7 +13,6 @@ This skill provides interpretive guidance and best practices for creating Claude
 
 - **<https://code.claude.com/docs/en/slash-commands.md>** - Core specification and examples
 - **<https://code.claude.com/docs/en/settings#tools-available-to-claude>** - Verify tool names
-- **<https://code.claude.com/docs/en/model-config.md>** - Model selection guidance
 
 ## Core Understanding
 
@@ -36,7 +35,6 @@ Commands are Markdown files with optional YAML frontmatter:
 description: Brief description (optional, defaults to first line)
 argument-hint: [expected-args]
 allowed-tools: Tool1, Tool2
-model: sonnet
 disable-model-invocation: false
 ---
 
@@ -48,13 +46,12 @@ Use $1, $2 for individual arguments or $ARGUMENTS for all.
 
 All fields are optional:
 
-| Field | Purpose | Default |
-|-------|---------|---------|
-| `description` | Brief command description for `/help` | First line of prompt |
-| `argument-hint` | Expected arguments (e.g., `[pr-number] [priority]`) | None |
-| `allowed-tools` | Restrict to specific tools (e.g., `Bash(git:*)`) | Inherits from conversation |
-| `model` | Specific model to use | Inherits from conversation |
-| `disable-model-invocation` | Prevents SlashCommand tool from auto-invoking | false |
+| Field                      | Purpose                                             | Default                    |
+| -------------------------- | --------------------------------------------------- | -------------------------- |
+| `description`              | Brief command description for `/help`               | First line of prompt       |
+| `argument-hint`            | Expected arguments (e.g., `[pr-number] [priority]`) | None                       |
+| `allowed-tools`            | Restrict to specific tools (e.g., `Bash(git:*)`)    | Inherits from conversation |
+| `disable-model-invocation` | Prevents SlashCommand tool from auto-invoking       | false                      |
 
 **Best practice:** Always include `description` even though it's optional - improves discoverability and Claude's ability to use the SlashCommand tool.
 
@@ -172,7 +169,6 @@ For simple, deterministic operations, restrict tools for security and clarity:
 ---
 description: Show git status
 allowed-tools: Bash(git status:*)
-model: haiku
 ---
 
 Run `git status` and display the output.
@@ -180,7 +176,6 @@ Run `git status` and display the output.
 
 **Benefits:**
 
-- Fast execution (haiku model)
 - Restricted permissions
 - Clear, single-purpose command
 
@@ -192,7 +187,6 @@ Run `git status` and display the output.
 ---
 description: Install GitHub CLI if not present
 allowed-tools: Bash
-model: haiku
 ---
 
 Check if gh CLI is installed. If not, provide installation instructions for the user's platform.
@@ -408,7 +402,6 @@ Before finalizing a command:
 - ✓ Arguments are simple (if present)
 - ✓ Clear, single-purpose design
 - ✓ Appropriate tool restrictions (if needed)
-- ✓ Model choice matches complexity (haiku for simple, sonnet for complex)
 
 ## Path Resolution
 
@@ -421,9 +414,9 @@ Before finalizing a command:
 **Resolution logic:**
 
 1. If caller specifies exact path → use that
-2. If in plugin context → use `plugins/[name]/commands/`
-3. Default → `.claude/commands/` (project-level)
-4. User-level → only when explicitly requested
+1. If in plugin context → use `plugins/[name]/commands/`
+1. Default → `.claude/commands/` (project-level)
+1. User-level → only when explicitly requested
 
 ## Name Normalization
 
@@ -496,9 +489,5 @@ Authoritative sources for command specifications:
 **Tool verification:**
 
 - <https://code.claude.com/docs/en/settings#tools-available-to-claude> - Current tool list
-
-**Model selection:**
-
-- <https://code.claude.com/docs/en/model-config.md> - Model guidance
 
 **Remember:** Official docs provide structure and features. This skill provides best practices and patterns for creating excellent commands.
