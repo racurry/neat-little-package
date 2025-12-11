@@ -1,11 +1,48 @@
 ---
-name: box-factory-plugin-design
+name: plugin-design
 description: Interpretive guidance for designing Claude Code plugins. Helps you understand plugin architecture, marketplace distribution, and when plugins are the right pattern. Use when creating or reviewing plugins.
 ---
 
-# Plugin Design Skill
+# Plugin Design
 
 This skill provides interpretive guidance and best practices for creating Claude Code plugins. It helps you understand what the docs mean and how to create excellent plugins.
+
+## Workflow Selection
+
+| If you need to...                 | Go to section                                                                |
+| --------------------------------- | ---------------------------------------------------------------------------- |
+| Understand plugin fundamentals    | [Core Understanding](#core-understanding)                                    |
+| Configure plugin.json             | [Plugin Manifest](#plugin-manifest-pluginjson---official-specification)      |
+| Bundle MCP servers with plugin    | [MCP Server Configuration](#mcp-server-configuration-best-practices)         |
+| Set up marketplace distribution   | [Marketplace Distribution](#marketplace-distribution-official-specification) |
+| Decide if plugin is right pattern | [Decision Framework](#decision-framework)                                    |
+| Avoid common mistakes             | [Common Pitfalls](#common-pitfalls-best-practices)                           |
+| Validate before publishing        | [Quality Checklist](#plugin-quality-checklist)                               |
+
+## Quick Start
+
+**Minimal plugin structure:**
+
+```text
+my-plugin/
+├── .claude-plugin/
+│   └── plugin.json          # {"name": "my-plugin", "version": "1.0.0"}
+├── commands/
+│   └── my-command.md
+├── agents/
+│   └── my-agent.md
+└── skills/
+    └── my-skill/
+        └── SKILL.md
+```
+
+**Critical rule:** Components (commands/, agents/, skills/, hooks/) MUST be at plugin root, NOT inside .claude-plugin/.
+
+**Validation:**
+
+```bash
+claude plugin validate .
+```
 
 ## Official Documentation
 
@@ -34,7 +71,7 @@ This skill provides interpretive guidance and best practices for creating Claude
 
 **The #1 mistake** that causes plugins to install but not work:
 
-```
+```text
 ✅ Correct:
 plugin-name/
 ├── .claude-plugin/
@@ -58,7 +95,7 @@ plugin-name/
 
 Skills use subdirectories with a `SKILL.md` file:
 
-```
+```text
 skills/
 ├── skill-one/
 │   ├── SKILL.md         ← Skill definition
@@ -77,20 +114,20 @@ Located at `.claude-plugin/plugin.json`:
 
 ### Optional Metadata Fields We Use
 
-| Field | Type | Purpose |
-|-------|------|---------|
-| version | string | Semantic versioning (e.g., "2.1.0") |
-| description | string | Brief plugin purpose explanation |
-| repository | string | Source code location |
+| Field       | Type   | Purpose                             |
+| ----------- | ------ | ----------------------------------- |
+| version     | string | Semantic versioning (e.g., "2.1.0") |
+| description | string | Brief plugin purpose explanation    |
+| repository  | string | Source code location                |
 
 ### Optional Metadata Fields We NEVER Use
 
-| Field | Type | Purpose |
-|-------|------|---------|
-| author | object | Author details: `{name, email, url}` |
-| homepage | string | Documentation URL |
-| license | string | License identifier (MIT, Apache-2.0, etc.) |
-| keywords | array | Discovery tags for categorization |
+| Field    | Type   | Purpose                                    |
+| -------- | ------ | ------------------------------------------ |
+| author   | object | Author details: `{name, email, url}`       |
+| homepage | string | Documentation URL                          |
+| license  | string | License identifier (MIT, Apache-2.0, etc.) |
+| keywords | array  | Discovery tags for categorization          |
 
 ### Component Path Fields (Optional)
 
@@ -160,11 +197,11 @@ For current MCP configuration syntax, fetch:
 
 Claude Code supports three MCP transport types. Choose based on server location:
 
-| Transport | Use Case | Example |
-|-----------|----------|---------|
-| **HTTP** | Remote/cloud servers (preferred) | `https://mcp.notion.com/mcp` |
-| **Stdio** | Local processes | `npx -y @modelcontextprotocol/server-github` |
-| **SSE** | Legacy remote servers (deprecated) | Use HTTP instead |
+| Transport | Use Case                           | Example                                      |
+| --------- | ---------------------------------- | -------------------------------------------- |
+| **HTTP**  | Remote/cloud servers (preferred)   | `https://mcp.notion.com/mcp`                 |
+| **Stdio** | Local processes                    | `npx -y @modelcontextprotocol/server-github` |
+| **SSE**   | Legacy remote servers (deprecated) | Use HTTP instead                             |
 
 **Key insight:** Claude Code supports HTTP transport natively - no proxy needed for remote servers (unlike Claude Desktop which requires `mcp-proxy`).
 
@@ -207,9 +244,9 @@ Claude Code supports three MCP transport types. Choose based on server location:
 For MCP servers requiring OAuth (not API keys):
 
 1. Configure server WITHOUT credentials in plugin `.mcp.json`
-2. Document in README: "Run `/mcp` to authenticate"
-3. Claude Code handles OAuth flow via browser
-4. Tokens stored and refreshed automatically
+1. Document in README: "Run `/mcp` to authenticate"
+1. Claude Code handles OAuth flow via browser
+1. Tokens stored and refreshed automatically
 
 **Plugin config (no credentials needed):**
 
@@ -265,11 +302,11 @@ After enabling plugin, run `/mcp` in Claude Code to authenticate with Service Na
 
 **Bug:** [#9427](https://github.com/anthropics/claude-code/issues/9427) - `url` field doesn't interpolate `${VAR}` in plugin .mcp.json files.
 
-| Field | Plugin Interpolation |
-|-------|---------------------|
-| `url` | ❌ Broken |
-| `args` | ✅ Works |
-| `env` | ✅ Works |
+| Field  | Plugin Interpolation |
+| ------ | -------------------- |
+| `url`  | ❌ Broken            |
+| `args` | ✅ Works             |
+| `env`  | ✅ Works             |
 
 **Workaround:** Use `mcp-proxy` via stdio instead of native HTTP transport:
 
@@ -375,7 +412,7 @@ After enabling plugin, run `/mcp` in Claude Code to authenticate with Service Na
 
 **In your README, always include:**
 
-```markdown
+````markdown
 ## MCP Server Setup
 
 This plugin includes the [Server Name] MCP server.
@@ -395,11 +432,11 @@ This plugin includes the [Server Name] MCP server.
    ```bash
    export API_KEY="your_key_here"
    export AUTH_TOKEN="your_token_here"
-   ```
+````
 
 1. The MCP server will start automatically when the plugin is enabled
 
-```
+````
 
 **Required documentation elements:**
 - Prerequisites (tools, accounts, permissions)
@@ -421,7 +458,7 @@ This plugin includes the [Server Name] MCP server.
     }
   }
 }
-```
+````
 
 **Filesystem:**
 
@@ -606,14 +643,14 @@ Located at `.claude-plugin/marketplace.json`:
 The docs show the mechanics. Here's the philosophy:
 
 1. **Build components first** - Create and test commands/agents individually
-2. **Test without packaging** - Use `.claude/` directories for iteration
-3. **Package when ready** - Add plugin.json and organize structure
-4. **Validate locally** - Use `claude plugin validate .` command
-5. **Create test marketplace** - Local marketplace with absolute paths
-6. **Install and test** - `/plugin marketplace add ./path/to/marketplace`
-7. **Iterate** - Fix issues, restart Claude Code, test again
-8. **Document** - Write focused README (components, installation, basic usage)
-9. **Publish** - Push to GitHub, share marketplace
+1. **Test without packaging** - Use `.claude/` directories for iteration
+1. **Package when ready** - Add plugin.json and organize structure
+1. **Validate locally** - Use `claude plugin validate .` command
+1. **Create test marketplace** - Local marketplace with absolute paths
+1. **Install and test** - `/plugin marketplace add ./path/to/marketplace`
+1. **Iterate** - Fix issues, restart Claude Code, test again
+1. **Document** - Write focused README (components, installation, basic usage)
+1. **Publish** - Push to GitHub, share marketplace
 
 **Key insight:** Don't start with plugin structure. Build components, then package them.
 
@@ -771,7 +808,7 @@ Check `/help` for newly installed commands and agents.
 
 **Embedded (monorepo approach):**
 
-```
+```text
 marketplace/
 ├── .claude-plugin/marketplace.json
 └── plugins/
@@ -904,25 +941,3 @@ Before publishing:
 
 - ✅ Specific description (what it does, how it helps)
 - ✅ (optional, but okay)Repository for issues and PRs
-
-## Documentation References
-
-Authoritative sources for plugin specifications:
-
-**Plugin creation:**
-
-- <https://code.claude.com/docs/en/plugins> - Overview and quickstart
-
-**Complete specifications:**
-
-- <https://code.claude.com/docs/en/plugins-reference> - All schemas and patterns
-
-**Distribution:**
-
-- <https://code.claude.com/docs/en/plugin-marketplaces> - Marketplace setup
-
-**Component specifications:**
-
-- Reference agent-design, slash-command-design skills for component details
-
-**Remember:** Official docs provide structure and features. This skill provides best practices and patterns for creating excellent plugins.

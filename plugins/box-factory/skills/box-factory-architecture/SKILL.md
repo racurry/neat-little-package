@@ -3,9 +3,52 @@ name: box-factory-architecture
 description: Interpretive guidance for understanding Claude Code component architecture and choosing between agents, skills, commands, and hooks. Helps decide which component type fits a use case, understand delegation and isolation, debug cross-component issues, and design cohesive plugin architectures. Use when choosing component types, designing plugins with multiple components, debugging delegation failures, asking about component interaction patterns, or creating Box Factory-compliant components.
 ---
 
-# Box Factory Architecture Skill
+# Box Factory Architecture
 
 This meta-skill teaches the Claude Code ecosystem architecture - how components interact, when to use each type, and how to design cohesive multi-component solutions. **This applies to both Main Claude (choosing what to create) and sub-agents (understanding their role).**
+
+## Workflow Selection
+
+| If you need...                      | Go to section...                                                                   |
+| ----------------------------------- | ---------------------------------------------------------------------------------- |
+| Quick overview example              | [Quick Start](#quick-start)                                                        |
+| Understand isolation and delegation | [Core Architectural Understanding](#core-architectural-understanding)              |
+| Choose between component types      | [Component Comparison (Best Practices)](#component-comparison-best-practices)      |
+| Design multi-component workflows    | [Component Interaction Patterns](#component-interaction-patterns-best-practices)   |
+| Debug delegation or loading issues  | [Debugging Cross-Component Issues](#debugging-cross-component-issues)              |
+| Validate architecture decisions     | [Quality Checklist](#quality-checklist)                                            |
+| See complete examples               | [Examples: Complete Component Ecosystems](#examples-complete-component-ecosystems) |
+
+## Quick Start
+
+**Core concept:** Claude Code uses isolated contexts with return-based delegation.
+
+```text
+User ↔ Main Claude ──→ Agent (isolated)
+                        │
+                        └──→ Returns result
+```
+
+**Example: Creating an agent**
+
+```text
+User: /add-agent test-runner "Run tests"
+  ↓
+Command → agent-writer agent
+  ├── Loads: agent-design skill
+  ├── Fetches: Official docs
+  ├── Creates: test-runner.md
+  └── Returns: Complete file
+
+Main Claude: "Created agent at .claude/agents/test-runner.md"
+```
+
+**Key rules:**
+
+- Agents can't ask users questions (isolated context)
+- Commands delegate to agents (thin wrapper pattern)
+- Skills load automatically when topics match
+- Hooks guarantee execution at lifecycle events
 
 ## Official Documentation
 
@@ -46,10 +89,10 @@ User ↔ Main Claude ──→ Sub-Agent (isolated context)
 **Execution flow:**
 
 1. Main Claude decides to delegate
-2. Sub-agent receives context + task
-3. Sub-agent works autonomously in isolation
-4. Sub-agent returns complete result
-5. Main Claude integrates result and continues
+1. Sub-agent receives context + task
+1. Sub-agent works autonomously in isolation
+1. Sub-agent returns complete result
+1. Main Claude integrates result and continues
 
 **What this means:**
 
@@ -429,10 +472,10 @@ Main Claude:
 **Key observations:**
 
 1. Command triggered explicitly (user typed `/add-agent`)
-2. Agent-writer operates in isolation (can't ask questions)
-3. Skill loads automatically (relevant topic)
-4. Agent returns complete result (file created)
-5. Main Claude integrates and communicates with user
+1. Agent-writer operates in isolation (can't ask questions)
+1. Skill loads automatically (relevant topic)
+1. Agent returns complete result (file created)
+1. Main Claude integrates and communicates with user
 
 ## Cross-Component Patterns (Best Practices)
 
@@ -840,9 +883,9 @@ development-tools/
 **Diagnosis:**
 
 1. Check agent description - too vague?
-2. Verify agent is properly installed
-3. Check tool permissions - missing required tools?
-4. Review context - does situation match description?
+1. Verify agent is properly installed
+1. Check tool permissions - missing required tools?
+1. Review context - does situation match description?
 
 **Fix:** Strengthen description with specific triggering conditions.
 
@@ -853,9 +896,9 @@ development-tools/
 **Diagnosis:**
 
 1. Check hook configuration syntax
-2. Verify matcher pattern (case-sensitive)
-3. Review hook logs (CTRL-R in Claude Code)
-4. Check timeout settings
+1. Verify matcher pattern (case-sensitive)
+1. Review hook logs (CTRL-R in Claude Code)
+1. Check timeout settings
 
 **Fix:** Validate JSON, test hook in isolation.
 
@@ -866,13 +909,13 @@ development-tools/
 **Diagnosis:**
 
 1. Check skill description - matches topic?
-2. Verify filename is `SKILL.md` (uppercase)
-3. Check directory structure (`skills/name/SKILL.md`)
-4. Review frontmatter YAML syntax
+1. Verify filename is `SKILL.md` (uppercase)
+1. Check directory structure (`skills/name/SKILL.md`)
+1. Review frontmatter YAML syntax
 
 **Fix:** Improve description triggering conditions.
 
-## Quality Checklist for Multi-Component Design
+## Quality Checklist
 
 Before finalizing a plugin or component set:
 
@@ -1055,24 +1098,3 @@ Skills:
 - Each component exemplifies what it teaches
 - Meta-skills guide creation of new components
 - Self-documenting, self-consistent ecosystem
-
-## Documentation References
-
-These are the authoritative sources for the ecosystem:
-
-**Core architecture:**
-
-- <https://code.claude.com/docs/en/sub-agents.md> - Isolation model, delegation patterns
-- <https://code.claude.com/docs/en/slash-commands.md> - User-triggered operations
-- <https://code.claude.com/docs/en/hooks> - Lifecycle integration
-- <https://code.claude.com/docs/en/plugins> - Component packaging
-
-**Component-specific:**
-
-- Fetch agent-design skill for agent creation guidance
-- Fetch slash-command-design skill for command patterns
-- Fetch skill-design skill for knowledge organization
-- Fetch hooks-design skill for hook best practices
-- Fetch plugin-design skill for multi-component packaging
-
-**Remember:** This meta-skill teaches ecosystem patterns. Always fetch official docs and component-specific skills for detailed guidance.

@@ -1,11 +1,53 @@
 ---
-name: box-factory-agent-design
+name: agent-design
 description: Interpretive guidance for designing Claude Code agents. Helps apply official documentation effectively and avoid common pitfalls. Use when creating or reviewing agents.
 ---
 
-# Agent Design Skill
+# Agent Design
 
 This skill provides interpretive guidance for creating Claude Code agents. It helps you understand what the docs mean and how to create excellent agents.
+
+## Workflow Selection
+
+| If you need to...                | Go to...                                                                    |
+| -------------------------------- | --------------------------------------------------------------------------- |
+| Understand agent isolation model | [Critical Architecture Understanding](#critical-architecture-understanding) |
+| Decide agent vs command vs skill | [Decision Framework](#decision-framework)                                   |
+| Pick tools for an agent          | [Tool Selection Philosophy](#tool-selection-philosophy)                     |
+| Write the description field      | [Description Field Design](#description-field-design)                       |
+| Avoid common mistakes            | [Common Gotchas](#common-gotchas)                                           |
+| Check color for status line      | [Color Selection](#color-selection)                                         |
+| Validate before completing       | [Quality Checklist](#quality-checklist)                                     |
+
+## Quick Start
+
+Create an agent at `.claude/agents/my-agent.md`:
+
+```yaml
+---
+name: my-agent
+description: Does X when Y. ALWAYS use when Z.
+tools: Read, Grep, Glob
+color: green
+---
+```
+
+```markdown
+# My Agent
+
+You are a specialized agent that [purpose].
+
+## Process
+
+1. [Step one]
+2. [Step two]
+
+## Constraints
+
+- Never include "ask the user" phrases (agents can't interact with users)
+```
+
+**Critical:** Agents operate in isolated context and return results. They cannot ask users questions.
 
 ## Official Documentation
 
@@ -19,7 +61,7 @@ This skill provides interpretive guidance for creating Claude Code agents. It he
 
 Agents operate in **isolated context** with a **return-based model**:
 
-```
+```text
 User ↔ Main Claude → Agent (isolated, returns results)
 ```
 
@@ -81,15 +123,15 @@ The optional `color` field sets visual distinction for agents in the status line
 
 **Semantic mapping:**
 
-| Color | Category | Use For |
-|-------|----------|---------|
-| `blue` | Creators | Agents that create/write files, components, code |
-| `green` | Quality | Validators, reviewers, checkers, analyzers |
-| `yellow` | Operations | Git, deployment, CI/CD, system tasks |
-| `purple` | Meta | Agents that create other agents |
-| `cyan` | Research | Exploration, documentation, research agents |
-| `red` | Safety | Security checks, destructive operations, warnings |
-| `orange` | Other | Agents that don't fit other categories (reserved) |
+| Color    | Category   | Use For                                           |
+| -------- | ---------- | ------------------------------------------------- |
+| `blue`   | Creators   | Agents that create/write files, components, code  |
+| `green`  | Quality    | Validators, reviewers, checkers, analyzers        |
+| `yellow` | Operations | Git, deployment, CI/CD, system tasks              |
+| `purple` | Meta       | Agents that create other agents                   |
+| `cyan`   | Research   | Exploration, documentation, research agents       |
+| `red`    | Safety     | Security checks, destructive operations, warnings |
+| `orange` | Other      | Agents that don't fit other categories (reserved) |
 
 **Example:**
 
@@ -242,46 +284,24 @@ Use consistent markdown hierarchy:
 - ✅ "Never modify production configuration files"
 - ✅ "Only analyze; never modify code"
 
-## Validation Workflow
+## Quality Checklist
 
 Before finalizing an agent:
 
 1. **Fetch official docs** - Verify against current specification
-2. **Check structure** - Valid YAML frontmatter, required fields present
-3. **Scan for forbidden language** - No user interaction phrases
-4. **Validate tools** - Match autonomous responsibilities, no AskUserQuestion
-5. **Test description** - Specific triggering conditions, not generic
-6. **Review system prompt** - Single H1, clear structure, actionable instructions
-7. **Verify no hardcoding** - No version-specific details that will become outdated
-8. **Set color** - Choose semantic color matching agent's primary function (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red, other=orange)
+1. **Check structure** - Valid YAML frontmatter, required fields present
+1. **Scan for forbidden language** - No user interaction phrases
+1. **Validate tools** - Match autonomous responsibilities, no AskUserQuestion
+1. **Test description** - Specific triggering conditions, not generic
+1. **Review system prompt** - Single H1, clear structure, actionable instructions
+1. **Verify no hardcoding** - No version-specific details that will become outdated
+1. **Set color** - Choose semantic color matching agent's primary function (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red, other=orange)
 
 ## Path Resolution
 
 When writing agents:
 
 1. If caller specifies path → use exact path
-2. If working in `.claude/agents/` → use that
-3. Default → `.claude/agents/` (project-level)
-4. User-level (`~/.claude/agents/`) → only when explicitly requested
-
-## Documentation References
-
-Authoritative sources for agent specifications:
-
-**Core specifications:**
-
-- <https://code.claude.com/docs/en/sub-agents.md> - Agent structure, examples, patterns
-
-**Tool verification:**
-
-- <https://code.claude.com/docs/en/settings#tools-available-to-claude> - Current tool list
-
-**Model selection:**
-
-- <https://code.claude.com/docs/en/model-config.md> - Available models, selection guidance
-
-**Workflow patterns:**
-
-- <https://code.claude.com/docs/en/common-workflows.md> - Real-world delegation patterns
-
-**Remember:** This skill helps you interpret and apply those docs effectively. Always fetch current documentation for specifications and details.
+1. If working in `.claude/agents/` → use that
+1. Default → `.claude/agents/` (project-level)
+1. User-level (`~/.claude/agents/`) → only when explicitly requested

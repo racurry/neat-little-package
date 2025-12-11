@@ -1,11 +1,48 @@
 ---
-name: box-factory-slash-command-design
+name: slash-command-design
 description: Interpretive guidance for designing Claude Code slash commands. Helps you apply official documentation effectively and create high-quality commands. Use when creating or reviewing slash commands.
 ---
 
-# Slash Command Design Skill
+# Slash Command Design
 
 This skill provides interpretive guidance and best practices for creating Claude Code slash commands. It helps you understand what the docs mean and how to create excellent commands.
+
+## Workflow Selection
+
+| If you need to...                          | Go to...                                                         |
+| ------------------------------------------ | ---------------------------------------------------------------- |
+| Understand command vs agent vs skill       | [Decision Framework](#decision-framework)                        |
+| See basic command structure                | [Quick Start](#quick-start)                                      |
+| Learn frontmatter fields                   | [Frontmatter Fields](#frontmatter-fields-official-specification) |
+| Use arguments in commands                  | [Argument Syntax](#argument-syntax-official-specification)       |
+| Execute bash or reference files            | [Advanced Features](#advanced-features-official-specification)   |
+| Decide delegation vs direct implementation | [Best Practices](#best-practices-opinionated-guidance)           |
+| Avoid common mistakes                      | [Common Pitfalls](#common-pitfalls-best-practices)               |
+| Validate before completing                 | [Quality Checklist](#quality-checklist)                          |
+
+## Quick Start
+
+Create a command at `.claude/commands/my-command.md`:
+
+```markdown
+---
+description: Brief description of what this command does
+argument-hint: expected-args
+---
+
+Command prompt content here.
+Use $1, $2 for individual arguments or $ARGUMENTS for all.
+```
+
+**Delegation pattern (recommended for complex tasks):**
+
+```markdown
+---
+description: Run full test suite and analyze failures
+---
+
+Use the test-runner agent to execute all tests and provide detailed failure analysis.
+```
 
 ## Official Documentation
 
@@ -107,7 +144,7 @@ Multiple files: `Compare @src/old.js with @src/new.js`
 
 Organize commands in subdirectories:
 
-```
+```text
 .claude/commands/frontend/component.md → /component (project:frontend)
 .claude/commands/backend/endpoint.md → /endpoint (project:backend)
 ```
@@ -382,7 +419,7 @@ description: Test, lint, format, commit, and deploy
 
 **Better:** Separate commands or orchestrator agent that coordinates multiple specialized agents.
 
-## Command Quality Checklist
+## Quality Checklist
 
 Before finalizing a command:
 
@@ -477,17 +514,3 @@ Follow project conventions:
 - ✅ Detailed deliverables listed
 - ✅ References project conventions
 - ✅ Actionable and unambiguous
-
-## Documentation References
-
-Authoritative sources for command specifications:
-
-**Core specifications:**
-
-- <https://code.claude.com/docs/en/slash-commands.md> - Command structure, examples, patterns
-
-**Tool verification:**
-
-- <https://code.claude.com/docs/en/settings#tools-available-to-claude> - Current tool list
-
-**Remember:** Official docs provide structure and features. This skill provides best practices and patterns for creating excellent commands.
