@@ -96,9 +96,9 @@ git log -1 --format='%an <%ae>'
 **What happens:**
 
 1. User attempts: `git commit -m "message"`
-2. Pre-commit hook runs and modifies files (auto-format)
-3. Commit FAILS with message about working directory changes
-4. Modified files are left unstaged
+1. Pre-commit hook runs and modifies files (auto-format)
+1. Commit FAILS with message about working directory changes
+1. Modified files are left unstaged
 
 **Why it fails:** Git won't commit when the working directory is modified during the commit process (hooks changed files after they were staged).
 
