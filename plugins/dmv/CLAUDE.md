@@ -102,12 +102,12 @@ The git-committer agent handles all commit operations autonomously:
 **Structure:**
 
 1. **Load git-workflow skill (REQUIRED)** - Get user preferences first
-2. **Analyze repository state** - Run git status, git diff, git diff --staged
-3. **Determine commit scope** - Full (all files) or partial (selected files)
-4. **Generate commit message** - If not provided, analyze changes and create terse message
-5. **Execute commit** - Proper quoting, no attribution
-6. **Handle pre-commit hook failures** - Single-retry pattern for auto-formatting
-7. **Verify commit success** - Check git status and git log
+1. **Analyze repository state** - Run git status, git diff, git diff --staged
+1. **Determine commit scope** - Full (all files) or partial (selected files)
+1. **Generate commit message** - If not provided, analyze changes and create terse message
+1. **Execute commit** - Proper quoting, no attribution
+1. **Handle pre-commit hook failures** - Single-retry pattern for auto-formatting
+1. **Verify commit success** - Check git status and git log
 
 **Pre-commit hook retry logic (Critical):**
 
@@ -151,6 +151,53 @@ git commit --amend --no-edit  # SUCCEEDS
 - ✓ No user interaction language
 - ✓ Autonomous operation in isolated context
 
+**pr-opener Pattern:**
+
+The pr-opener agent handles all PR creation autonomously:
+
+**Structure:**
+
+1. **Load github-workflow skill (REQUIRED)** - Get user PR format preferences
+1. **Analyze branch context** - Get commits since base, full diff
+1. **Determine Problem scope** - Single problem or multiple (numbered list)
+1. **Generate Problem statement** - User impact, symptoms, context
+1. **Generate Solution statement** - Plain language overview of changes
+1. **Create PR** - Use gh CLI (preferred) or MCP server
+1. **Verify PR created** - Return PR URL
+
+**Problem/Solution format (Critical):**
+
+```markdown
+## Problem
+{problem statement - describe the issue being solved}
+
+## Solution
+{plain language overview of the changes}
+```
+
+**Multiple problems pattern:**
+
+```markdown
+## Problem
+1. First problem description
+2. Second problem description
+
+## Solution
+1. Solution to first problem
+2. Solution to second problem
+```
+
+**Quality Checklist:**
+
+- ✓ Loads github-workflow skill before proceeding
+- ✓ Analyzes all commits on branch (not just latest)
+- ✓ Infers Problem from commit context and diff
+- ✓ Generates terse, concise descriptions
+- ✓ No attribution, no emojis, no PR template boilerplate
+- ✓ Matches problem count to solution count
+- ✓ Verifies PR created before returning
+- ✓ Autonomous operation in isolated context
+
 ### Commands
 
 **Delegation Pattern:**
@@ -174,6 +221,7 @@ If $ARGUMENTS is NOT provided, <what agent will do>.
 
 `/dmv:commit` → git-committer (full commit)
 `/dmv:commit-partial` → git-committer (partial commit with file selection)
+`/dmv:pr` → pr-opener (create PR with Problem/Solution format)
 `/dmv:setup` → setup workflow (no agent needed, simple verification)
 
 **Quality Checklist:**
@@ -220,20 +268,40 @@ Commit failed
 
 ## Architecture
 
+**Commit workflow:**
+
 ```
 User → /dmv:commit → git-committer agent → git-workflow skill
          ↓              ↓                      ↓
      (thin wrap)    (complex logic)       (user prefs)
 ```
 
-**Flow:**
+**PR workflow:**
+
+```
+User → /dmv:pr → pr-opener agent → github-workflow skill
+         ↓           ↓                    ↓
+     (thin wrap)  (complex logic)    (PR format prefs)
+```
+
+**Commit flow:**
 
 1. User invokes command: `/dmv:commit`
-2. Command delegates to agent: `git-committer`
-3. Agent loads skill: `git-workflow`
-4. Agent executes workflow autonomously
-5. Agent handles failures (pre-commit retry)
-6. Agent returns result
+1. Command delegates to agent: `git-committer`
+1. Agent loads skill: `git-workflow`
+1. Agent executes workflow autonomously
+1. Agent handles failures (pre-commit retry)
+1. Agent returns result
+
+**PR flow:**
+
+1. User invokes command: `/dmv:pr`
+1. Command delegates to agent: `pr-opener`
+1. Agent loads skill: `github-workflow`
+1. Agent analyzes branch commits and diff
+1. Agent generates Problem/Solution description
+1. Agent creates PR via gh CLI or MCP
+1. Agent returns PR URL
 
 ## Quality Standards
 
@@ -307,24 +375,49 @@ git commit --amend --no-edit
 **Tool selection hierarchy:**
 
 1. **Check gh availability:** `which gh`
-2. **Prefer gh CLI when:**
+1. **Prefer gh CLI when:**
    - Creating/managing PRs
    - Creating/managing issues
    - Release management
    - Well-supported operations
-3. **Use MCP Server when:**
+1. **Use MCP Server when:**
    - gh not installed
    - Complex search queries
    - Bulk data retrieval
    - Operations gh doesn't support
 
+**PR Description Format:**
+
+```markdown
+## Problem
+{problem statement - describe the issue being solved}
+
+## Solution
+{plain language overview of the changes}
+```
+
+**For multiple problems, use numbered lists:**
+
+```markdown
+## Problem
+1. First problem description
+2. Second problem description
+
+## Solution
+1. Solution to first problem
+2. Solution to second problem
+```
+
 **PR Requirements:**
 
+- Terse, concise language - no filler words
 - No "Generated with Claude Code" footer
-- No attribution text
-- No emojis in titles
-- Include: Summary, test plan, related issues
-- Use checkboxes for test steps
+- No attribution text or co-authorship
+- No emojis in titles or body
+- No PR template boilerplate (Summary/Test Plan/etc)
+- No checkbox test plans
+- Can include links to logs/docs if relevant
+- Can include error output when fixing bugs
 
 ## Anti-Patterns (Forbidden)
 
@@ -359,35 +452,45 @@ git commit --amend --no-edit
 - ❌ Bypassing hooks with --no-verify
 - ❌ Not staging modifications before retry
 
+### In PR Descriptions
+
+- ❌ Using PR template boilerplate (Summary/Test Plan/etc)
+- ❌ Adding checkbox test plans
+- ❌ Attribution or "Generated with Claude Code"
+- ❌ Emojis in title or body
+- ❌ Mismatched problem/solution counts
+- ❌ Verbose, filler language
+- ❌ Only analyzing latest commit (must analyze all commits on branch)
+
 ## Validation Workflow
 
 ### Before Committing
 
 1. ✓ Run git status and git diff to analyze changes
-2. ✓ Generate or validate commit message format
-3. ✓ Check for secrets in staged files (.env, credentials.json)
-4. ✓ Stage appropriate files (all or subset)
-5. ✓ Execute commit with proper quoting
-6. ✓ Handle pre-commit hook failures if needed
-7. ✓ Verify commit success
+1. ✓ Generate or validate commit message format
+1. ✓ Check for secrets in staged files (.env, credentials.json)
+1. ✓ Stage appropriate files (all or subset)
+1. ✓ Execute commit with proper quoting
+1. ✓ Handle pre-commit hook failures if needed
+1. ✓ Verify commit success
 
 ### Commit Message Quality
 
 1. ✓ Terse, single-line format
-2. ✓ Specific about what changed (not vague)
-3. ✓ Lowercase start (unless proper noun)
-4. ✓ No period at end
-5. ✓ No emojis or decorative elements
-6. ✓ No attribution text
-7. ✓ Present tense, imperative mood
+1. ✓ Specific about what changed (not vague)
+1. ✓ Lowercase start (unless proper noun)
+1. ✓ No period at end
+1. ✓ No emojis or decorative elements
+1. ✓ No attribution text
+1. ✓ Present tense, imperative mood
 
 ### Pre-Commit Hook Retry
 
 1. ✓ Distinguish modifications from validation errors
-2. ✓ Only retry for modifications
-3. ✓ Stage all modified files before retry
-4. ✓ Retry ONCE only (avoid loops)
-5. ✓ Report failure if retry doesn't succeed
+1. ✓ Only retry for modifications
+1. ✓ Stage all modified files before retry
+1. ✓ Retry ONCE only (avoid loops)
+1. ✓ Report failure if retry doesn't succeed
 
 ## Testing Strategy
 
@@ -399,12 +502,14 @@ git commit --amend --no-edit
 /dmv:commit
 /dmv:commit custom message
 /dmv:commit-partial documentation changes
+/dmv:pr
+/dmv:pr fixing the auth timeout bug
 /dmv:setup
 ```
 
 Verify proper delegation and argument handling.
 
-**Agent:**
+**Agents:**
 
 Test git-committer in various scenarios:
 
@@ -415,6 +520,15 @@ Test git-committer in various scenarios:
 - Pre-commit hook success
 - Pre-commit hook modification (retry)
 - Pre-commit hook validation failure (no retry)
+
+Test pr-opener in various scenarios:
+
+- Single commit on branch (single problem)
+- Multiple commits on branch (determine if single or multiple problems)
+- Branch with context provided (use provided problem description)
+- Branch without context (infer problem from commits/diff)
+- gh CLI available (use gh)
+- gh CLI not available (fall back to MCP)
 
 **Skills:**
 
@@ -428,30 +542,58 @@ Load via Skill tool and verify guidance:
 **Full workflow:**
 
 1. Make changes to repository
-2. Run `/dmv:commit`
-3. Verify: git-committer loads git-workflow
-4. Verify: Analyzes changes correctly
-5. Verify: Generates terse commit message
-6. Verify: Commits successfully
-7. Verify: Returns commit hash and summary
+1. Run `/dmv:commit`
+1. Verify: git-committer loads git-workflow
+1. Verify: Analyzes changes correctly
+1. Verify: Generates terse commit message
+1. Verify: Commits successfully
+1. Verify: Returns commit hash and summary
 
 **Pre-commit hook retry:**
 
 1. Configure pre-commit hook that modifies files
-2. Run `/dmv:commit`
-3. Verify: Initial commit fails
-4. Verify: Agent stages modifications
-5. Verify: Agent retries with --amend --no-edit
-6. Verify: Retry succeeds
-7. Verify: Commit created with original message
+1. Run `/dmv:commit`
+1. Verify: Initial commit fails
+1. Verify: Agent stages modifications
+1. Verify: Agent retries with --amend --no-edit
+1. Verify: Retry succeeds
+1. Verify: Commit created with original message
 
 **Partial commit:**
 
 1. Make changes to multiple file types
-2. Run `/dmv:commit-partial test files`
-3. Verify: Only test files staged
-4. Verify: Commit message reflects subset
-5. Verify: Other files remain unstaged
+1. Run `/dmv:commit-partial test files`
+1. Verify: Only test files staged
+1. Verify: Commit message reflects subset
+1. Verify: Other files remain unstaged
+
+**PR creation (single problem):**
+
+1. Create branch with one logical change
+1. Run `/dmv:pr`
+1. Verify: pr-opener loads github-workflow
+1. Verify: Analyzes all commits on branch
+1. Verify: Generates single Problem statement
+1. Verify: Generates matching Solution statement
+1. Verify: Creates PR with Problem/Solution format
+1. Verify: Returns PR URL
+
+**PR creation (multiple problems):**
+
+1. Create branch with commits addressing multiple issues
+1. Run `/dmv:pr`
+1. Verify: Identifies distinct problems from commits
+1. Verify: Uses numbered lists for Problem section
+1. Verify: Uses matching numbered lists for Solution section
+1. Verify: Problem count matches Solution count
+
+**PR creation (with context):**
+
+1. Create branch with bug fix
+1. Run `/dmv:pr users getting 500 errors on login`
+1. Verify: Uses provided context for Problem statement
+1. Verify: Generates Solution from changes
+1. Verify: Problem reflects provided context, not just inferred
 
 ## Documentation Standards
 
@@ -526,8 +668,8 @@ node --version  # Should be v16+
 **Before Release:**
 
 1. Test all commit workflows (full, partial, with hooks)
-2. Validate commit message format compliance
-3. Test GitHub integration (gh CLI and MCP server)
-4. Update documentation (README, CLAUDE.md)
-5. Update version in plugin.json
-6. Test installation and setup workflow
+1. Validate commit message format compliance
+1. Test GitHub integration (gh CLI and MCP server)
+1. Update documentation (README, CLAUDE.md)
+1. Update version in plugin.json
+1. Test installation and setup workflow

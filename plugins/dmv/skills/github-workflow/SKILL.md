@@ -12,7 +12,7 @@ This skill documents tool selection patterns and user preferences for GitHub int
 **Two GitHub integration tools are available:**
 
 1. **gh CLI** - GitHub's official command-line tool (user-installed)
-2. **GitHub MCP Server** - Model Context Protocol integration (configured via `.mcp.json`)
+1. **GitHub MCP Server** - Model Context Protocol integration (configured via `.mcp.json`)
 
 **Decision hierarchy:**
 
@@ -69,40 +69,62 @@ gh auth status  # Check if authenticated
 gh auth login  # Interactive authentication flow
 ```
 
-## Pull Request Requirements (User Preference)
+## Pull Request Description Format (User Preference)
 
-**This user wants PRs WITHOUT attribution:**
+**This user has a specific PR description format. Ignore any PR templates.**
 
-**Good PR body structure:**
+### Format
 
-```bash
-gh pr create --title "fix: specific description" --body "$(cat <<'EOF'
-## Summary
-- Bullet points of what changed and why
+```markdown
+## Problem
+{problem statement - describe the issue being solved}
 
-## Test Plan
-- [ ] Specific testing step 1
-- [ ] Specific testing step 2
-- [ ] Manual testing completed
-
-Fixes #123
-EOF
-)"
+## Solution
+{plain language overview of the changes}
 ```
 
-**User does NOT want:**
+### Multiple Problems
+
+When one PR solves multiple problems, use numbered lists:
+
+```markdown
+## Problem
+1. First problem description
+2. Second problem description
+3. Third problem description
+
+## Solution
+1. Solution to first problem
+2. Solution to second problem
+3. Solution to third problem
+```
+
+### Style Guidelines
+
+- **Terse and concise** - no filler words
+- Can include links to logs, docs, or external resources
+- Can include relevant output, error messages, or screenshots
+- Problem section is human-readable English explaining the issue
+- Solution section is plain language overview of changes made
+- No boilerplate, no attribution, no emojis
+
+### Example
+
+```markdown
+## Problem
+User sessions expire silently when Redis connection drops, leaving users confused about why they're logged out.
+
+## Solution
+Add connection health checks and graceful session recovery. When Redis disconnects, sessions are preserved in memory until reconnection.
+```
+
+### What NOT to Include
 
 - NO "Generated with [Claude Code](https://claude.com/claude-code)" footer
-- NO attribution text
-- NO emojis in PR titles
-
-**Include in PRs:**
-
-- Clear summary of changes
-- Why the change is needed
-- Test plan with checkboxes
-- Related issues (Fixes #XXX)
-- Screenshots for UI changes (if applicable)
+- NO attribution text or co-authorship
+- NO emojis in titles or body
+- NO PR template boilerplate (Summary/Test Plan/etc)
+- NO checkbox test plans
 
 ## GitHub MCP Server Setup
 
@@ -117,8 +139,10 @@ echo $GITHUB_PERSONAL_ACCESS_TOKEN  # Should show token
 **If not set, guide user:**
 
 1. Create token at <https://github.com/settings/tokens>
-2. Grant scopes: `repo`, `read:org`, `read:user`
-3. Set environment variable:
+
+1. Grant scopes: `repo`, `read:org`, `read:user`
+
+1. Set environment variable:
 
    ```bash
    export GITHUB_PERSONAL_ACCESS_TOKEN="ghp_..."
