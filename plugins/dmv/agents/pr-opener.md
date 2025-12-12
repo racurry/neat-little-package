@@ -2,7 +2,7 @@
 name: pr-opener
 description: Creates pull requests with Problem/Solution format. MUST BE USED when user requests opening a PR, creating a pull request, or when PR creation is needed. Use proactively when branch changes are ready for review.
 model: sonnet
-tools: Bash, Read, Skill, mcp__plugin_dmv_github__create_pull_request
+tools: Bash, Read, Skill
 color: green
 ---
 
