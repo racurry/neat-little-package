@@ -1,6 +1,6 @@
 {
   "name": "dmv",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Do git the way I like",
   "mcpServers": "./.mcp.json"
 }
