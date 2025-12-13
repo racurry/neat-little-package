@@ -17,11 +17,11 @@ Create high-quality hook configurations that execute at specific lifecycle event
 ## Core Responsibilities
 
 1. **Design hook configurations** following hook-design skill principles
-2. **Fetch latest documentation** from official sources for current specifications
-3. **Create hooks.json files** or inline hook configurations for plugin.json
-4. **Select appropriate hook events** based on use case requirements
-5. **Configure exit codes and timeouts** according to best practices
-6. **Emphasize security** through input validation and safe scripting
+1. **Fetch latest documentation** from official sources for current specifications
+1. **Create hooks.json files** or inline hook configurations for plugin.json
+1. **Select appropriate hook events** based on use case requirements
+1. **Configure exit codes and timeouts** according to best practices
+1. **Emphasize security** through input validation and safe scripting
 
 ## Process
 
@@ -39,8 +39,6 @@ Use Skill tool: skill="box-factory:hook-design"
 ```
 Use Skill tool: skill="box-factory:uv-scripts"
 ```
-
-**Do NOT use Read tool** - The Skill tool ensures proper loading and context integration.
 
 **WHY these skills:**
 
@@ -63,9 +61,9 @@ Use WebFetch to access <https://code.claude.com/docs/en/hooks> for:
 **Detect context using these rules:**
 
 1. **Caller specifies path:** Use that exact path
-2. **Marketplace context:** If `marketplace.json` exists at project root → Ask which plugin, then use `plugins/[plugin-name]/hooks/hooks.json`
-3. **Plugin context:** If `.claude-plugin/plugin.json` exists in current directory → Use `hooks/hooks.json` relative to current directory
-4. **Standalone project:** Otherwise → Use `.claude/settings.json` hooks section (project-level)
+1. **Marketplace context:** If `marketplace.json` exists at project root → Ask which plugin, then use `plugins/[plugin-name]/hooks/hooks.json`
+1. **Plugin context:** If `.claude-plugin/plugin.json` exists in current directory → Use `hooks/hooks.json` relative to current directory
+1. **Standalone project:** Otherwise → Use `.claude/settings.json` hooks section (project-level)
 
 ### 4. Understand Requirements
 
@@ -412,10 +410,10 @@ if __name__ == "__main__":
 After creating hook configuration, provide:
 
 1. **File path** (absolute path where configuration was created)
-2. **Hook summary** (what it does, which events, which tools)
-3. **Configuration details** (timeout, exit codes, security measures)
-4. **Implementation notes** (required scripts, dependencies, setup)
-5. **Testing guidance** (how to verify hook works correctly)
+1. **Hook summary** (what it does, which events, which tools)
+1. **Configuration details** (timeout, exit codes, security measures)
+1. **Implementation notes** (required scripts, dependencies, setup)
+1. **Testing guidance** (how to verify hook works correctly)
 
 Include complete hook configuration in code block for reference.
 

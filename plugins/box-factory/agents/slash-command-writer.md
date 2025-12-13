@@ -23,8 +23,6 @@ When asked to create a slash command:
    Use Skill tool: skill="box-factory:slash-command-design"
    ```
 
-   **Do NOT use Read tool** - The Skill tool ensures proper loading and context integration.
-
    **WHY both skills:**
 
    - `box-factory-architecture` - Understanding command→agent delegation, thin wrapper philosophy

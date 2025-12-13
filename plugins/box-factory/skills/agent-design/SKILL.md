@@ -9,15 +9,17 @@ This skill provides interpretive guidance for creating Claude Code agents. It he
 
 ## Workflow Selection
 
-| If you need to...                | Go to...                                                                    |
-| -------------------------------- | --------------------------------------------------------------------------- |
-| Understand agent isolation model | [Critical Architecture Understanding](#critical-architecture-understanding) |
-| Decide agent vs command vs skill | [Decision Framework](#decision-framework)                                   |
-| Pick tools for an agent          | [Tool Selection Philosophy](#tool-selection-philosophy)                     |
-| Write the description field      | [Description Field Design](#description-field-design)                       |
-| Avoid common mistakes            | [Common Gotchas](#common-gotchas)                                           |
-| Check color for status line      | [Color Selection](#color-selection)                                         |
-| Validate before completing       | [Quality Checklist](#quality-checklist)                                     |
+| If you need to...                  | Go to...                                                                    |
+| ---------------------------------- | --------------------------------------------------------------------------- |
+| Understand agent isolation model   | [Critical Architecture Understanding](#critical-architecture-understanding) |
+| Decide agent vs command vs skill   | [Decision Framework](#decision-framework)                                   |
+| Decide what goes in agent vs skill | [Agent-Skill Relationship](#agent-skill-relationship)                       |
+| Pick tools for an agent            | [Tool Selection Philosophy](#tool-selection-philosophy)                     |
+| Write the description field        | [Description Field Design](#description-field-design)                       |
+| Avoid common mistakes              | Read `gotchas.md`                                                           |
+| Write agent system prompts         | Read `system-prompt.md`                                                     |
+| Check color for status line        | [Color Selection](#color-selection)                                         |
+| Validate before completing         | [Quality Checklist](#quality-checklist)                                     |
 
 ## Quick Start
 
@@ -99,6 +101,64 @@ User ↔ Main Claude → Agent (isolated, returns results)
 - Procedural expertise that's substantial
 - Progressive disclosure would save tokens
 
+### Agent-Skill Relationship
+
+**Core principle:** When an agent loads a skill, knowledge lives in the skill; the agent focuses on process.
+
+**Decision logic:**
+
+| Agent has backing skill? | Where knowledge goes            | Agent contains                       |
+| ------------------------ | ------------------------------- | ------------------------------------ |
+| Yes, loads a skill       | Skill contains domain knowledge | Process, mechanics, validation steps |
+| No backing skill         | Agent contains domain knowledge | Both process AND knowledge           |
+
+**Why this matters:**
+
+- Avoids duplication (same knowledge in agent AND skill)
+- Single source of truth (update skill, all agents benefit)
+- Smaller agent prompts (less context consumed)
+- Skills are reusable across multiple agents
+
+**Pattern for skill-backed agents:**
+
+```markdown
+## Process
+
+1. **Load design skill (REQUIRED)**
+```
+
+Use Skill tool: skill="my-plugin:my-skill"
+
+```
+
+2. **Follow skill guidance** for [specific aspect]:
+- See `SKILL.md` for [topic]
+- See `subfile.md` for [detailed topic]
+
+3. **Execute task** using skill patterns
+```
+
+**Pattern for standalone agents (no skill):**
+
+```markdown
+## Process
+
+1. **Understand requirements** [process step]
+
+2. **Apply domain knowledge** [embedded in agent]:
+   - Guideline one
+   - Guideline two
+   - Decision framework here
+
+3. **Execute task** [process step]
+```
+
+**Anti-pattern:** Agent loads skill but also embeds same knowledge inline. This causes:
+
+- Maintenance burden (update two places)
+- Context waste (duplicate content loaded)
+- Potential conflicts (agent and skill disagree)
+
 ### Tool Selection Philosophy
 
 **Match tools to autonomous responsibilities:**
@@ -163,126 +223,6 @@ The `description` field determines when Claude delegates to your agent. This is 
 - Be specific about context and use cases
 - Test empirically - if your agent isn't being invoked automatically, revise the description
 - Avoid overly generic descriptions that match too many scenarios
-
-## Common Gotchas
-
-### Gotcha #1: User Interaction Language
-
-**Problem:** Agent prompts assume they can ask questions or confirm actions
-
-**Forbidden phrases anywhere in agent prompt:**
-
-- "ask the user", "gather from user", "clarify with user"
-- "request from user", "prompt the user", "wait for input"
-- "check with user", "verify with user", "confirm with user"
-
-**Replace with:**
-
-- "infer from context", "use provided parameters"
-- "make reasonable assumptions", "use available information"
-- "default to [specific behavior]"
-
-### Gotcha #2: Hardcoding Version-Specific Info
-
-**Problem:** Docs change; hardcoded details become outdated
-
-**Instead of:**
-
-```markdown
-Available models: sonnet, opus, haiku
-Use these tools: Read, Write, Edit, Bash
-```
-
-**Do this:**
-
-```markdown
-See model-config documentation for current options
-Refer to tools documentation for current capabilities
-```
-
-### Gotcha #3: Tool Mismatches
-
-**Problem:** Tools don't match the agent's autonomous responsibilities
-
-**Examples:**
-
-- ❌ Code generator with only Read (can't write generated code)
-- ❌ Test runner without Bash (can't run tests)
-- ❌ Code reviewer with Write/Edit (should be read-only)
-
-**Solution:** Grant minimal necessary permissions for the agent's actual work
-
-## Common Antipatterns
-
-### Antipattern: Overly Broad Scope
-
-**What you'll see:** "Full-stack engineer agent that handles everything"
-
-**Why it fails:**
-
-- Unclear when to delegate
-- Context pollution
-- Violates single responsibility principle
-
-**Solution:** Split into focused agents (frontend-dev, backend-dev, db-specialist)
-
-### Antipattern: Vague Delegation Triggers
-
-**What you'll see:** Great functionality, vague description
-
-**Why it fails:** Agent only fires on explicit request, not autonomously
-
-**Solution:** Make description specific about triggering conditions and use cases
-
-### Antipattern: Interactive Assumptions
-
-**What you'll see:** "Ask user for target directory", "Confirm with user before proceeding"
-
-**Why it fails:** Agents can't interact with users
-
-**Solution:** "Use provided directory parameter or default to ./src", "Proceed based on available context"
-
-## System Prompt Best Practices
-
-### Structure
-
-Use consistent markdown hierarchy:
-
-```markdown
-# Agent Name (H1 - single heading)
-
-## Purpose
-[Clear statement of role]
-
-## Process
-1. Step one
-2. Step two
-
-## Guidelines
-- Key principle one
-- Key principle two
-
-## Constraints
-- What NOT to do
-- Boundaries and limitations
-```
-
-### Content Quality
-
-**Be specific and actionable:**
-
-- ✅ "Run pytest -v and parse output for failures"
-- ❌ "Run tests and check for problems"
-
-**Define scope clearly:**
-
-- ✅ "Only analyze Python files in src/ directory"
-- ❌ "Analyze code"
-
-**Include constraints:**
-
-- ✅ "Never modify production configuration files"
-- ✅ "Only analyze; never modify code"
 
 ## Quality Checklist
 

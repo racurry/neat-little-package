@@ -98,14 +98,13 @@ Every skill needs a Workflow Selection table as the first content section.
 
 ## Size Guidance
 
-| Component                | Target             | Consider splitting if...                 |
-| ------------------------ | ------------------ | ---------------------------------------- |
-| SKILL.md (unified)       | 50-200 lines       | Over 300 lines with independent sections |
-| SKILL.md (with subfiles) | 30-80 lines        | Just navigation + core concepts          |
-| Subfiles                 | 100-200 lines each | Over 250 lines                           |
-| Quick Start section      | ≤20 lines          | Needs more than basic example            |
+| Component           | Target             | Hard Limit |
+| ------------------- | ------------------ | ---------- |
+| SKILL.md (any type) | 50-200 lines       | 300 lines  |
+| Subfiles            | 100-200 lines each | 250 lines  |
+| Quick Start section | ≤20 lines          | —          |
 
-**Teaching/philosophy skills** can be longer (500+ lines) if content is truly interconnected.
+**No exceptions.** Even teaching/philosophy skills with interconnected content should keep SKILL.md under 300 lines and offload details to subfiles. The main file provides navigation and core concepts; subfiles contain the depth.
 
 ## Scripts Folder
 

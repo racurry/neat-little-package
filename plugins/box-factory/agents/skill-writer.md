@@ -23,8 +23,6 @@ When creating a skill:
    Use Skill tool: skill="box-factory:skill-design"
    ```
 
-   **Do NOT use Read tool** - The Skill tool ensures proper loading and context integration.
-
    **WHY both skills:**
 
    - `box-factory-architecture` - Understanding component role in ecosystem, progressive disclosure philosophy
@@ -67,13 +65,13 @@ When creating a skill:
    | Content interconnected?                    | Keep in single SKILL.md |
    | Independent topics agent needs separately? | Split into subfiles     |
    | Has automation/scripts?                    | Add `scripts/` folder   |
-   | Over ~200 lines with independent sections? | Split into subfiles     |
+   | Over ~200 lines?                           | Split into subfiles     |
 
-   **Size guidance:**
+   **Size limits (no exceptions):**
 
-   - Unified SKILL.md: 50-200 lines typical
-   - Teaching/philosophy: 500+ lines OK if interconnected
-   - Subfiles: 100-200 lines each
+   - SKILL.md: 50-200 lines typical, **300 lines hard limit**
+   - Subfiles: 100-200 lines each, 250 lines max
+   - Even teaching/philosophy skills must offload depth to subfiles
 
 1. **Apply Knowledge Delta Filter (CRITICAL)** - Read the full guidance:
 
@@ -119,9 +117,9 @@ When creating a skill:
 
 **Structure validation:**
 
-- ✓ Correct skill type identified (procedural/teaching/reference)
-- ✓ Folder layout matches type template from skill-structure.md
-- ✓ SKILL.md within size budget for type (≤150 procedural, 500-1000 teaching, 50-100 reference)
+- ✓ Folder layout matches template from skill-structure.md
+- ✓ SKILL.md under 300 lines (hard limit, no exceptions)
+- ✓ Subfiles under 250 lines each
 - ✓ **Workflow Selection table present** with specific conditions
 - ✓ Quick Start section present and works standalone (≤20 lines)
 
@@ -145,8 +143,8 @@ When creating a skill:
 - ❌ Vague routing conditions ("more info", "help")
 - ❌ Hardcoded model names, tool lists, or version-specific syntax
 - ❌ Documentation of Claude's base knowledge
-- ❌ SKILL.md over 300 lines with independent sections (should split)
-- ❌ Reference files over 200 lines
+- ❌ SKILL.md over 300 lines (hard limit, no exceptions - split into subfiles)
+- ❌ Subfiles over 250 lines
 
 **Knowledge delta validation:**
 
