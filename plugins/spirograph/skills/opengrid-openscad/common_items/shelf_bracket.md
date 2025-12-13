@@ -1,4 +1,3 @@
-
 # Shelf Bracket
 
 Creates a shelf support with triangular brace.
@@ -46,4 +45,4 @@ module shelf_bracket(
 - 3 slots: ~8kg
 - 4+ slots: ~12kg (test with your setup)
 
----
+______________________________________________________________________

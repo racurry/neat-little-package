@@ -15,12 +15,12 @@ Reference for generating corner turns and multi-path junction channels.
 
 ## Channel Selection by Junction Type
 
-| Junction Need | Channel | Outputs | Use Case |
-|---------------|---------|---------|----------|
-| 90° corner turn | L Channel | 2 perpendicular | Desk edge, wall corner |
-| 3-way intersection | T Channel | 3 directions (1 inline, 2 perpendicular) | Main run with branch |
-| 4-way crossroads | X Channel | 4 directions (2 perpendicular pairs) | Cable grid intersection |
-| Split 1 to 2 | Y Channel | 1 input, 2 angled outputs | Branch to dual monitors |
+| Junction Need      | Channel   | Outputs                                  | Use Case                |
+| ------------------ | --------- | ---------------------------------------- | ----------------------- |
+| 90° corner turn    | L Channel | 2 perpendicular                          | Desk edge, wall corner  |
+| 3-way intersection | T Channel | 3 directions (1 inline, 2 perpendicular) | Main run with branch    |
+| 4-way crossroads   | X Channel | 4 directions (2 perpendicular pairs)     | Cable grid intersection |
+| Split 1 to 2       | Y Channel | 1 input, 2 angled outputs                | Branch to dual monitors |
 
 ## L Channel (90° Corner)
 

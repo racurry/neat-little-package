@@ -16,7 +16,7 @@ Generates OpenSCAD code for desktop and drawer storage items compatible with Gri
 
 **Pattern references** (read as needed):
 
-- ./common_items/*.md - Full OpenSCAD modules for each pattern
+- ./common_items/\*.md - Full OpenSCAD modules for each pattern
 - home-organization/gridfinity-reference.md - Gridfinity system overview (sibling skill)
 
 ## Core Understanding (Critical Architecture)
@@ -81,13 +81,13 @@ bin_height = height_unit * height_u;  // 28mm
 
 Use this decision tree to select pattern:
 
-| User wants to store | Primary pattern | Alternative | Read module |
-|---------------------|----------------|-------------|-------------|
-| Generic desktop organization | Basic Bin | Divided Bin (if categories) | basic_bin.md |
-| Sorted small parts (resistors, screws) | Divider Bin | Multiple basic bins | divider_bin.md |
-| Maximum drawer space efficiency | Basic Bin (exact drawer dimensions) | Lite Bin (vase mode) | basic_bin.md, lite_bin.md |
-| Rapid printing / minimal filament | Lite Bin | Basic Bin (if strength needed) | lite_bin.md |
-| Custom baseplate for drawer/desk | Baseplate | N/A | baseplate.md |
+| User wants to store                    | Primary pattern                     | Alternative                    | Read module               |
+| -------------------------------------- | ----------------------------------- | ------------------------------ | ------------------------- |
+| Generic desktop organization           | Basic Bin                           | Divided Bin (if categories)    | basic_bin.md              |
+| Sorted small parts (resistors, screws) | Divider Bin                         | Multiple basic bins            | divider_bin.md            |
+| Maximum drawer space efficiency        | Basic Bin (exact drawer dimensions) | Lite Bin (vase mode)           | basic_bin.md, lite_bin.md |
+| Rapid printing / minimal filament      | Lite Bin                            | Basic Bin (if strength needed) | lite_bin.md               |
+| Custom baseplate for drawer/desk       | Baseplate                           | N/A                            | baseplate.md              |
 
 ### When Pattern Is Unclear
 
@@ -164,6 +164,7 @@ union() {
 **When user says "I need a bin for X"**:
 
 1. **Estimate grid dimensions** for their items:
+
    - Small parts (screws, resistors): 1×1 or 2×1 (42mm or 84mm)
    - Tools (pliers, cutters): 2×2 or 3×2 (84mm × 84mm or 126mm × 84mm)
    - Desk supplies (tape, scissors): 2×3 or 3×3 (84mm × 126mm or 126mm × 126mm)
@@ -188,6 +189,7 @@ union() {
    ```
 
 4. **Inform user of actual dimensions**:
+
    - "2×3×4u bin = 83mm × 124.5mm × 28mm exterior"
    - "Usable interior ≈ 79mm × 120.5mm × 23mm (with 2mm walls)"
 

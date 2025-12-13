@@ -5,6 +5,7 @@ description: Create a new Claude Code plugin with complete scaffolding
 Delegate to the plugin-writer agent to create a new Claude Code plugin.
 
 The plugin-writer will:
+
 - Create proper directory structure with components at root (not in .claude-plugin/)
 - Generate plugin.json with comprehensive metadata
 - Write detailed README with installation and usage instructions

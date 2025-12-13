@@ -6,6 +6,7 @@ argument-hint: [component-path]
 Use the component-reviewer agent to perform a comprehensive quality review of the specified Claude Code component.
 
 The component-reviewer agent will analyze the component against:
+
 - Relevant design skills (slash-command-design, agent-design, hook-design, plugin-design)
 - Official Claude Code documentation
 - Common anti-patterns and best practices

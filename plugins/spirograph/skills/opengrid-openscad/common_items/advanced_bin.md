@@ -53,13 +53,13 @@ module advanced_bin(
 
 **Why advanced_bin vs basic_bin?**
 
-| Feature | basic_bin.md | advanced_bin.md |
-|---------|--------------|-----------------|
-| Geometry | Manual cube operations | BOSL2 rect_tube() |
-| Front angle | None | Customizable 0-30° |
-| Edge finish | Sharp | Chamfered bottom |
-| Code complexity | Simple | Requires BOSL2 |
-| Use case | Quick bins | Production quality |
+| Feature         | basic_bin.md           | advanced_bin.md    |
+| --------------- | ---------------------- | ------------------ |
+| Geometry        | Manual cube operations | BOSL2 rect_tube()  |
+| Front angle     | None                   | Customizable 0-30° |
+| Edge finish     | Sharp                  | Chamfered bottom   |
+| Code complexity | Simple                 | Requires BOSL2     |
+| Use case        | Quick bins             | Production quality |
 
 **Angle recommendations**:
 

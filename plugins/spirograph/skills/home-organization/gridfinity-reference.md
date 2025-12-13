@@ -101,7 +101,7 @@ Gridfinity is an open-source, modular grid storage system for 3D printing. Creat
 - **French Cleat**: Heavy wall items
 - **Underware**: Cable management
 
----
+______________________________________________________________________
 
 *Last updated: October 2025*
 *System: Gridfinity v1 (Community Standard)*

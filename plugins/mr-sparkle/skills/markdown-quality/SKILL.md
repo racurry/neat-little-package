@@ -138,14 +138,14 @@ More content.
 
 code here
 
-```
+````
 
 <!-- ✅ Language specified -->
 ```javascript
 code here
-```
+````
 
-```
+````
 
 **Why:** Enables syntax highlighting, makes intent clear, helps tools process content.
 
@@ -175,7 +175,7 @@ code here
 Content here (can include markdown).
 
 </details>
-```
+````
 
 **Anti-pattern:**
 
@@ -270,14 +270,14 @@ Use **bold** and __bold__ mixed
 
 **Better:**
 
-```markdown
+````markdown
 <!-- ✅ Fenced code block with language -->
 ```javascript
 const x = 1;
 console.log(x);
-```
+````
 
-```
+````
 
 ### Pitfall #3: Missing Blank Lines
 
@@ -287,7 +287,7 @@ console.log(x);
 # Heading
 Content immediately after heading
 - List item  <!-- ❌ MD032: No blank line before list -->
-```
+````
 
 **Why it fails:** Reduces readability, can cause parsing ambiguities.
 

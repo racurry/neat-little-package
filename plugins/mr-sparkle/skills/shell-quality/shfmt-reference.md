@@ -52,15 +52,15 @@ switch_case_indent = true
 
 **EditorConfig properties shfmt understands:**
 
-| Property | Values | shfmt Flag Equivalent |
-|----------|--------|----------------------|
-| `indent_style` | `space`, `tab` | `-i 0` (tab) or `-i N` (space) |
-| `indent_size` | number | `-i N` |
-| `binary_next_line` | `true`, `false` | `-bn` |
-| `switch_case_indent` | `true`, `false` | `-ci` |
-| `space_redirects` | `true`, `false` | `-sr` |
-| `keep_padding` | `true`, `false` | `-kp` |
-| `function_next_line` | `true`, `false` | `-fn` |
+| Property             | Values          | shfmt Flag Equivalent          |
+| -------------------- | --------------- | ------------------------------ |
+| `indent_style`       | `space`, `tab`  | `-i 0` (tab) or `-i N` (space) |
+| `indent_size`        | number          | `-i N`                         |
+| `binary_next_line`   | `true`, `false` | `-bn`                          |
+| `switch_case_indent` | `true`, `false` | `-ci`                          |
+| `space_redirects`    | `true`, `false` | `-sr`                          |
+| `keep_padding`       | `true`, `false` | `-kp`                          |
+| `function_next_line` | `true`, `false` | `-fn`                          |
 
 **Command-line flags override EditorConfig settings.**
 

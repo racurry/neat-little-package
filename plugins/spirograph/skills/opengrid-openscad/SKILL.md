@@ -16,7 +16,7 @@ Generates OpenSCAD code for wall-mounted storage items compatible with OpenGrid 
 
 **Pattern references** (read as needed):
 
-- ./common_items/*.md - Full OpenSCAD modules for each pattern
+- ./common_items/\*.md - Full OpenSCAD modules for each pattern
 - ./enhancements.md - Optional feature modules
 
 ## Core Understanding (Critical Architecture)
@@ -52,19 +52,19 @@ actual_slots = max(1, slotCount);               // Minimum 1 slot
 
 Use this decision tree to select pattern:
 
-| User wants to store | Primary pattern | Alternative | Read module |
-|---------------------|----------------|-------------|-------------|
-| Small hardware (screws, bits) | Basic Bin | Shallow Tray (if flat) | basic_bin.md |
-| Writing tools (pens, markers) | Vertical Holder | Angled Storage Row (if visibility needed) | vertical_holder.md, angled_storage_row.md |
-| Hand tools (screwdrivers, pliers) | Tool Holder with Hooks | Angled Storage Row | tool_holder_with_hooks.md, angled_storage_row.md |
-| Bottles, spray cans | Round Item Holder | Advanced Bin (if accessibility needed) | round_item_holder.md, advanced_bin.md |
-| Mixed items in sections | Divided Bin | Multiple basic bins | divided_bin.md |
-| Light shelving needs | Shelf Bracket | N/A | shelf_bracket.md |
-| Easy-access items (cables, tape) | Open Basket | Multi-Access Holder | open_basket.md, multi_access_holder.md |
-| Keys, lightweight hangables | Hook Array | Curved Hook (for smooth finish) | hook_array.md, curved_hook.md |
-| Phone/charger/electronics | Multi-Access Holder | Advanced Bin | multi_access_holder.md, advanced_bin.md |
-| Items needing angled visibility | Angled Storage Row | Basic Bin | angled_storage_row.md |
-| Professional-quality bins | Advanced Bin | Basic Bin | advanced_bin.md |
+| User wants to store               | Primary pattern        | Alternative                               | Read module                                      |
+| --------------------------------- | ---------------------- | ----------------------------------------- | ------------------------------------------------ |
+| Small hardware (screws, bits)     | Basic Bin              | Shallow Tray (if flat)                    | basic_bin.md                                     |
+| Writing tools (pens, markers)     | Vertical Holder        | Angled Storage Row (if visibility needed) | vertical_holder.md, angled_storage_row.md        |
+| Hand tools (screwdrivers, pliers) | Tool Holder with Hooks | Angled Storage Row                        | tool_holder_with_hooks.md, angled_storage_row.md |
+| Bottles, spray cans               | Round Item Holder      | Advanced Bin (if accessibility needed)    | round_item_holder.md, advanced_bin.md            |
+| Mixed items in sections           | Divided Bin            | Multiple basic bins                       | divided_bin.md                                   |
+| Light shelving needs              | Shelf Bracket          | N/A                                       | shelf_bracket.md                                 |
+| Easy-access items (cables, tape)  | Open Basket            | Multi-Access Holder                       | open_basket.md, multi_access_holder.md           |
+| Keys, lightweight hangables       | Hook Array             | Curved Hook (for smooth finish)           | hook_array.md, curved_hook.md                    |
+| Phone/charger/electronics         | Multi-Access Holder    | Advanced Bin                              | multi_access_holder.md, advanced_bin.md          |
+| Items needing angled visibility   | Angled Storage Row     | Basic Bin                                 | angled_storage_row.md                            |
+| Professional-quality bins         | Advanced Bin           | Basic Bin                                 | advanced_bin.md                                  |
 
 ### When Pattern Is Unclear
 
@@ -82,11 +82,11 @@ Use this decision tree to select pattern:
 
 QuackWorks patterns provide calibration parameters for perfect fit across different printers:
 
-| Parameter | Range | Default | Purpose |
-|-----------|-------|---------|---------|
-| slotTolerance | 0.925-1.075 | 1.00 | Scale slot width (tight/loose fit) |
-| dimpleScale | 0.5-1.5 | 1.0 | Scale dimple size (snap strength) |
-| slotDepthMicroadjustment | -0.5 to +0.5 | 0 | Fine-tune slot depth |
+| Parameter                | Range        | Default | Purpose                            |
+| ------------------------ | ------------ | ------- | ---------------------------------- |
+| slotTolerance            | 0.925-1.075  | 1.00    | Scale slot width (tight/loose fit) |
+| dimpleScale              | 0.5-1.5      | 1.0     | Scale dimple size (snap strength)  |
+| slotDepthMicroadjustment | -0.5 to +0.5 | 0       | Fine-tune slot depth               |
 
 **Calibration Process:**
 
@@ -107,11 +107,11 @@ QuackWorks patterns provide calibration parameters for perfect fit across differ
 
 On-ramps are conical guides that ease mounting of heavy or tall items onto MultiConnect slots:
 
-| Parameter | Default | Purpose |
-|-----------|---------|---------|
-| onRampEnabled | true | Add guide cones to slots |
-| On_Ramp_Every_X_Slots | 2 | Frequency (1=every slot, 2=every 2nd slot) |
-| onRampHalfOffset | false | Stagger ramps between grid points for better grip |
+| Parameter             | Default | Purpose                                           |
+| --------------------- | ------- | ------------------------------------------------- |
+| onRampEnabled         | true    | Add guide cones to slots                          |
+| On_Ramp_Every_X_Slots | 2       | Frequency (1=every slot, 2=every 2nd slot)        |
+| onRampHalfOffset      | false   | Stagger ramps between grid points for better grip |
 
 **When to enable:**
 
@@ -141,13 +141,13 @@ Ramps guide item onto slots, especially helpful when you can't see the back of t
 
 QuackWorks supports multiple mounting systems. Choose based on your wall setup:
 
-| Option | Back Thickness | Grid | Use Case |
-|--------|----------------|------|----------|
-| Multiconnect V1 | 6.5mm | 25/28mm | Standard, dimple-based hold |
-| Multiconnect V2 | 6.5mm | 25/28mm | Triangle snap, stronger hold |
-| Multipoint | 4.8mm | 25mm | Thinner profile, Multiboard system |
-| GOEWS | 7mm | Custom | Alternative slot design |
-| Command Strip | N/A | N/A | Adhesive mount, rental-friendly |
+| Option          | Back Thickness | Grid    | Use Case                           |
+| --------------- | -------------- | ------- | ---------------------------------- |
+| Multiconnect V1 | 6.5mm          | 25/28mm | Standard, dimple-based hold        |
+| Multiconnect V2 | 6.5mm          | 25/28mm | Triangle snap, stronger hold       |
+| Multipoint      | 4.8mm          | 25mm    | Thinner profile, Multiboard system |
+| GOEWS           | 7mm            | Custom  | Alternative slot design            |
+| Command Strip   | N/A            | N/A     | Adhesive mount, rental-friendly    |
 
 ### Multiconnect V2 vs V1
 
@@ -224,6 +224,7 @@ union() {
 **When user says "I need a bin for X"**:
 
 1. **Estimate internal dimensions** for their items:
+
    - Small screws/bits: 50×40×40mm internal
    - Markers/pens vertical: 15mm diameter × 70mm deep
    - Screwdrivers horizontal: 60mm hook length
@@ -238,6 +239,7 @@ union() {
    ```
 
 3. **Check grid alignment** (optional but aesthetic):
+
    - Is total_width close to 28mm multiple? (28, 56, 84, 112mm)
    - If yes, mention to user as "this will align nicely to grid"
    - If no, not critical - mounting still works

@@ -20,13 +20,13 @@ Creates Claude Code memory rule files by applying the memory-design skill.
 
    The skill provides all guidance on rule structure, path-specific patterns, and anti-patterns.
 
-1. **Detect context** to determine correct path:
+2. **Detect context** to determine correct path:
 
    - `marketplace.json` at project root → marketplace context (ask which plugin)
    - `.claude-plugin/plugin.json` in cwd → plugin context
    - Otherwise → standalone project context
 
-1. **Determine target directory**:
+3. **Determine target directory**:
 
    | Context     | Directory                                 |
    | ----------- | ----------------------------------------- |
@@ -35,36 +35,36 @@ Creates Claude Code memory rule files by applying the memory-design skill.
    | Standalone  | `.claude/rules/` relative to project root |
    | User-level  | `~/.claude/rules/` (only when explicit)   |
 
-1. **Fetch memory documentation** if needed:
+4. **Fetch memory documentation** if needed:
 
    ```
    WebFetch https://code.claude.com/docs/en/memory.md
    ```
 
-1. **Design rule file** following memory-design skill:
+5. **Design rule file** following memory-design skill:
 
    - See `SKILL.md` for when to use rules vs CLAUDE.md
    - See `path-specific-rules.md` for when to use `paths` frontmatter
    - See `organization-patterns.md` for one-topic-per-file principle
 
-1. **Check for duplication**:
+6. **Check for duplication**:
 
    - Read existing CLAUDE.md and `.claude/rules/` files
    - Warn if content duplicates existing rules
    - Suggest consolidation if overlap found
 
-1. **Validate** against memory-design skill:
+7. **Validate** against memory-design skill:
 
    - See `path-specific-rules.md` for glob pattern validation
    - See `anti-patterns.md` for things to avoid
 
-1. **Create directory and write file**:
+8. **Create directory and write file**:
 
    ```bash
    mkdir -p .claude/rules
    ```
 
-1. **Verify** by reading file back
+9. **Verify** by reading file back
 
 ## Rule File Templates
 
@@ -117,11 +117,11 @@ Rules for TypeScript files in src/api/.
 After creating a rule file, provide:
 
 1. **File path** (absolute)
-1. **Topic summary** (one sentence)
-1. **Type** (unconditional or path-specific with pattern)
-1. **Pattern explanation** (if path-specific)
-1. **Integration** (relationship to existing memory)
-1. **Recommendations** (next steps)
+2. **Topic summary** (one sentence)
+3. **Type** (unconditional or path-specific with pattern)
+4. **Pattern explanation** (if path-specific)
+5. **Integration** (relationship to existing memory)
+6. **Recommendations** (next steps)
 
 ## Example
 
@@ -130,13 +130,13 @@ After creating a rule file, provide:
 **Process:**
 
 1. Load memory-design skill
-1. Detect context → standalone project
-1. Target → `.claude/rules/`
-1. Design with `paths: src/api/**/*.ts` (per `path-specific-rules.md`)
-1. Check duplication → none
-1. Validate pattern → valid
-1. Write `api-design.md`
-1. Verify and respond
+2. Detect context → standalone project
+3. Target → `.claude/rules/`
+4. Design with `paths: src/api/**/*.ts` (per `path-specific-rules.md`)
+5. Check duplication → none
+6. Validate pattern → valid
+7. Write `api-design.md`
+8. Verify and respond
 
 **Output:**
 

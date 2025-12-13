@@ -45,4 +45,3 @@ module shallow_tray() {
 - SD cards, USB drives
 - Small electronic components
 - Jewelry, rings
-

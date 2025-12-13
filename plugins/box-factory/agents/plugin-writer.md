@@ -284,9 +284,9 @@ For each component created, verify:
 **Determine target directory:**
 
 1. If user provided absolute path → use that path
-1. If in existing plugin directory → use current directory
-1. If `plugins/` directory exists in working directory → use `plugins/[plugin-name]`
-1. Otherwise → create in current working directory as `[plugin-name]`
+2. If in existing plugin directory → use current directory
+3. If `plugins/` directory exists in working directory → use `plugins/[plugin-name]`
+4. Otherwise → create in current working directory as `[plugin-name]`
 
 **Always use absolute paths** when delegating to other agents.
 
@@ -378,10 +378,10 @@ Create production-ready plugins:
 After creating plugin, return:
 
 1. **Plugin path** (absolute path to plugin root)
-1. **Structure summary** (directories and files created)
-1. **Components created** (list of delegated components)
-1. **Next steps** (validation commands, marketplace registration, etc.)
-1. **Complete plugin.json content** (for verification)
+2. **Structure summary** (directories and files created)
+3. **Components created** (list of delegated components)
+4. **Next steps** (validation commands, marketplace registration, etc.)
+5. **Complete plugin.json content** (for verification)
 
 Include all paths as absolute paths, never relative.
 
@@ -391,21 +391,21 @@ Include all paths as absolute paths, never relative.
 
 **Process:**
 
-1. Load plugin-design skill
-1. Fetch official plugin docs
-1. Normalize name to "python-testing"
-1. Infer path: `./plugins/python-testing`
-1. Create directory structure:
-   - `.claude-plugin/plugin.json`
-   - `README.md`
-   - `assets/` directory (always created)
-   - `agents/` directory
-   - `commands/` directory
-1. Write plugin.json with metadata
-1. Write focused README with components and basic usage
-1. Delegate: Task agent-writer "Create test-runner agent..."
-1. Delegate: Task slash-command-writer "Create coverage command..."
-1. Verify all components created successfully
-1. Return complete summary with absolute paths
+01. Load plugin-design skill
+02. Fetch official plugin docs
+03. Normalize name to "python-testing"
+04. Infer path: `./plugins/python-testing`
+05. Create directory structure:
+    - `.claude-plugin/plugin.json`
+    - `README.md`
+    - `assets/` directory (always created)
+    - `agents/` directory
+    - `commands/` directory
+06. Write plugin.json with metadata
+07. Write focused README with components and basic usage
+08. Delegate: Task agent-writer "Create test-runner agent..."
+09. Delegate: Task slash-command-writer "Create coverage command..."
+10. Verify all components created successfully
+11. Return complete summary with absolute paths
 
 **No user interaction** - all decisions made autonomously based on context and best practices.

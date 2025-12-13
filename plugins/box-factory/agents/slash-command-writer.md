@@ -30,7 +30,7 @@ When asked to create a slash command:
 
    Skipping either step results in non-compliant commands.
 
-1. **Understand requirements** from the caller:
+2. **Understand requirements** from the caller:
 
    - Command name (normalize to kebab-case if needed)
    - Command purpose and behavior
@@ -38,31 +38,31 @@ When asked to create a slash command:
    - Tool restrictions (if any)
    - Target location
 
-1. **Determine file path** using resolution rules:
+3. **Determine file path** using resolution rules:
 
    - If caller specifies path: use that exact path
    - If current directory contains `plugins/[plugin-name]/`: use `plugins/[plugin-name]/commands/`
    - Otherwise: use `.claude/commands/`
 
-1. **Fetch latest documentation** if needed:
+4. **Fetch latest documentation** if needed:
 
    - Use WebFetch to access <https://code.claude.com/docs/en/slash-commands.md> for specification updates
    - Use WebFetch to access <https://code.claude.com/docs/en/settings#tools-available-to-claude> for tool verification
 
-1. **Design the command** following slash-command-design skill principles:
+5. **Design the command** following slash-command-design skill principles:
 
    - Single responsibility
    - Clear, actionable prompt
    - Appropriate argument handling
    - Proper tool restrictions (if needed)
 
-1. **Validate scope**: If request involves multiple unrelated purposes, raise concern that this should be multiple commands or potentially a skill
+6. **Validate scope**: If request involves multiple unrelated purposes, raise concern that this should be multiple commands or potentially a skill
 
-1. **Write the command file** to the determined path
+7. **Write the command file** to the determined path
 
-1. **Verify creation** by reading the file back
+8. **Verify creation** by reading the file back
 
-1. **Validate Box Factory compliance (REQUIRED)** - Before completing, verify the command follows ALL Box Factory principles:
+9. **Validate Box Factory compliance (REQUIRED)** - Before completing, verify the command follows ALL Box Factory principles:
 
    **MUST have:**
 
@@ -102,9 +102,9 @@ Transform provided names to kebab-case:
 **Detect context using these rules:**
 
 1. **Caller specifies path:** Use that exact path
-1. **Marketplace context:** If `marketplace.json` exists at project root → Ask which plugin, then use `plugins/[plugin-name]/commands/`
-1. **Plugin context:** If `.claude-plugin/plugin.json` exists in current directory → Use `commands/` relative to current directory
-1. **Standalone project:** Otherwise → Use `.claude/commands/` (project-level)
+2. **Marketplace context:** If `marketplace.json` exists at project root → Ask which plugin, then use `plugins/[plugin-name]/commands/`
+3. **Plugin context:** If `.claude-plugin/plugin.json` exists in current directory → Use `commands/` relative to current directory
+4. **Standalone project:** Otherwise → Use `.claude/commands/` (project-level)
 
 Examples:
 
@@ -184,10 +184,10 @@ For requests that don't make sense:
 After creating a command, provide:
 
 1. **File path** (absolute path where command was created)
-1. **Purpose summary** (what it does)
-1. **Invocation** (how to use it, e.g., `/command-name [args]`)
-1. **Design decisions** (any choices made, constraints applied)
-1. **Assumptions** (if requirements were unclear)
+2. **Purpose summary** (what it does)
+3. **Invocation** (how to use it, e.g., `/command-name [args]`)
+4. **Design decisions** (any choices made, constraints applied)
+5. **Assumptions** (if requirements were unclear)
 
 Include the complete command content in a code block for reference.
 
@@ -198,11 +198,11 @@ Include the complete command content in a code block for reference.
 **Process:**
 
 1. Load slash-command-design skill
-1. Fetch slash-commands.md for latest spec
-1. Normalize name to "run-tests"
-1. Design: delegate to test-runner agent (don't reimplement)
-1. Write to `.claude/commands/run-tests.md`
-1. Verify and respond
+2. Fetch slash-commands.md for latest spec
+3. Normalize name to "run-tests"
+4. Design: delegate to test-runner agent (don't reimplement)
+5. Write to `.claude/commands/run-tests.md`
+6. Verify and respond
 
 **Output:**
 

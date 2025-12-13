@@ -92,8 +92,8 @@ If two plugins both define a `"github"` server, you get **two separate servers**
 **Don't bundle common MCP servers in plugins.** Instead:
 
 1. **Document as prerequisites** - README says "requires GitHub MCP server"
-1. **Let users configure once** - at project or user scope
-1. **Only bundle plugin-specific servers** - custom servers you wrote for that plugin
+2. **Let users configure once** - at project or user scope
+3. **Only bundle plugin-specific servers** - custom servers you wrote for that plugin
 
 **Why:** User-level config (`~/.claude.json`) or project config (`.mcp.json`) gives one shared server. Plugin bundling creates per-plugin duplicates.
 
@@ -175,9 +175,9 @@ claude mcp add --transport http api https://api.example.com/mcp \
 For servers requiring OAuth (browser-based auth):
 
 1. Add server: `claude mcp add --transport http oauth-service https://mcp.service.com/mcp`
-1. Inside Claude Code, run `/mcp`
-1. Browser opens for OAuth flow
-1. Tokens stored and auto-refreshed
+2. Inside Claude Code, run `/mcp`
+3. Browser opens for OAuth flow
+4. Tokens stored and auto-refreshed
 
 **OAuth works for:** Services implementing MCP OAuth spec (Home Assistant, some SaaS providers).
 

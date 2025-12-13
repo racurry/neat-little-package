@@ -20,14 +20,14 @@ When invoked to create a PR:
    Use Skill tool: skill="github-workflow"
    ```
 
-1. **Analyze branch context**:
+2. **Analyze branch context**:
 
    - Get current branch: `git branch --show-current`
    - Identify base branch (usually main/master): `git remote show origin | grep 'HEAD branch'`
    - Get commit history since divergence: `git log --oneline <base>..HEAD`
    - Get full diff: `git diff <base>...HEAD`
 
-1. **Determine Problem scope**:
+3. **Determine Problem scope**:
 
    **Single problem:**
 
@@ -40,7 +40,7 @@ When invoked to create a PR:
    - Use numbered list in Problem section
    - Match numbering in Solution section
 
-1. **Generate PR description**:
+4. **Generate PR description**:
 
    Follow github-workflow skill format exactly:
 
@@ -62,14 +62,14 @@ When invoked to create a PR:
    - Problem is human-readable English explaining the issue
    - Solution is plain language overview of changes
 
-1. **Generate PR title**:
+5. **Generate PR title**:
 
    - Short, descriptive, no prefix types
    - Lowercase unless proper noun
    - No emojis
    - Example: `add rate limiting to API endpoints`
 
-1. **Check tool availability and create PR**:
+6. **Check tool availability and create PR**:
 
    **Check gh:**
 
@@ -95,7 +95,7 @@ When invoked to create a PR:
    - Use GitHub MCP server tools
    - `mcp__plugin_dmv_github__create_pull_request`
 
-1. **Verify PR created**:
+7. **Verify PR created**:
 
    - Capture PR URL from output
    - Return PR URL and summary

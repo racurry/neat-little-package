@@ -173,11 +173,11 @@ Ask these questions:
 
 ## Built-in Styles
 
-| Style | Purpose | Use When |
-|-------|---------|----------|
-| **Default** | Software engineering | Normal development work |
-| **Explanatory** | Educational insights | Learning codebases, onboarding |
-| **Learning** | Deliberate practice | Building skills, pair programming |
+| Style           | Purpose              | Use When                          |
+| --------------- | -------------------- | --------------------------------- |
+| **Default**     | Software engineering | Normal development work           |
+| **Explanatory** | Educational insights | Learning codebases, onboarding    |
+| **Learning**    | Deliberate practice  | Building skills, pair programming |
 
 ## Custom Style Design
 

@@ -9,15 +9,15 @@ This skill provides universal polyglot linting through a CLI script that detects
 
 ## Supported Languages and Tools
 
-| Language | Tool Groups (priority order) | Config Detection |
-|----------|------------------------------|------------------|
-| Python | `ruff` OR `pylint`+`isort`+`black` | pyproject.toml, ruff.toml, setup.cfg |
-| JavaScript/TypeScript | `biome` OR `eslint`+`prettier` | biome.json, eslint.config.*, package.json |
-| Markdown | `markdownlint-cli2` | .markdownlint-cli2.*, ~/.markdownlint-cli2.jsonc |
-| Shell | `shfmt`+`shellcheck` | .editorconfig, .shellcheckrc |
-| Ruby | `standard` OR `rubocop` | .standard.yml, .rubocop.yml, Gemfile |
-| YAML | `prettier` | .prettierrc*, ~/.prettierrc.json5 |
-| JSON/JSON5/JSONC | `prettier` | .prettierrc*, ~/.prettierrc.json5 |
+| Language              | Tool Groups (priority order)       | Config Detection                                  |
+| --------------------- | ---------------------------------- | ------------------------------------------------- |
+| Python                | `ruff` OR `pylint`+`isort`+`black` | pyproject.toml, ruff.toml, setup.cfg              |
+| JavaScript/TypeScript | `biome` OR `eslint`+`prettier`     | biome.json, eslint.config.\*, package.json        |
+| Markdown              | `markdownlint-cli2`                | .markdownlint-cli2.\*, ~/.markdownlint-cli2.jsonc |
+| Shell                 | `shfmt`+`shellcheck`               | .editorconfig, .shellcheckrc                      |
+| Ruby                  | `standard` OR `rubocop`            | .standard.yml, .rubocop.yml, Gemfile              |
+| YAML                  | `prettier`                         | .prettierrc\*, ~/.prettierrc.json5                |
+| JSON/JSON5/JSONC      | `prettier`                         | .prettierrc\*, ~/.prettierrc.json5                |
 
 ## Tool Selection Logic
 
@@ -101,42 +101,42 @@ Config detection happens relative to project root.
 
 ### Python Tools
 
-| Tool | Config Files | pyproject.toml | INI Files |
-|------|--------------|----------------|-----------|
-| ruff | `ruff.toml`, `.ruff.toml` | `[tool.ruff]` | - |
-| black | - | `[tool.black]` | - |
-| isort | `.isort.cfg` | `[tool.isort]` | `setup.cfg [isort]` |
-| pylint | `.pylintrc`, `pylintrc` | `[tool.pylint]` | `setup.cfg [pylint]` |
+| Tool   | Config Files              | pyproject.toml  | INI Files            |
+| ------ | ------------------------- | --------------- | -------------------- |
+| ruff   | `ruff.toml`, `.ruff.toml` | `[tool.ruff]`   | -                    |
+| black  | -                         | `[tool.black]`  | -                    |
+| isort  | `.isort.cfg`              | `[tool.isort]`  | `setup.cfg [isort]`  |
+| pylint | `.pylintrc`, `pylintrc`   | `[tool.pylint]` | `setup.cfg [pylint]` |
 
 ### JavaScript/TypeScript Tools
 
-| Tool | Config Files | package.json |
-|------|--------------|--------------|
-| biome | `biome.json`, `biome.jsonc` | `@biomejs/biome` in deps |
-| eslint | `eslint.config.*`, `.eslintrc.*` | `eslint` in deps |
-| prettier | `.prettierrc*`, `prettier.config.*` | `prettier` in deps |
+| Tool     | Config Files                        | package.json             |
+| -------- | ----------------------------------- | ------------------------ |
+| biome    | `biome.json`, `biome.jsonc`         | `@biomejs/biome` in deps |
+| eslint   | `eslint.config.*`, `.eslintrc.*`    | `eslint` in deps         |
+| prettier | `.prettierrc*`, `prettier.config.*` | `prettier` in deps       |
 
 ### Markdown Tools
 
-| Tool | Config Files | Global Fallback |
-|------|--------------|-----------------|
+| Tool              | Config Files           | Global Fallback              |
+| ----------------- | ---------------------- | ---------------------------- |
 | markdownlint-cli2 | `.markdownlint-cli2.*` | `~/.markdownlint-cli2.jsonc` |
 
 If no config found, uses skill's `../markdown-quality/default-config.jsonc`.
 
 ### Shell Tools
 
-| Tool | Config Files |
-|------|--------------|
-| shfmt | `.editorconfig` |
+| Tool       | Config Files    |
+| ---------- | --------------- |
+| shfmt      | `.editorconfig` |
 | shellcheck | `.shellcheckrc` |
 
 ### Ruby Tools
 
-| Tool | Config Files | Gemfile |
-|------|--------------|---------|
-| standard | `.standard.yml` | `gem "standard"` or `gem "standardrb"` |
-| rubocop | `.rubocop.yml`, `.rubocop_todo.yml` | `gem "rubocop"` |
+| Tool     | Config Files                        | Gemfile                                |
+| -------- | ----------------------------------- | -------------------------------------- |
+| standard | `.standard.yml`                     | `gem "standard"` or `gem "standardrb"` |
+| rubocop  | `.rubocop.yml`, `.rubocop_todo.yml` | `gem "rubocop"`                        |
 
 **Tool selection:**
 
@@ -145,8 +145,8 @@ If no config found, uses skill's `../markdown-quality/default-config.jsonc`.
 
 ### YAML/JSON Tools
 
-| Tool | Config Files | Global Fallback |
-|------|--------------|-----------------|
+| Tool     | Config Files                        | Global Fallback       |
+| -------- | ----------------------------------- | --------------------- |
 | prettier | `.prettierrc*`, `prettier.config.*` | `~/.prettierrc.json5` |
 
 If no config found, uses skill's `../prettier-quality/default-config.json5`.

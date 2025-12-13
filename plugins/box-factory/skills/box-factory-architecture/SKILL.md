@@ -89,10 +89,10 @@ User ↔ Main Claude ──→ Sub-Agent (isolated context)
 **Execution flow:**
 
 1. Main Claude decides to delegate
-1. Sub-agent receives context + task
-1. Sub-agent works autonomously in isolation
-1. Sub-agent returns complete result
-1. Main Claude integrates result and continues
+2. Sub-agent receives context + task
+3. Sub-agent works autonomously in isolation
+4. Sub-agent returns complete result
+5. Main Claude integrates result and continues
 
 **What this means:**
 
@@ -472,10 +472,10 @@ Main Claude:
 **Key observations:**
 
 1. Command triggered explicitly (user typed `/add-agent`)
-1. Agent-writer operates in isolation (can't ask questions)
-1. Skill loads automatically (relevant topic)
-1. Agent returns complete result (file created)
-1. Main Claude integrates and communicates with user
+2. Agent-writer operates in isolation (can't ask questions)
+3. Skill loads automatically (relevant topic)
+4. Agent returns complete result (file created)
+5. Main Claude integrates and communicates with user
 
 ## Cross-Component Patterns (Best Practices)
 
@@ -883,9 +883,9 @@ development-tools/
 **Diagnosis:**
 
 1. Check agent description - too vague?
-1. Verify agent is properly installed
-1. Check tool permissions - missing required tools?
-1. Review context - does situation match description?
+2. Verify agent is properly installed
+3. Check tool permissions - missing required tools?
+4. Review context - does situation match description?
 
 **Fix:** Strengthen description with specific triggering conditions.
 
@@ -896,9 +896,9 @@ development-tools/
 **Diagnosis:**
 
 1. Check hook configuration syntax
-1. Verify matcher pattern (case-sensitive)
-1. Review hook logs (CTRL-R in Claude Code)
-1. Check timeout settings
+2. Verify matcher pattern (case-sensitive)
+3. Review hook logs (CTRL-R in Claude Code)
+4. Check timeout settings
 
 **Fix:** Validate JSON, test hook in isolation.
 
@@ -909,9 +909,9 @@ development-tools/
 **Diagnosis:**
 
 1. Check skill description - matches topic?
-1. Verify filename is `SKILL.md` (uppercase)
-1. Check directory structure (`skills/name/SKILL.md`)
-1. Review frontmatter YAML syntax
+2. Verify filename is `SKILL.md` (uppercase)
+3. Check directory structure (`skills/name/SKILL.md`)
+4. Review frontmatter YAML syntax
 
 **Fix:** Improve description triggering conditions.
 

@@ -28,10 +28,10 @@ Interpretive guidance for organizing Claude Code's memory system. The 4-tier mem
 Claude Code loads memory in this order (highest to lowest priority):
 
 1. **Enterprise policy** - Organization-wide (system location, managed by IT)
-1. **Project memory** - Team-shared via git (`./CLAUDE.md` or `./.claude/CLAUDE.md`)
-1. **Project rules** - Modular team-shared (`./.claude/rules/*.md`)
-1. **User memory** - Personal cross-project (`~/.claude/CLAUDE.md`)
-1. **Project local** - Personal project-specific (`./CLAUDE.local.md`, gitignored)
+2. **Project memory** - Team-shared via git (`./CLAUDE.md` or `./.claude/CLAUDE.md`)
+3. **Project rules** - Modular team-shared (`./.claude/rules/*.md`)
+4. **User memory** - Personal cross-project (`~/.claude/CLAUDE.md`)
+5. **Project local** - Personal project-specific (`./CLAUDE.local.md`, gitignored)
 
 **Key insight:** Higher tiers provide foundation, lower tiers add specificity. All files load automatically at session start.
 

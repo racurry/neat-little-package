@@ -352,12 +352,12 @@ Print_Specs = true;  // Emboss Material_Thickness value on base
 
 ## Base Selection Summary Table
 
-| Base Type | Height | Attachment | Repositionable | Grid | Multi-tile | Use Case |
-|-----------|--------|------------|----------------|------|------------|----------|
-| **Gridfinity** | ~5mm | Snap to baseplate | Yes | 42mm | Yes (X only) | Modular system, easy reconfig |
-| **openGrid** | 3-7mm | Snap to openGrid | Yes | 25mm | No | Wall/vertical mounting |
-| **Flat** | ~1.5mm | Adhesive tape | Limited | Custom | No | Simple, no baseplate |
-| **None** | 0mm | Friction/optional glue | No | N/A | No | Minimal, temporary |
+| Base Type      | Height | Attachment             | Repositionable | Grid   | Multi-tile   | Use Case                      |
+| -------------- | ------ | ---------------------- | -------------- | ------ | ------------ | ----------------------------- |
+| **Gridfinity** | ~5mm   | Snap to baseplate      | Yes            | 42mm   | Yes (X only) | Modular system, easy reconfig |
+| **openGrid**   | 3-7mm  | Snap to openGrid       | Yes            | 25mm   | No           | Wall/vertical mounting        |
+| **Flat**       | ~1.5mm | Adhesive tape          | Limited        | Custom | No           | Simple, no baseplate          |
+| **None**       | 0mm    | Friction/optional glue | No             | N/A    | No           | Minimal, temporary            |
 
 ## Recommendation by Drawer Use
 

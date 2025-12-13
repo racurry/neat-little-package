@@ -35,12 +35,12 @@ Channel_Length_Units = 5;  // Length in grid units (25mm each)
 
 **Decision guide:**
 
-| Desk/wall distance | Units | Actual length | Mounting points |
-|-------------------|-------|---------------|-----------------|
-| Small desk run | 3 | 75mm | 3 holes (1 per unit) |
-| Medium run | 5 | 125mm | 5 holes |
-| Long wall run | 10 | 250mm | 10 holes |
-| Full desk width | 20 | 500mm | 20 holes |
+| Desk/wall distance | Units | Actual length | Mounting points      |
+| ------------------ | ----- | ------------- | -------------------- |
+| Small desk run     | 3     | 75mm          | 3 holes (1 per unit) |
+| Medium run         | 5     | 125mm         | 5 holes              |
+| Long wall run      | 10    | 250mm         | 10 holes             |
+| Full desk width    | 20    | 500mm         | 20 holes             |
 
 **Mounting point calculation**: Each grid unit (25mm) gets one mounting hole when using OpenGrid/Multiboard methods.
 
@@ -69,30 +69,30 @@ Example: 3 cutouts with 25mm spacing = 50mm span (fits in 3+ unit channel)
 
 **Number_of_Cord_Cutouts:**
 
-| Use case | Recommended count | Reasoning |
-|----------|------------------|-----------|
-| Single device (monitor, lamp) | 1 | One exit point for power cable |
-| Power strip with 3-4 devices | 3 | Spaced exits for each device |
-| Full desk cable management | 5-6 | Multiple workstations or devices |
-| No exits (through-run) | 0 | Cables stay in channel entire length |
+| Use case                      | Recommended count | Reasoning                            |
+| ----------------------------- | ----------------- | ------------------------------------ |
+| Single device (monitor, lamp) | 1                 | One exit point for power cable       |
+| Power strip with 3-4 devices  | 3                 | Spaced exits for each device         |
+| Full desk cable management    | 5-6               | Multiple workstations or devices     |
+| No exits (through-run)        | 0                 | Cables stay in channel entire length |
 
 **Cord_Side_Cutouts:**
 
-| Scenario | Setting | Why |
-|----------|---------|-----|
-| Devices on both sides of desk | `"Both Sides"` | Cables exit left and right |
-| Wall-mounted (devices below) | `"Both Sides"` | Maximum flexibility |
-| Desk edge (devices one side) | `"Left Side"` or `"Right Side"` | Cleaner look, less material removed |
-| Testing/unsure | `"Both Sides"` | Can always route cables through one side |
+| Scenario                      | Setting                         | Why                                      |
+| ----------------------------- | ------------------------------- | ---------------------------------------- |
+| Devices on both sides of desk | `"Both Sides"`                  | Cables exit left and right               |
+| Wall-mounted (devices below)  | `"Both Sides"`                  | Maximum flexibility                      |
+| Desk edge (devices one side)  | `"Left Side"` or `"Right Side"` | Cleaner look, less material removed      |
+| Testing/unsure                | `"Both Sides"`                  | Can always route cables through one side |
 
 **Cord_Cutout_Width:**
 
-| Cable type | Recommended width | Notes |
-|------------|------------------|-------|
-| Thin cables (USB, audio) | 8-10mm | Snug fit, cable retention |
-| Standard power cables | 12mm | Default, fits most power cords |
-| Thick cables (extension cords) | 15-18mm | Bulky connectors, multiple cables |
-| Very thick bundles | 20mm+ | Consider wider channel instead |
+| Cable type                     | Recommended width | Notes                             |
+| ------------------------------ | ----------------- | --------------------------------- |
+| Thin cables (USB, audio)       | 8-10mm            | Snug fit, cable retention         |
+| Standard power cables          | 12mm              | Default, fits most power cords    |
+| Thick cables (extension cords) | 15-18mm           | Bulky connectors, multiple cables |
+| Very thick bundles             | 20mm+             | Consider wider channel instead    |
 
 **Distance_Between_Cutouts:**
 

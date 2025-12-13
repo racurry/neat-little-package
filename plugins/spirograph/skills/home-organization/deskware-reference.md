@@ -235,7 +235,7 @@ Deskware is an open-source, modular desk riser and organizer system designed by 
 - **v1.4** (2025-06-06): Riser customizer (slide sides, chamfer)
 - **v1.5** (2025-08-10): Split height option for large risers
 
----
+______________________________________________________________________
 
 *Last updated: December 2025*
 *License: CC-BY-NC-SA (non-commercial)*

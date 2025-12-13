@@ -181,7 +181,7 @@ Underware 2.0 is an open-source, modular cable management system designed by Han
 - LED channel use: Print in transparent filament for light diffusion
 - **Historical note**: Previously compatible with Multiboard 25mm grid system
 
----
+______________________________________________________________________
 
 *Last updated: October 2025*
 *License: CC-BY-NC-SA*

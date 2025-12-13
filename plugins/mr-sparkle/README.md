@@ -11,15 +11,15 @@ Lints your code on write.
 
 ## Supported Languages
 
-| Language | Tools |
-|----------|-------|
-| Markdown | markdownlint-cli2 |
-| Python | ruff, pylint, isort, black |
-| JavaScript/TypeScript | biome, eslint, prettier |
-| Shell | shfmt, shellcheck |
-| Ruby | standardrb, rubocop |
-| YAML | prettier |
-| JSON/JSON5/JSONC | prettier |
+| Language              | Tools                      |
+| --------------------- | -------------------------- |
+| Markdown              | markdownlint-cli2          |
+| Python                | ruff, pylint, isort, black |
+| JavaScript/TypeScript | biome, eslint, prettier    |
+| Shell                 | shfmt, shellcheck          |
+| Ruby                  | standardrb, rubocop        |
+| YAML                  | prettier                   |
+| JSON/JSON5/JSONC      | prettier                   |
 
 ## Commands
 

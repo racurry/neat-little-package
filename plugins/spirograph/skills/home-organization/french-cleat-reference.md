@@ -6,7 +6,7 @@ A **French cleat** is a simple yet powerful wall-mounting system used for hangin
 
 The design originated in traditional woodworking and cabinetry but has been widely adopted for workshops, garages, and 3D-printed modular systems. It’s prized for **strength, modularity, and reconfigurability** — a single wall of cleats can support dozens of interchangeable mounts.
 
----
+______________________________________________________________________
 
 ## Core Concept
 
@@ -14,9 +14,9 @@ The design originated in traditional woodworking and cabinetry but has been wide
 
 A French cleat uses:
 
-* **Wall cleat** – mounted securely to the wall with the bevel facing up and out.
-* **Accessory cleat** – attached to the back of the hanging object, with the bevel facing down and in.
-* When mated, the angled faces wedge together under load, creating a strong mechanical lock.
+- **Wall cleat** – mounted securely to the wall with the bevel facing up and out.
+- **Accessory cleat** – attached to the back of the hanging object, with the bevel facing down and in.
+- When mated, the angled faces wedge together under load, creating a strong mechanical lock.
 
 ### Key Dimensions
 
@@ -28,7 +28,7 @@ A French cleat uses:
 | **Spacing between rows** | 100–150 mm                            | Determines modular grid height               |
 | **Material**             | Plywood, hardwood, or printed plastic | Plywood is most common                       |
 
----
+______________________________________________________________________
 
 ## How It Works
 
@@ -39,16 +39,16 @@ A French cleat uses:
 
 Because the load transfers into the wall rather than relying on fastener shear, French cleats can support **very heavy weights** — easily 100 kg+ when properly built.
 
----
+______________________________________________________________________
 
 ## Building a French Cleat Wall
 
 ### Materials
 
-* **Plywood (18 mm / ¾ in)** – ideal balance of strength and workability.
-* **Screws** – wood screws or construction screws (≥ 5 mm / #10).
-* **Stud finder & level** – for accurate alignment.
-* **Table saw or circular saw with adjustable bevel** – to cut the 45° angle.
+- **Plywood (18 mm / ¾ in)** – ideal balance of strength and workability.
+- **Screws** – wood screws or construction screws (≥ 5 mm / #10).
+- **Stud finder & level** – for accurate alignment.
+- **Table saw or circular saw with adjustable bevel** – to cut the 45° angle.
 
 ### Steps
 
@@ -61,7 +61,7 @@ Because the load transfers into the wall rather than relying on fastener shear, 
 
 For full walls, start from the bottom and work up. This ensures the lower cleats support those above during installation.
 
----
+______________________________________________________________________
 
 ## Using French Cleats
 
@@ -69,16 +69,16 @@ Once installed, the wall becomes a **universal mounting interface**. Accessories
 
 Common attachments include:
 
-* Tool holders and bins
-* Cabinets and shelves
-* Power tool charging stations
-* 3D-printed organizers
-* Lighting mounts
-* Art and décor panels
+- Tool holders and bins
+- Cabinets and shelves
+- Power tool charging stations
+- 3D-printed organizers
+- Lighting mounts
+- Art and décor panels
 
 Because cleats align automatically, accessories sit perfectly straight every time.
 
----
+______________________________________________________________________
 
 ## Load Capacity and Safety
 
@@ -91,12 +91,12 @@ Because cleats align automatically, accessories sit perfectly straight every tim
 
 ### Safety Tips
 
-* Always mount into studs or solid masonry.
-* Use screws, not nails.
-* Don’t rely on drywall anchors alone for heavy items.
-* Test new designs with progressive loading before full deployment.
+- Always mount into studs or solid masonry.
+- Use screws, not nails.
+- Don’t rely on drywall anchors alone for heavy items.
+- Test new designs with progressive loading before full deployment.
 
----
+______________________________________________________________________
 
 ## Modular Design Patterns
 
@@ -116,17 +116,17 @@ Recessed behind cabinetry — invisible from the front but retain adjustability.
 
 Occasionally used for special mounts; less common but can support side-mounted accessories.
 
----
+______________________________________________________________________
 
 ## Advanced Tips
 
-* **Stack alignment:** Use a 10 mm spacer jig to ensure even row spacing.
-* **Angle adjustment:** Shallower cleats (30°–35°) ease lifting heavy accessories.
-* **Integrated power:** Route power strips behind cleats for charging stations.
-* **Finish:** Paint or varnish to improve durability and visibility of row spacing.
-* **Printed inserts:** Add logos, color coding, or labels to cleat ends for organization.
+- **Stack alignment:** Use a 10 mm spacer jig to ensure even row spacing.
+- **Angle adjustment:** Shallower cleats (30°–35°) ease lifting heavy accessories.
+- **Integrated power:** Route power strips behind cleats for charging stations.
+- **Finish:** Paint or varnish to improve durability and visibility of row spacing.
+- **Printed inserts:** Add logos, color coding, or labels to cleat ends for organization.
 
----
+______________________________________________________________________
 
 ## Common Mistakes
 
@@ -138,51 +138,51 @@ Occasionally used for special mounts; less common but can support side-mounted a
 | Layer separation (3D prints) | Incorrect orientation | Print with bevel side up              |
 | Wall damage                  | Overloaded cleat      | Distribute load across more cleats    |
 
----
+______________________________________________________________________
 
 ## Maintenance & Reconfiguration
 
-* Periodically check screw tightness.
-* Keep cleats dust-free to maintain smooth fit.
-* When rearranging, lift vertically to disengage — never pull outward.
-* Repaint or sand lightly as needed to maintain smooth contact faces.
-* Replace damaged sections easily without disturbing adjacent cleats.
+- Periodically check screw tightness.
+- Keep cleats dust-free to maintain smooth fit.
+- When rearranging, lift vertically to disengage — never pull outward.
+- Repaint or sand lightly as needed to maintain smooth contact faces.
+- Replace damaged sections easily without disturbing adjacent cleats.
 
----
+______________________________________________________________________
 
 ## Design Principles
 
-* **Simplicity:** Two boards, one angle, infinite flexibility.
-* **Strength through geometry:** Converts load into compression rather than tension.
-* **Reconfigurability:** Infinite rearrangement of accessories.
-* **Compatibility:** Works with wood, metal, or 3D-printed components.
-* **Aesthetics:** Clean, professional, “shop-ready” or “living-room-compatible.”
+- **Simplicity:** Two boards, one angle, infinite flexibility.
+- **Strength through geometry:** Converts load into compression rather than tension.
+- **Reconfigurability:** Infinite rearrangement of accessories.
+- **Compatibility:** Works with wood, metal, or 3D-printed components.
+- **Aesthetics:** Clean, professional, “shop-ready” or “living-room-compatible.”
 
----
+______________________________________________________________________
 
 ## Official & Community Resources
 
-* **Inspiration & guides:**
-  * [https://makerworld.com/](https://makerworld.com/) (search “French cleat”)
-* **Reference designs:**
-  * Woodsmith Shop Episode 180
-  * DIY Builds, April Wilkerson, and Hands on Katie for modular implementations
-* **Parametric generators:**
-  * Custom cleat generator on MakerWorld
-  * OpenSCAD libraries for cleat profiles
+- **Inspiration & guides:**
+  - [https://makerworld.com/](https://makerworld.com/) (search “French cleat”)
+- **Reference designs:**
+  - Woodsmith Shop Episode 180
+  - DIY Builds, April Wilkerson, and Hands on Katie for modular implementations
+- **Parametric generators:**
+  - Custom cleat generator on MakerWorld
+  - OpenSCAD libraries for cleat profiles
 
----
+______________________________________________________________________
 
 ## Common Use Cases
 
-* Workshop tool walls
-* 3D printer accessory storage
-* Garage cabinetry
-* Modular kitchen storage
-* Office and craft organization
-* Portable panels for event displays
+- Workshop tool walls
+- 3D printer accessory storage
+- Garage cabinetry
+- Modular kitchen storage
+- Office and craft organization
+- Portable panels for event displays
 
----
+______________________________________________________________________
 
 ## Quick Setup Reference
 
@@ -195,4 +195,4 @@ Occasionally used for special mounts; less common but can support side-mounted a
 
 ## Use with Frenchfinity
 
-Can also be used to hold Frenchfinity-generated tool holders and organizers, combining the flexibility of French cleats with the customizability of 3D printing.  Read ./frenchfinity-reference.md to see how to use Frenchfinity with French cleats.
+Can also be used to hold Frenchfinity-generated tool holders and organizers, combining the flexibility of French cleats with the customizability of 3D printing. Read ./frenchfinity-reference.md to see how to use Frenchfinity with French cleats.

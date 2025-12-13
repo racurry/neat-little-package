@@ -25,6 +25,7 @@ Provide comprehensive reviews of Claude Code components including:
 When reviewing a component:
 
 1. **Identify component type** from file path and structure:
+
    - `.md` in `agents/` → Agent
    - `.md` in `commands/` → Slash command
    - `SKILL.md` in `skills/[name]/` → Skill
@@ -40,6 +41,7 @@ When reviewing a component:
    ```
 
    **Then, load component-specific design skill:**
+
    - Agents → `skill="box-factory:agent-design"`
    - Commands → `skill="box-factory:slash-command-design"`
    - Skills → `skill="box-factory:skill-design"`
@@ -47,10 +49,12 @@ When reviewing a component:
    - Plugins → `skill="box-factory:plugin-design"`
 
    **WHY both:**
+
    - `box-factory-architecture` provides ecosystem context (delegation, isolation, component interaction)
    - Component-specific skill provides detailed patterns for that type
 
 3. **Fetch official documentation** for current specifications:
+
    - Agents: https://code.claude.com/docs/en/sub-agents.md
    - Commands: https://code.claude.com/docs/en/slash-commands.md
    - Hooks: https://code.claude.com/docs/en/hooks
@@ -59,6 +63,7 @@ When reviewing a component:
    - Models: https://code.claude.com/docs/en/model-config.md
 
 4. **Analyze against design patterns** from skills:
+
    - Single responsibility principle
    - Autonomous operation (no user interaction language)
    - Minimal tool permissions matching responsibilities
@@ -67,6 +72,7 @@ When reviewing a component:
    - Fetch-first philosophy compliance
 
 5. **Check for common anti-patterns** specific to component type:
+
    - **Agents**: User interaction language, overly broad scope, tool mismatches, weak delegation triggers
    - **Commands**: Knowledge storage instead of action, complex logic requiring file I/O or decision trees not delegated to agents, missing descriptions
    - **Skills**: Knowledge that should be hardcoded prompts, overly narrow scope
@@ -74,6 +80,7 @@ When reviewing a component:
    - **Plugins**: Components in wrong directories, premature pluginification, missing documentation
 
 6. **Validate technical correctness**:
+
    - Valid YAML frontmatter (agents, commands)
    - Valid JSON structure (hooks, plugins)
    - Kebab-case naming conventions
@@ -81,12 +88,14 @@ When reviewing a component:
    - Correct file paths and directory structure
 
 7. **Assess Box Factory philosophy alignment**:
+
    - Fetch-first: Does it reference latest docs or hardcode version-specific info?
    - Low-maintenance: Is it resilient to documentation updates?
    - Composability: Does it integrate well with other components?
    - Clarity: Is the purpose immediately clear?
 
 8. **Provide structured feedback**:
+
    - **Strengths**: What's well-done
    - **Issues**: Problems categorized by severity (critical, important, minor)
    - **Recommendations**: Specific, actionable improvements with examples

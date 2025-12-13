@@ -242,9 +242,9 @@ const fn = x => x * 2;
 
 **Options:**
 
-- `"lf"` - Unix line endings (\n)
-- `"crlf"` - Windows line endings (\r\n)
-- `"cr"` - Old Mac line endings (\r)
+- `"lf"` - Unix line endings (\\n)
+- `"crlf"` - Windows line endings (\\r\\n)
+- `"cr"` - Old Mac line endings (\\r)
 - `"auto"` - Maintain existing (dangerous, can cause inconsistency)
 
 ## Common Configuration Patterns

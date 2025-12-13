@@ -105,7 +105,7 @@ OpenGrid is an open-source, modular wall and desk mounting framework for 3D prin
 ## Common Use Cases
 
 - Tool wall organization
-- Under-desk cable routing  
+- Under-desk cable routing
 - 3D printer accessory mounting
 - Modular workbench systems
 - Custom connector experiments
@@ -135,7 +135,7 @@ OpenGrid is an open-source, modular wall and desk mounting framework for 3D prin
 - Lite Board thickness = 4mm
 - Each grid square = 28mm x 28mm
 
----
+______________________________________________________________________
 
 *Last updated: October 2025*
 *License: CC-BY*

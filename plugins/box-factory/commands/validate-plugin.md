@@ -6,6 +6,7 @@ argument-hint: [plugin-path]
 Use the validation-agent to perform comprehensive validation of the plugin at `$1`.
 
 The agent will validate:
+
 - plugin.json structure and required fields
 - Directory structure (components at plugin root, not in .claude-plugin/)
 - Component frontmatter and formatting

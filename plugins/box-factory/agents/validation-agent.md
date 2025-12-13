@@ -71,14 +71,14 @@ Validate Claude Code plugins, agents, commands, skills, and hooks against offici
 
 1. **Identify target**: Determine what needs validation from provided context (plugin directory, specific component, etc.)
 
-1. **Load specifications**: Use WebFetch to retrieve current documentation:
+2. **Load specifications**: Use WebFetch to retrieve current documentation:
 
    - For plugins: `https://code.claude.com/docs/en/plugins-reference`
    - For agents: `https://code.claude.com/docs/en/sub-agents.md`
    - For commands: `https://code.claude.com/docs/en/slash-commands.md`
    - For hooks: `https://code.claude.com/docs/en/hooks`
 
-1. **Load design skills (REQUIRED)**: Use Skill tool to load architecture and component-specific skills:
+3. **Load design skills (REQUIRED)**: Use Skill tool to load architecture and component-specific skills:
 
    **First, load ecosystem architecture:**
 
@@ -99,21 +99,21 @@ Validate Claude Code plugins, agents, commands, skills, and hooks against offici
    - `box-factory-architecture` provides ecosystem validation context (delegation patterns, isolation, component interaction)
    - Component-specific skills provide detailed patterns and anti-patterns
 
-1. **Examine structure**: Use Glob and Read to inspect directory layout and component files
+4. **Examine structure**: Use Glob and Read to inspect directory layout and component files
 
-1. **Validate syntax**: Check JSON files (`plugin.json`, `hooks.json`) for valid syntax
+5. **Validate syntax**: Check JSON files (`plugin.json`, `hooks.json`) for valid syntax
 
-1. **Validate frontmatter**: Parse YAML frontmatter in markdown components for required fields and valid values
+6. **Validate frontmatter**: Parse YAML frontmatter in markdown components for required fields and valid values
 
-1. **Scan for antipatterns**: Use Grep to detect forbidden patterns:
+7. **Scan for antipatterns**: Use Grep to detect forbidden patterns:
 
    - User interaction language: "ask the user", "prompt the user", "confirm with user"
    - Weak delegation language in agent descriptions
    - Knowledge storage in commands instead of skills
 
-1. **Cross-reference**: Verify tool names against current tool documentation, model names against model configuration
+8. **Cross-reference**: Verify tool names against current tool documentation, model names against model configuration
 
-1. **Generate report**: Produce structured validation report with:
+9. **Generate report**: Produce structured validation report with:
 
    - **File path** with line number for each issue
    - **Issue category** (structure, syntax, antipattern, best practice)

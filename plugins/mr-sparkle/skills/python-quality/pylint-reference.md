@@ -16,13 +16,13 @@ Pylint is a comprehensive Python linter that checks for:
 
 Pylint organizes messages into categories:
 
-| Category | Prefix | Examples |
-|----------|--------|----------|
-| **Convention** | C | C0103 (invalid-name), C0114 (missing-module-docstring) |
-| **Refactor** | R | R0913 (too-many-arguments), R1705 (no-else-return) |
-| **Warning** | W | W0612 (unused-variable), W0621 (redefined-outer-name) |
-| **Error** | E | E0401 (import-error), E1101 (no-member) |
-| **Fatal** | F | F0001 (syntax-error) |
+| Category       | Prefix | Examples                                               |
+| -------------- | ------ | ------------------------------------------------------ |
+| **Convention** | C      | C0103 (invalid-name), C0114 (missing-module-docstring) |
+| **Refactor**   | R      | R0913 (too-many-arguments), R1705 (no-else-return)     |
+| **Warning**    | W      | W0612 (unused-variable), W0621 (redefined-outer-name)  |
+| **Error**      | E      | E0401 (import-error), E1101 (no-member)                |
+| **Fatal**      | F      | F0001 (syntax-error)                                   |
 
 ## Common Configuration
 

@@ -321,14 +321,14 @@ for (x = [10:15:bin_width-10]) {
 
 **2×3×4u bin comparison**:
 
-| Aspect | Standard Bin | Lite Bin |
-|--------|--------------|----------|
-| Print time | 3-4 hours | 1-2 hours |
-| Filament | 25-30g | 8-12g |
-| Strength | High | Low-Medium |
-| Base grip | Excellent | Good |
-| Stackable | Yes (with lip) | No |
-| Cost | $0.75-1.00 | $0.25-0.40 |
+| Aspect     | Standard Bin   | Lite Bin   |
+| ---------- | -------------- | ---------- |
+| Print time | 3-4 hours      | 1-2 hours  |
+| Filament   | 25-30g         | 8-12g      |
+| Strength   | High           | Low-Medium |
+| Base grip  | Excellent      | Good       |
+| Stackable  | Yes (with lip) | No         |
+| Cost       | $0.75-1.00     | $0.25-0.40 |
 
 **When to choose lite**:
 

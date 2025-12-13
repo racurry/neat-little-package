@@ -102,6 +102,7 @@ value_template: >
 Users must configure:
 
 1. Create long-lived access token in HA (Profile → Security → Long-Lived Access Tokens)
+
 2. Export environment variables:
 
    ```bash

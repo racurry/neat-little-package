@@ -15,12 +15,12 @@ Reference for generating Underware mounting accessories and add-ons.
 
 ## Accessory Selection Guide
 
-| Accessory | Purpose | Use Case |
-|-----------|---------|----------|
-| Keyholes | Wall mounting without OpenGrid | Direct drywall/wood surface mounting |
-| Hooks | Hang items from channel | Cable loops, lightweight tools, accessories |
-| Item Holders | Clamp items to channel | Phone holders, tool clips, attachments |
-| Connectors | Join channel sections | Threaded snap connections between channels |
+| Accessory    | Purpose                        | Use Case                                    |
+| ------------ | ------------------------------ | ------------------------------------------- |
+| Keyholes     | Wall mounting without OpenGrid | Direct drywall/wood surface mounting        |
+| Hooks        | Hang items from channel        | Cable loops, lightweight tools, accessories |
+| Item Holders | Clamp items to channel         | Phone holders, tool clips, attachments      |
+| Connectors   | Join channel sections          | Threaded snap connections between channels  |
 
 ## Keyholes (Wall Mounting)
 
@@ -155,12 +155,12 @@ Number_of_Hooks = 1;               // Hooks per piece
 
 **Hook_Length decision:**
 
-| Item to hang | Recommended length | Notes |
-|--------------|-------------------|-------|
-| Thin cables (USB, audio) | 20mm | Minimal projection |
-| Power cables | 30mm | Standard |
-| Coiled cables | 40-50mm | Larger loop diameter |
-| Small tools (screwdrivers) | 40mm | Tool handle clearance |
+| Item to hang               | Recommended length | Notes                 |
+| -------------------------- | ------------------ | --------------------- |
+| Thin cables (USB, audio)   | 20mm               | Minimal projection    |
+| Power cables               | 30mm               | Standard              |
+| Coiled cables              | 40-50mm            | Larger loop diameter  |
+| Small tools (screwdrivers) | 40mm               | Tool handle clearance |
 
 **Hook_Angle options:**
 
@@ -336,20 +336,20 @@ Thread_Depth_Sm = 0.5;
 
 **Built-in channel mounting** (no separate accessories):
 
-| Method | Surface | Hardware | Repositionable | Cost |
-|--------|---------|----------|----------------|------|
-| Threaded Snap Connector | OpenGrid/Multiboard | Snap connectors | Yes | Medium |
-| Direct Multiboard Screw | Multiboard | Screws | No | Low |
-| Direct Multipoint Screw | Honeycomb Wall | Screws | No | Low |
-| Magnet | Metal surfaces | Magnets | Yes | Medium |
-| Wood Screw | Wood/drywall | Screws | No | Very low |
-| Flat | Any (with adhesive) | Adhesive strips | No | Very low |
+| Method                  | Surface             | Hardware        | Repositionable | Cost     |
+| ----------------------- | ------------------- | --------------- | -------------- | -------- |
+| Threaded Snap Connector | OpenGrid/Multiboard | Snap connectors | Yes            | Medium   |
+| Direct Multiboard Screw | Multiboard          | Screws          | No             | Low      |
+| Direct Multipoint Screw | Honeycomb Wall      | Screws          | No             | Low      |
+| Magnet                  | Metal surfaces      | Magnets         | Yes            | Medium   |
+| Wood Screw              | Wood/drywall        | Screws          | No             | Very low |
+| Flat                    | Any (with adhesive) | Adhesive strips | No             | Very low |
 
 **Keyhole mounting** (separate accessory):
 
-| Method | Surface | Hardware | Repositionable | Cost |
-|--------|---------|----------|----------------|------|
-| Keyholes | Drywall/wood | Wall screws | Limited | Very low |
+| Method   | Surface      | Hardware    | Repositionable | Cost     |
+| -------- | ------------ | ----------- | -------------- | -------- |
+| Keyholes | Drywall/wood | Wall screws | Limited        | Very low |
 
 **Selection guide:**
 

@@ -23,11 +23,11 @@ Advanced parametric implementations are sourced from [QuackWorks](https://github
 
 **Covered Systems:**
 
-| System | QuackWorks Path | Skill |
-|--------|-----------------|-------|
-| Underware (cable management) | `/Underware/` | `underware-openscad` |
-| NeoGrid (drawer dividers) | `/NeoGrid/` | `neogrid-openscad` |
-| OpenGrid items | `/VerticalMountingSeries/` | `opengrid-openscad` |
-| Deskware (desk risers) | `/Deskware/` | `home-organization` |
+| System                       | QuackWorks Path            | Skill                |
+| ---------------------------- | -------------------------- | -------------------- |
+| Underware (cable management) | `/Underware/`              | `underware-openscad` |
+| NeoGrid (drawer dividers)    | `/NeoGrid/`                | `neogrid-openscad`   |
+| OpenGrid items               | `/VerticalMountingSeries/` | `opengrid-openscad`  |
+| Deskware (desk risers)       | `/Deskware/`               | `home-organization`  |
 
 QuackWorks is licensed CC BY-NC-SA 4.0.

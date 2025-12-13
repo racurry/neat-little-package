@@ -83,29 +83,29 @@ include <BOSL2/threading.scad>
 
 ### By Cable Routing Need
 
-| Routing Need | Channel Type | Key File | Read Subpage |
-|--------------|--------------|----------|--------------|
-| Straight run with cord exits | I Channel | `Underware_I_Channel.scad` | ./straight-runs.md |
-| 90° corner, independent arm lengths | L Channel | `Underware_L_Channel.scad` | ./corners-junctions.md |
-| 3-way intersection | T Channel | `Underware_T_Channel.scad` | ./corners-junctions.md |
-| 4-way cross | X Channel | `Underware_X_Channel.scad` | ./corners-junctions.md |
-| Split one path to two | Y Channel (Branch Split) | `Underware_Branch_Split_Channel.scad` | ./corners-junctions.md |
-| Smooth diagonal transition | S Channel | `Underware_S_Channel.scad` | ./curves-transitions.md |
-| Quarter/half/full circle | C Channel | `Underware_C_Channel.scad` | ./curves-transitions.md |
-| 45° angled corner | Mitre Channel | `Underware_Mitre_Channel.scad` | ./curves-transitions.md |
-| Vertical level change | Height Change Channel | `Underware_Height_Change_Channel.scad` | ./curves-transitions.md |
+| Routing Need                        | Channel Type             | Key File                               | Read Subpage            |
+| ----------------------------------- | ------------------------ | -------------------------------------- | ----------------------- |
+| Straight run with cord exits        | I Channel                | `Underware_I_Channel.scad`             | ./straight-runs.md      |
+| 90° corner, independent arm lengths | L Channel                | `Underware_L_Channel.scad`             | ./corners-junctions.md  |
+| 3-way intersection                  | T Channel                | `Underware_T_Channel.scad`             | ./corners-junctions.md  |
+| 4-way cross                         | X Channel                | `Underware_X_Channel.scad`             | ./corners-junctions.md  |
+| Split one path to two               | Y Channel (Branch Split) | `Underware_Branch_Split_Channel.scad`  | ./corners-junctions.md  |
+| Smooth diagonal transition          | S Channel                | `Underware_S_Channel.scad`             | ./curves-transitions.md |
+| Quarter/half/full circle            | C Channel                | `Underware_C_Channel.scad`             | ./curves-transitions.md |
+| 45° angled corner                   | Mitre Channel            | `Underware_Mitre_Channel.scad`         | ./curves-transitions.md |
+| Vertical level change               | Height Change Channel    | `Underware_Height_Change_Channel.scad` | ./curves-transitions.md |
 
 ### By Use Case Examples
 
-| User wants to | Recommended approach | Notes |
-|---------------|---------------------|-------|
-| Route desk power cables horizontally | I Channel with cord cutouts | Use `Both Sides` cutouts for multiple exit points |
-| Turn corner around desk edge | L Channel | Set `L_Channel_Length_in_Units_Y/X_Axis` independently |
-| Create cable junction box | T or X Channel | T for 3-way, X for 4-way crossroads |
-| Branch to two monitor cables | Y Channel | `Y_Output_Direction = "Forward"` keeps both outputs same direction |
-| Gradually shift cable run diagonally | S Channel | Bezier curve, specify `Units_Over` and `Units_Up` |
-| Route around circular desk leg | C Channel | Set `Arc_Angle` for quarter (90°) or half (180°) circle |
-| Transition cables up/down wall | Height Change Channel | Smooth vertical transitions |
+| User wants to                        | Recommended approach        | Notes                                                              |
+| ------------------------------------ | --------------------------- | ------------------------------------------------------------------ |
+| Route desk power cables horizontally | I Channel with cord cutouts | Use `Both Sides` cutouts for multiple exit points                  |
+| Turn corner around desk edge         | L Channel                   | Set `L_Channel_Length_in_Units_Y/X_Axis` independently             |
+| Create cable junction box            | T or X Channel              | T for 3-way, X for 4-way crossroads                                |
+| Branch to two monitor cables         | Y Channel                   | `Y_Output_Direction = "Forward"` keeps both outputs same direction |
+| Gradually shift cable run diagonally | S Channel                   | Bezier curve, specify `Units_Over` and `Units_Up`                  |
+| Route around circular desk leg       | C Channel                   | Set `Arc_Angle` for quarter (90°) or half (180°) circle            |
+| Transition cables up/down wall       | Height Change Channel       | Smooth vertical transitions                                        |
 
 ### When Pattern Is Unclear
 
@@ -138,14 +138,14 @@ Mounting_Method = "Threaded Snap Connector";
 
 ### Mounting Method Selection
 
-| Method | Use When | Parameters Needed | Print Orientation |
-|--------|----------|-------------------|-------------------|
-| Threaded Snap Connector | OpenGrid/Multiboard with connectors | None (default) | Base flat, Top upside-down |
-| Direct Multiboard Screw | Screw directly into board holes | None | Base flat (pre-drilled holes) |
-| Direct Multipoint Screw | Honeycomb Storage Wall | None | Base flat (larger holes) |
-| Magnet | Curved surfaces, repositionable | `Magnet_Diameter`, `Magnet_Thickness` | Base flat (magnet recesses) |
-| Wood Screw | Direct wall/desk mounting | `Wood_Screw_Thread_Diameter` | Base flat (countersink holes) |
-| Flat | Adhesive mounting, testing | None | Base flat (no mounting features) |
+| Method                  | Use When                            | Parameters Needed                     | Print Orientation                |
+| ----------------------- | ----------------------------------- | ------------------------------------- | -------------------------------- |
+| Threaded Snap Connector | OpenGrid/Multiboard with connectors | None (default)                        | Base flat, Top upside-down       |
+| Direct Multiboard Screw | Screw directly into board holes     | None                                  | Base flat (pre-drilled holes)    |
+| Direct Multipoint Screw | Honeycomb Storage Wall              | None                                  | Base flat (larger holes)         |
+| Magnet                  | Curved surfaces, repositionable     | `Magnet_Diameter`, `Magnet_Thickness` | Base flat (magnet recesses)      |
+| Wood Screw              | Direct wall/desk mounting           | `Wood_Screw_Thread_Diameter`          | Base flat (countersink holes)    |
+| Flat                    | Adhesive mounting, testing          | None                                  | Base flat (no mounting features) |
 
 **Common mistake**: Using `Flat` for production installs. This removes all mounting features - only use for adhesive mounting or prototyping.
 
@@ -377,11 +377,11 @@ Additional_Holding_Strength = 0.6;  // Stable, works with Original
 
 **Read these subpages for detailed parameter reference:**
 
-| Subpage | Contains | Use For |
-|---------|----------|---------|
-| **./straight-runs.md** | I Channel (straight with cord cutouts) | Linear cable runs, desktop cable management |
-| **./corners-junctions.md** | L, T, X, Y Channels | Corner turns, multi-path junctions, cable splits |
-| **./curves-transitions.md** | S, C, Mitre, Height Change Channels | Smooth curves, diagonal transitions, vertical routing |
+| Subpage                       | Contains                                  | Use For                                                   |
+| ----------------------------- | ----------------------------------------- | --------------------------------------------------------- |
+| **./straight-runs.md**        | I Channel (straight with cord cutouts)    | Linear cable runs, desktop cable management               |
+| **./corners-junctions.md**    | L, T, X, Y Channels                       | Corner turns, multi-path junctions, cable splits          |
+| **./curves-transitions.md**   | S, C, Mitre, Height Change Channels       | Smooth curves, diagonal transitions, vertical routing     |
 | **./mounting-accessories.md** | Keyholes, Hooks, Item Holders, Connectors | Wall mounting, accessory integration, modular connections |
 
 ## Documentation References

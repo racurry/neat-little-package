@@ -1,6 +1,6 @@
 # Basic Bin
 
-Standard open-top bin with four walls and floor. Most versatile pattern.  Good for small parts, screws, hardware.
+Standard open-top bin with four walls and floor. Most versatile pattern. Good for small parts, screws, hardware.
 
 ```openscad
 module basic_bin() {

@@ -21,6 +21,7 @@ When invoked to create a commit:
    ```
 
 2. **Analyze repository state**:
+
    - Run `git status` to see all changes (staged, unstaged, untracked)
    - Run `git diff` to see detailed unstaged changes
    - Run `git diff --staged` to see what's already staged (if anything)
@@ -28,10 +29,12 @@ When invoked to create a commit:
 3. **Determine commit scope** based on parameters:
 
    **Full commit (all files):**
+
    - Stage all changes: `git add .`
    - Proceed to commit step
 
    **Partial commit (file selection):**
+
    - Identify files matching the provided description by analyzing:
      - File paths from `git status` output
      - Change content from `git diff` output
@@ -43,6 +46,7 @@ When invoked to create a commit:
      - "commit frontend changes" → stage `src/components/`, `*.tsx`, etc.
 
 4. **Generate commit message** (if not provided):
+
    - Analyze staged changes using `git diff --staged`
    - Identify the nature of changes (fix, refactor, add, update, etc.)
    - Read affected files if needed to understand context
@@ -58,7 +62,9 @@ When invoked to create a commit:
    - Example: `fix: prevent race condition in user session cleanup`
 
 5. **Execute commit**:
+
    - Use provided message or generated message
+
    - Format commit with proper quoting:
 
      ```bash
@@ -70,6 +76,7 @@ When invoked to create a commit:
 6. **Handle pre-commit hook failures** (following git-workflow skill):
 
    **If commit fails due to hook modifications:**
+
    - Hook may auto-format or modify files during commit
    - Modified files remain unstaged after failure
    - Stage the auto-fixed files: `git add .`
@@ -77,17 +84,20 @@ When invoked to create a commit:
    - If retry fails, report the issue and stop (avoid infinite loops)
 
    **If commit fails due to validation errors:**
+
    - Report the specific errors from hook output
    - Do NOT retry automatically
    - Return error details for user to fix
 
    **CRITICAL retry rules:**
+
    - Only retry ONCE to avoid infinite loops
    - Use same commit message on retry
    - Stage all modified files before retry
    - If second attempt fails, investigate hook configuration
 
 7. **Verify commit success**:
+
    - Run `git status` to confirm working directory state
    - Run `git log -1 --oneline` to show created commit
    - Return commit hash and message
@@ -170,7 +180,7 @@ Action needed:
 
 **Partial commit for documentation:**
 
-- Filter files matching "documentation" (*.md, docs/ directory)
+- Filter files matching "documentation" (\*.md, docs/ directory)
 - Stage: `git add README.md docs/api.md docs/setup.md`
 - Commit: `git commit -m "update API documentation and setup guide"`
 - Return staged files and commit hash

@@ -31,6 +31,7 @@ When invoked to research code history:
    - **Pattern-level:** "Why is there a setTimeout here instead of async/await?"
 
    **Extract from query:**
+
    - File path (if provided)
    - Function/class name (if provided)
    - Specific line numbers (if provided)
@@ -90,6 +91,7 @@ When invoked to research code history:
 4. **Find related context**:
 
    **Parse commit messages for references:**
+
    - Issue numbers: `#123`, `fixes #456`, `closes #789`
    - PR numbers: `PR #42`, `pull request #99`
    - Related commits: `see also abc1234`
@@ -118,6 +120,7 @@ When invoked to research code history:
    ```
 
    **Read referenced files:**
+
    - Use Read tool to examine current state of related files
    - Use Grep to find related code patterns
    - Use Glob to discover related files
@@ -129,28 +132,33 @@ When invoked to research code history:
    **Structure your explanation:**
 
    **A. Summary answer (start here):**
+
    - Direct answer to user's question
    - Key decision or change point
    - When it happened (date + commit)
 
    **B. Historical evolution (chronological):**
+
    - When was this first introduced? (commit, date, author)
    - How has it evolved? (major changes chronologically)
    - What were the key decision points?
 
    **C. Reasoning and context:**
+
    - What problem was being solved?
    - Why was this approach chosen?
    - Were there alternative approaches considered? (check PR discussions)
    - What constraints existed? (technical, business, timeline)
 
    **D. Supporting evidence:**
+
    - Relevant commit messages (quote key ones)
    - PR descriptions/comments (if found)
    - Code snippets showing evolution
    - Related issues or discussions
 
    **E. Current state assessment:**
+
    - Is this still the right approach?
    - Has context changed since original decision?
    - Any technical debt or areas for improvement?
@@ -158,17 +166,20 @@ When invoked to research code history:
 6. **Handle ambiguity and gaps**:
 
    **When history is unclear:**
+
    - State what you found and what's missing
    - Provide most likely explanation based on available evidence
    - Note assumptions explicitly: "Based on the commit message, it appears..."
    - Suggest where more information might exist
 
    **When query is too vague:**
+
    - Make reasonable inferences about what user wants
    - Research most likely interpretation
    - Note what you researched: "I researched X based on your question about Y"
 
    **When tracing through refactors:**
+
    - Use `git log --follow` to track renames
    - Note when files were split/merged
    - Show evolution path: "Originally in A.js, moved to B.js in commit xyz, then split into C.js and D.js"

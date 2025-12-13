@@ -6,24 +6,24 @@ This document provides a quick reference for ruff rule categories and common con
 
 Ruff organizes 800+ rules into categories based on the original tools they replace:
 
-| Category | Tool Replaced | What It Checks |
-|----------|---------------|----------------|
-| **E/W** | pycodestyle | PEP 8 style (spacing, indentation, line length) |
-| **F** | Pyflakes | Undefined names, unused imports, invalid syntax |
-| **I** | isort | Import sorting and organization |
-| **B** | flake8-bugbear | Likely bugs and design problems |
-| **UP** | pyupgrade | Modernizations for newer Python syntax |
-| **C4** | flake8-comprehensions | List/dict/set comprehension optimization |
-| **SIM** | flake8-simplify | Code simplifications |
-| **N** | pep8-naming | Naming conventions (PEP 8 compliance) |
-| **D** | pydocstyle | Docstring format and completeness |
-| **S** | flake8-bandit | Security vulnerabilities |
-| **RET** | flake8-return | Return statement patterns |
-| **PTH** | flake8-use-pathlib | Prefer pathlib over os.path |
-| **DTZ** | flake8-datetimez | Timezone-related datetime issues |
-| **LOG** | flake8-logging | Logging best practices |
-| **PLR/PLE/PLC/PLW** | Pylint | Refactoring, errors, conventions, warnings |
-| **RUF** | Ruff-specific | Custom rules unique to Ruff |
+| Category            | Tool Replaced         | What It Checks                                  |
+| ------------------- | --------------------- | ----------------------------------------------- |
+| **E/W**             | pycodestyle           | PEP 8 style (spacing, indentation, line length) |
+| **F**               | Pyflakes              | Undefined names, unused imports, invalid syntax |
+| **I**               | isort                 | Import sorting and organization                 |
+| **B**               | flake8-bugbear        | Likely bugs and design problems                 |
+| **UP**              | pyupgrade             | Modernizations for newer Python syntax          |
+| **C4**              | flake8-comprehensions | List/dict/set comprehension optimization        |
+| **SIM**             | flake8-simplify       | Code simplifications                            |
+| **N**               | pep8-naming           | Naming conventions (PEP 8 compliance)           |
+| **D**               | pydocstyle            | Docstring format and completeness               |
+| **S**               | flake8-bandit         | Security vulnerabilities                        |
+| **RET**             | flake8-return         | Return statement patterns                       |
+| **PTH**             | flake8-use-pathlib    | Prefer pathlib over os.path                     |
+| **DTZ**             | flake8-datetimez      | Timezone-related datetime issues                |
+| **LOG**             | flake8-logging        | Logging best practices                          |
+| **PLR/PLE/PLC/PLW** | Pylint                | Refactoring, errors, conventions, warnings      |
+| **RUF**             | Ruff-specific         | Custom rules unique to Ruff                     |
 
 ## Common Rule Selections
 

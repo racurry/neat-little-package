@@ -33,12 +33,12 @@ Decision framework for system selection. Contains:
 
 Each system has a dedicated code generation skill:
 
-| Skill | System | Key Pattern |
-|-------|--------|-------------|
-| `gridfinity-openscad` | Gridfinity bins/baseplates | 42mm grid, magnet mounts |
-| `opengrid-openscad` | OpenGrid wall items | 28mm grid, MultiConnect backplate |
-| `neogrid-openscad` | NeoGrid drawer dividers | Hybrid (print connectors, buy dividers) |
-| `underware-openscad` | Underware cable channels | Parametric sizing, OpenGrid snap-in |
+| Skill                 | System                     | Key Pattern                             |
+| --------------------- | -------------------------- | --------------------------------------- |
+| `gridfinity-openscad` | Gridfinity bins/baseplates | 42mm grid, magnet mounts                |
+| `opengrid-openscad`   | OpenGrid wall items        | 28mm grid, MultiConnect backplate       |
+| `neogrid-openscad`    | NeoGrid drawer dividers    | Hybrid (print connectors, buy dividers) |
+| `underware-openscad`  | Underware cable channels   | Parametric sizing, OpenGrid snap-in     |
 
 ### Skill Subdirectories
 

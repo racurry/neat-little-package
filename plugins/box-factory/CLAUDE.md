@@ -182,17 +182,17 @@ The agent-writer will:
    - Skill = Knowledge that loads when relevant, interpretive guidance
    - Agent = Does actual work autonomously (writes files, runs tests)
 
-1. **Command pattern?**
+2. **Command pattern?**
 
    - ALL Box Factory commands delegate to specialized agents
    - Command = thin wrapper, agent = complex logic
 
-1. **Read-only vs Write?**
+3. **Read-only vs Write?**
 
    - Validation/review agents = Read, Grep, Glob, WebFetch only
    - Creation agents = Add Write, Edit as needed
 
-1. **What design skill applies?**
+4. **What design skill applies?**
 
    - Creating agents → use agent-design
    - Creating commands → use slash-command-design
@@ -200,7 +200,7 @@ The agent-writer will:
    - Creating hooks → use hooks-design
    - Creating plugins → use plugin-design
 
-1. **Apply knowledge delta filter?**
+5. **Apply knowledge delta filter?**
 
    - For skills: Only document what Claude doesn't already know
    - Would Claude get this wrong without the skill?
@@ -270,45 +270,45 @@ All Box Factory components are self-documenting examples of the patterns they te
 ### Creating Components
 
 1. Load relevant design skills
-1. Fetch official documentation
-1. Create component following patterns
-1. Self-validate against quality checklist
-1. Return complete result
+2. Fetch official documentation
+3. Create component following patterns
+4. Self-validate against quality checklist
+5. Return complete result
 
 ### Validating Components
 
 1. Load box-factory-architecture skill
-1. Load component-specific design skill
-1. Fetch official documentation
-1. Check structure, syntax, specifications
-1. Detect anti-patterns
-1. Generate detailed report with file:line references
+2. Load component-specific design skill
+3. Fetch official documentation
+4. Check structure, syntax, specifications
+5. Detect anti-patterns
+6. Generate detailed report with file:line references
 
 ### Reviewing Components
 
 1. Identify component type
-1. Load box-factory-architecture + component-specific skill
-1. Fetch official documentation
-1. Analyze against design patterns
-1. Provide prioritized feedback (critical, important, minor)
-1. Suggest specific improvements with examples
+2. Load box-factory-architecture + component-specific skill
+3. Fetch official documentation
+4. Analyze against design patterns
+5. Provide prioritized feedback (critical, important, minor)
+6. Suggest specific improvements with examples
 
 ## Component Creation Best Practices
 
 ### Writer Agents Must
 
 1. Load both box-factory-architecture AND component-specific design skill
-1. Fetch official documentation before creating
-1. Self-validate against quality checklist
-1. Delegate component creation to specialized agents (never create directly)
+2. Fetch official documentation before creating
+3. Self-validate against quality checklist
+4. Delegate component creation to specialized agents (never create directly)
 
 ### Quality Agents Must
 
 1. Load box-factory-architecture AND relevant design skills
-1. Fetch current official documentation
-1. Provide specific file:line references
-1. Distinguish between errors (blocking) and warnings (quality)
-1. Include actionable fix recommendations
+2. Fetch current official documentation
+3. Provide specific file:line references
+4. Distinguish between errors (blocking) and warnings (quality)
+5. Include actionable fix recommendations
 
 ## Knowledge Delta Examples
 
@@ -412,10 +412,10 @@ This skill documents workflow preferences specific to this user. For standard gi
 Test complete workflows:
 
 1. User types command
-1. Command delegates to agent
-1. Agent loads relevant skills
-1. Agent creates/validates component
-1. Verify result matches expectations
+2. Command delegates to agent
+3. Agent loads relevant skills
+4. Agent creates/validates component
+5. Verify result matches expectations
 
 ### Validation Testing
 
@@ -455,9 +455,9 @@ Box Factory is a meta-plugin that creates other plugins. Its README is intention
 **Structure:**
 
 1. Philosophy and principles
-1. Component patterns
-1. Decision frameworks
-1. Anti-patterns
+2. Component patterns
+3. Decision frameworks
+4. Anti-patterns
 
 **Tone:**
 
@@ -488,24 +488,24 @@ Box Factory is a meta-plugin that creates other plugins. Its README is intention
 ### Adding New Components
 
 1. Determine component type (agent, command, skill, hook)
-1. Use relevant `/box-factory:add-*` command or create manually
-1. Follow design skill patterns
-1. Self-validate against quality checklist
-1. Test component in isolation
-1. Test integration with other components
-1. Run `/box-factory:validate-plugin`
-1. Fix any validation issues
-1. Update documentation with `/box-factory:update-docs`
+2. Use relevant `/box-factory:add-*` command or create manually
+3. Follow design skill patterns
+4. Self-validate against quality checklist
+5. Test component in isolation
+6. Test integration with other components
+7. Run `/box-factory:validate-plugin`
+8. Fix any validation issues
+9. Update documentation with `/box-factory:update-docs`
 
 ### Modifying Existing Components
 
 1. Read component and relevant design skill
-1. Make changes following patterns
-1. Validate against quality checklist
-1. Test changes thoroughly
-1. Run `/box-factory:review-component` for feedback
-1. Fix any issues
-1. Update documentation if needed
+2. Make changes following patterns
+3. Validate against quality checklist
+4. Test changes thoroughly
+5. Run `/box-factory:review-component` for feedback
+6. Fix any issues
+7. Update documentation if needed
 
 ### Version Management
 
@@ -518,7 +518,7 @@ Box Factory is a meta-plugin that creates other plugins. Its README is intention
 **Before Release:**
 
 1. Validate all components
-1. Review all components
-1. Update documentation
-1. Test end-to-end workflows
-1. Update version in plugin.json
+2. Review all components
+3. Update documentation
+4. Test end-to-end workflows
+5. Update version in plugin.json

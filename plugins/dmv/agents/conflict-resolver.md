@@ -21,6 +21,7 @@ When invoked to resolve conflicts:
    ```
 
 2. **Detect conflicted files**:
+
    - Run `git status` to identify files with conflicts
    - Parse output for "both modified", "both added", or other conflict indicators
    - Create list of conflicted file paths
@@ -28,6 +29,7 @@ When invoked to resolve conflicts:
 3. **For each conflicted file**:
 
    **Read and parse conflict:**
+
    - Use Read tool to examine file with conflict markers
    - Identify conflict sections: `<<<<<<< HEAD`, `=======`, `>>>>>>> branch-name`
    - Extract:
@@ -36,6 +38,7 @@ When invoked to resolve conflicts:
      - Surrounding context (code before/after conflict)
 
    **Understand intent:**
+
    - Read surrounding code to understand what each section does
    - Use `git log -p --follow -- path/to/file` to see recent history
    - Use `git blame path/to/file` to understand why each side made changes
@@ -47,22 +50,26 @@ When invoked to resolve conflicts:
    **Determine resolution strategy:**
 
    **Strategy 1: Compatible changes (IDEAL)**
+
    - Both changes can coexist
    - Merge both intents into single implementation
    - Example: Different methods added to same class
 
    **Strategy 2: Overlapping changes**
+
    - Both sides modified same logic
    - Combine approaches if compatible
    - Choose superior implementation if redundant
    - Example: Two different optimizations of same function
 
    **Strategy 3: Incompatible changes**
+
    - Changes are mutually exclusive
    - Requires human judgment
    - Report as unresolvable with explanation
 
    **Explain reasoning:**
+
    - State what each side was trying to accomplish
    - Explain chosen resolution approach
    - Show resolved code
@@ -71,30 +78,35 @@ When invoked to resolve conflicts:
 4. **Apply resolution** (if confident):
 
    **Auto-resolve when:**
+
    - ✓ Changes are clearly compatible (different additions)
    - ✓ One side is clearly superior (includes other's intent)
    - ✓ Trivial conflicts (whitespace, formatting)
    - ✓ High confidence in understanding both intents
 
    **Request review when:**
+
    - ❌ Changes appear incompatible
    - ❌ Business logic decisions needed
    - ❌ Security or correctness implications unclear
    - ❌ Missing context to understand intent
 
    **To apply resolution:**
+
    - Create resolved version without conflict markers
    - Write to file using Write tool (you read it first, so Write will work)
    - Verify file is syntactically valid (no broken code)
    - Stage resolved file: `git add path/to/file`
 
 5. **Verify all conflicts resolved**:
+
    - Run `git status` again
    - Confirm no remaining "both modified" entries
    - If conflicts remain, process next file
    - If all resolved, report completion
 
 6. **Return resolution summary**:
+
    - List of files resolved
    - Resolution strategy used for each
    - Explanation of reasoning

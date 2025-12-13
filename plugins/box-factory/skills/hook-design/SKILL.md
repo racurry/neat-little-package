@@ -78,18 +78,18 @@ User Input → Claude Thinks → Tool Execution
 
 Complete list of available events:
 
-| Event | When It Fires | Matcher Applies |
-|-------|--------------|----------------|
-| **PreToolUse** | After Claude creates tool params, before processing | Yes |
-| **PostToolUse** | Immediately after successful tool completion | Yes |
-| **PermissionRequest** | When permission dialogs shown to users | No |
-| **Notification** | When Claude Code sends notifications | No |
-| **UserPromptSubmit** | When users submit prompts, before Claude processes | No |
-| **Stop** | When main Claude agent finishes responding | No |
-| **SubagentStop** | When subagents (Task tool calls) complete | No |
-| **PreCompact** | Before compacting operations | No |
-| **SessionStart** | When sessions start or resume | No |
-| **SessionEnd** | When sessions terminate | No |
+| Event                 | When It Fires                                       | Matcher Applies |
+| --------------------- | --------------------------------------------------- | --------------- |
+| **PreToolUse**        | After Claude creates tool params, before processing | Yes             |
+| **PostToolUse**       | Immediately after successful tool completion        | Yes             |
+| **PermissionRequest** | When permission dialogs shown to users              | No              |
+| **Notification**      | When Claude Code sends notifications                | No              |
+| **UserPromptSubmit**  | When users submit prompts, before Claude processes  | No              |
+| **Stop**              | When main Claude agent finishes responding          | No              |
+| **SubagentStop**      | When subagents (Task tool calls) complete           | No              |
+| **PreCompact**        | Before compacting operations                        | No              |
+| **SessionStart**      | When sessions start or resume                       | No              |
+| **SessionEnd**        | When sessions terminate                             | No              |
 
 ## Hook Types (Official Specification)
 
@@ -416,12 +416,12 @@ For modifying or blocking tool execution:
 
 Available in command hooks:
 
-| Variable | Purpose |
-|----------|---------|
-| `$CLAUDE_PROJECT_DIR` | Absolute path to project root |
-| `$CLAUDE_ENV_FILE` | File path for persisting env vars (SessionStart only) |
-| `${CLAUDE_PLUGIN_ROOT}` | Plugin directory path (for plugin hooks) |
-| `$CLAUDE_CODE_REMOTE` | `"true"` for remote, empty for local execution |
+| Variable                | Purpose                                               |
+| ----------------------- | ----------------------------------------------------- |
+| `$CLAUDE_PROJECT_DIR`   | Absolute path to project root                         |
+| `$CLAUDE_ENV_FILE`      | File path for persisting env vars (SessionStart only) |
+| `${CLAUDE_PLUGIN_ROOT}` | Plugin directory path (for plugin hooks)              |
+| `$CLAUDE_CODE_REMOTE`   | `"true"` for remote, empty for local execution        |
 
 **Best practice:** Always quote variables: `"$CLAUDE_PROJECT_DIR"` not `$CLAUDE_PROJECT_DIR`
 

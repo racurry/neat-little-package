@@ -21,7 +21,7 @@ Creates Claude Code agents by applying the agent-design skill.
 
    The skills provide all guidance on agent structure, tool selection, and anti-patterns.
 
-1. **Understand requirements** from the caller:
+2. **Understand requirements** from the caller:
 
    - Agent name (normalize to kebab-case if needed)
    - Agent purpose and scope
@@ -29,20 +29,20 @@ Creates Claude Code agents by applying the agent-design skill.
    - Expected inputs/outputs
    - Required tools
 
-1. **Fetch latest documentation** if needed:
+3. **Fetch latest documentation** if needed:
 
    - Use WebFetch to access <https://code.claude.com/docs/en/sub-agents.md>
    - Use WebFetch to access <https://code.claude.com/docs/en/settings#tools-available-to-claude>
    - Use WebFetch to access <https://code.claude.com/docs/en/model-config.md>
 
-1. **Design the agent** following agent-design skill:
+4. **Design the agent** following agent-design skill:
 
    - See `SKILL.md` for decision framework and agent-skill relationship
    - See `SKILL.md` Tool Selection Philosophy for tool choices
    - See `SKILL.md` Description Field Design for delegation triggers
    - See `SKILL.md` Color Selection for semantic color mapping
 
-1. **Determine target directory**:
+5. **Determine target directory**:
 
    | Context     | Directory                             |
    | ----------- | ------------------------------------- |
@@ -50,11 +50,11 @@ Creates Claude Code agents by applying the agent-design skill.
    | Plugin      | `agents/` relative to plugin root     |
    | Standalone  | `.claude/agents/` relative to project |
 
-1. **Write the agent file** to the determined path
+6. **Write the agent file** to the determined path
 
-1. **Verify creation** by reading the file back
+7. **Verify creation** by reading the file back
 
-1. **Validate** against agent-design skill:
+8. **Validate** against agent-design skill:
 
    - See `SKILL.md` Quality Checklist for validation steps
    - See `gotchas.md` for forbidden patterns to scan for
@@ -84,11 +84,11 @@ Transform provided names to kebab-case:
 After creating an agent, provide:
 
 1. **File path** (absolute path where agent was created)
-1. **Purpose summary** (what it does and when it's used)
-1. **Tool justification** (why these specific tools)
-1. **Color selection** (which color and why)
-1. **Design decisions** (any choices made, constraints applied)
-1. **Assumptions** (if requirements were unclear)
+2. **Purpose summary** (what it does and when it's used)
+3. **Tool justification** (why these specific tools)
+4. **Color selection** (which color and why)
+5. **Design decisions** (any choices made, constraints applied)
+6. **Assumptions** (if requirements were unclear)
 
 Include the complete agent content in a code block for reference.
 
@@ -99,14 +99,14 @@ Include the complete agent content in a code block for reference.
 **Process:**
 
 1. Load agent-design skill
-1. Fetch sub-agents.md for latest spec
-1. Normalize name to "test-runner"
-1. Design with tools per Tool Selection Philosophy: Bash (run tests), Read (examine files), Grep (parse output), Skill (load guidance)
-1. Select color per Color Selection: yellow (operations/CI task)
-1. Write strong description per Description Field Design
-1. Write to `.claude/agents/test-runner.md`
-1. Validate per Quality Checklist
-1. Verify and respond
+2. Fetch sub-agents.md for latest spec
+3. Normalize name to "test-runner"
+4. Design with tools per Tool Selection Philosophy: Bash (run tests), Read (examine files), Grep (parse output), Skill (load guidance)
+5. Select color per Color Selection: yellow (operations/CI task)
+6. Write strong description per Description Field Design
+7. Write to `.claude/agents/test-runner.md`
+8. Validate per Quality Checklist
+9. Verify and respond
 
 **Output:**
 

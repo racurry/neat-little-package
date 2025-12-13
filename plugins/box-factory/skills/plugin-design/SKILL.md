@@ -244,9 +244,9 @@ Claude Code supports three MCP transport types. Choose based on server location:
 For MCP servers requiring OAuth (not API keys):
 
 1. Configure server WITHOUT credentials in plugin `.mcp.json`
-1. Document in README: "Run `/mcp` to authenticate"
-1. Claude Code handles OAuth flow via browser
-1. Tokens stored and refreshed automatically
+2. Document in README: "Run `/mcp` to authenticate"
+3. Claude Code handles OAuth flow via browser
+4. Tokens stored and refreshed automatically
 
 **Plugin config (no credentials needed):**
 
@@ -643,14 +643,14 @@ Located at `.claude-plugin/marketplace.json`:
 The docs show the mechanics. Here's the philosophy:
 
 1. **Build components first** - Create and test commands/agents individually
-1. **Test without packaging** - Use `.claude/` directories for iteration
-1. **Package when ready** - Add plugin.json and organize structure
-1. **Validate locally** - Use `claude plugin validate .` command
-1. **Create test marketplace** - Local marketplace with absolute paths
-1. **Install and test** - `/plugin marketplace add ./path/to/marketplace`
-1. **Iterate** - Fix issues, restart Claude Code, test again
-1. **Document** - Write focused README (components, installation, basic usage)
-1. **Publish** - Push to GitHub, share marketplace
+2. **Test without packaging** - Use `.claude/` directories for iteration
+3. **Package when ready** - Add plugin.json and organize structure
+4. **Validate locally** - Use `claude plugin validate .` command
+5. **Create test marketplace** - Local marketplace with absolute paths
+6. **Install and test** - `/plugin marketplace add ./path/to/marketplace`
+7. **Iterate** - Fix issues, restart Claude Code, test again
+8. **Document** - Write focused README (components, installation, basic usage)
+9. **Publish** - Push to GitHub, share marketplace
 
 **Key insight:** Don't start with plugin structure. Build components, then package them.
 

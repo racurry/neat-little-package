@@ -57,10 +57,10 @@ One paragraph explaining:
 Numbered steps for the agent's workflow:
 
 1. Load required skills (if any)
-1. Gather context
-1. Execute task
-1. Validate results
-1. Return findings
+2. Gather context
+3. Execute task
+4. Validate results
+5. Return findings
 
 ### Guidelines Section
 

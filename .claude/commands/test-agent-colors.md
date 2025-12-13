@@ -6,15 +6,15 @@ Test all agent colors by invoking each one sequentially. For each agent, note wh
 
 Invoke these agents IN ORDER, four at a time:
 
-1. color-red
-2. color-green
-3. color-blue
-4. color-yellow
-5. color-magenta
-6. color-cyan
-7. color-white
-8. color-black
-9. color-gray
+01. color-red
+02. color-green
+03. color-blue
+04. color-yellow
+05. color-magenta
+06. color-cyan
+07. color-white
+08. color-black
+09. color-gray
 10. color-grey
 11. color-purple
 12. color-orange

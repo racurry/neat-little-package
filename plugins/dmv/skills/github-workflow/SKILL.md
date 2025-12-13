@@ -12,7 +12,7 @@ This skill documents tool selection patterns and user preferences for GitHub int
 **Two GitHub integration tools are available:**
 
 1. **gh CLI** - GitHub's official command-line tool (user-installed)
-1. **GitHub MCP Server** - Model Context Protocol integration (configured via `.mcp.json`)
+2. **GitHub MCP Server** - Model Context Protocol integration (configured via `.mcp.json`)
 
 **Decision hierarchy:**
 
@@ -140,9 +140,9 @@ echo $GITHUB_PERSONAL_ACCESS_TOKEN  # Should show token
 
 1. Create token at <https://github.com/settings/tokens>
 
-1. Grant scopes: `repo`, `read:org`, `read:user`
+2. Grant scopes: `repo`, `read:org`, `read:user`
 
-1. Set environment variable:
+3. Set environment variable:
 
    ```bash
    export GITHUB_PERSONAL_ACCESS_TOKEN="ghp_..."

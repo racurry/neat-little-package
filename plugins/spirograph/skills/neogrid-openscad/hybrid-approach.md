@@ -24,14 +24,14 @@ NeoGrid's core innovation is separating 3D-printed connectors from store-bought 
 
 ## Material Comparison Table
 
-| Material | Thickness | Cost/sheet | Pros | Cons | Retention spikes? |
-|----------|-----------|------------|------|------|-------------------|
-| **uPVC utility board** | 8.5mm | Low | No painting, long lengths, UK-available | Less common in US | Optional |
-| **Plywood** | 6mm, 8mm | Low | Strong, natural look, widely available | Needs finish/paint | Optional |
-| **MDF** | 3mm, 6mm, 8mm | Very low | Cheapest, smooth surface, easy to cut | Heavy, soft (needs spikes) | **Yes** |
-| **Acrylic** | 3mm, 6mm | Medium | Transparent, modern aesthetic, easy clean | Brittle, expensive, can crack | **No** |
-| **Foam board** | 5mm (~3/16") | Very low | Lightweight, cheap, US-available | Low strength, dents easily | Optional |
-| **1/4" hardboard** | 6.35mm | Low | US-standard, strong, smooth | Needs sealing (moisture) | Optional |
+| Material               | Thickness     | Cost/sheet | Pros                                      | Cons                          | Retention spikes? |
+| ---------------------- | ------------- | ---------- | ----------------------------------------- | ----------------------------- | ----------------- |
+| **uPVC utility board** | 8.5mm         | Low        | No painting, long lengths, UK-available   | Less common in US             | Optional          |
+| **Plywood**            | 6mm, 8mm      | Low        | Strong, natural look, widely available    | Needs finish/paint            | Optional          |
+| **MDF**                | 3mm, 6mm, 8mm | Very low   | Cheapest, smooth surface, easy to cut     | Heavy, soft (needs spikes)    | **Yes**           |
+| **Acrylic**            | 3mm, 6mm      | Medium     | Transparent, modern aesthetic, easy clean | Brittle, expensive, can crack | **No**            |
+| **Foam board**         | 5mm (~3/16")  | Very low   | Lightweight, cheap, US-available          | Low strength, dents easily    | Optional          |
+| **1/4" hardboard**     | 6.35mm        | Low        | US-standard, strong, smooth               | Needs sealing (moisture)      | Optional          |
 
 ## Sourcing Recommendations
 
@@ -98,13 +98,13 @@ NeoGrid's core innovation is separating 3D-printed connectors from store-bought 
 
 **Nominal vs Actual**:
 
-| Nominal | Actual range | Notes |
-|---------|--------------|-------|
-| 3mm | 2.9-3.2mm | Varies by manufacturer |
-| 6mm | 5.8-6.3mm | Plywood especially variable |
-| 1/4" (6.35mm) | 6.0-6.5mm | US lumber sizing |
-| 8mm | 7.8-8.2mm | MDF typically accurate |
-| 8.5mm | 8.3-8.7mm | uPVC utility board |
+| Nominal       | Actual range | Notes                       |
+| ------------- | ------------ | --------------------------- |
+| 3mm           | 2.9-3.2mm    | Varies by manufacturer      |
+| 6mm           | 5.8-6.3mm    | Plywood especially variable |
+| 1/4" (6.35mm) | 6.0-6.5mm    | US lumber sizing            |
+| 8mm           | 7.8-8.2mm    | MDF typically accurate      |
+| 8.5mm         | 8.3-8.7mm    | uPVC utility board          |
 
 **Why it matters**: 0.2mm variation changes friction fit from perfect to loose/tight.
 

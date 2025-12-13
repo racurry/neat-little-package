@@ -451,9 +451,9 @@ Before finalizing a command:
 **Resolution logic:**
 
 1. If caller specifies exact path → use that
-1. If in plugin context → use `plugins/[name]/commands/`
-1. Default → `.claude/commands/` (project-level)
-1. User-level → only when explicitly requested
+2. If in plugin context → use `plugins/[name]/commands/`
+3. Default → `.claude/commands/` (project-level)
+4. User-level → only when explicitly requested
 
 ## Name Normalization
 

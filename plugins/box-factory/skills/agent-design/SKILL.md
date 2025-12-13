@@ -229,19 +229,19 @@ The `description` field determines when Claude delegates to your agent. This is 
 Before finalizing an agent:
 
 1. **Fetch official docs** - Verify against current specification
-1. **Check structure** - Valid YAML frontmatter, required fields present
-1. **Scan for forbidden language** - No user interaction phrases
-1. **Validate tools** - Match autonomous responsibilities, no AskUserQuestion
-1. **Test description** - Specific triggering conditions, not generic
-1. **Review system prompt** - Single H1, clear structure, actionable instructions
-1. **Verify no hardcoding** - No version-specific details that will become outdated
-1. **Set color** - Choose semantic color matching agent's primary function (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red, other=orange)
+2. **Check structure** - Valid YAML frontmatter, required fields present
+3. **Scan for forbidden language** - No user interaction phrases
+4. **Validate tools** - Match autonomous responsibilities, no AskUserQuestion
+5. **Test description** - Specific triggering conditions, not generic
+6. **Review system prompt** - Single H1, clear structure, actionable instructions
+7. **Verify no hardcoding** - No version-specific details that will become outdated
+8. **Set color** - Choose semantic color matching agent's primary function (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red, other=orange)
 
 ## Path Resolution
 
 When writing agents:
 
 1. If caller specifies path → use exact path
-1. If working in `.claude/agents/` → use that
-1. Default → `.claude/agents/` (project-level)
-1. User-level (`~/.claude/agents/`) → only when explicitly requested
+2. If working in `.claude/agents/` → use that
+3. Default → `.claude/agents/` (project-level)
+4. User-level (`~/.claude/agents/`) → only when explicitly requested

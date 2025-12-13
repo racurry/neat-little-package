@@ -30,16 +30,16 @@ One-liner description.
 Setup
 ```
 
-/plugin:setup     # walks through configuration
+/plugin:setup # walks through configuration
 
 ```
 
 Main Actions
 ```
 
-/plugin:do-thing                    # does the thing
-/plugin:do-thing with args          # does the thing with these args
-/plugin:do-other selective stuff    # does other with just the selective stuff
+/plugin:do-thing # does the thing
+/plugin:do-thing with args # does the thing with these args
+/plugin:do-other selective stuff # does other with just the selective stuff
 
 ```
 ```
@@ -152,17 +152,17 @@ Git and GitHub workflow preferences for Claude.
 Setup
 ```
 
-/dmv:setup    # walks through git and GitHub configuration
+/dmv:setup # walks through git and GitHub configuration
 
 ```
 
 Main Actions
 ```
 
-/pr                        # create pull request from current branch
-/pr --draft                # create draft pull request
-/commit "message"          # commit with user's preferred format
-/github:issue <number>     # fetch and analyze issue
+/pr # create pull request from current branch
+/pr --draft # create draft pull request
+/commit "message" # commit with user's preferred format
+/github:issue <number> # fetch and analyze issue
 
 ```
 ```
@@ -183,9 +183,9 @@ Main Actions
 Group Label
 ```
 
-/command                    # what it does
-/command with args          # what it does with args
-/command:subcommand         # what the subcommand does
+/command # what it does
+/command with args # what it does with args
+/command:subcommand # what the subcommand does
 
 ```
 ```
@@ -204,15 +204,15 @@ Group Label
 Setup
 ```
 
-/plugin:init     # initialize plugin configuration
+/plugin:init # initialize plugin configuration
 
 ```
 
 Analysis
 ```
 
-/plugin:check current       # analyze current state
-/plugin:check all           # comprehensive analysis
+/plugin:check current # analyze current state
+/plugin:check all # comprehensive analysis
 
 ```
 ```

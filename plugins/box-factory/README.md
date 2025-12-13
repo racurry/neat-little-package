@@ -481,6 +481,7 @@ Understanding when to use each component type is critical for good architecture.
 ### Manual Installation
 
 1. Clone or copy the `box-factory` directory to your plugins location
+
 2. Ensure proper structure:
 
    ```
@@ -686,6 +687,7 @@ Both commands provide detailed reports with file:line references and specific re
 ### Iterative Development
 
 1. Create or modify plugin files
+
 2. Uninstall the plugin:
 
    ```
@@ -699,6 +701,7 @@ Both commands provide detailed reports with file:line references and specific re
    ```
 
 4. Test the changes
+
 5. Repeat as needed
 
 ### Testing Components

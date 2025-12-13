@@ -15,12 +15,12 @@ Reference for generating smooth curve and transition channels.
 
 ## Channel Selection by Curve Type
 
-| Curve Need | Channel | Geometry | Use Case |
-|------------|---------|----------|----------|
-| Smooth diagonal transition | S Channel | Bezier curve path | Gradual X/Y position shift |
-| Arc around obstacle | C Channel | Circular arc (quarter to full) | Round desk legs, poles, corners |
-| 45° angled corner | Mitre Channel | 45° chamfered turn | Sharper than L, softer than 90° |
-| Vertical level change | Height Change | Z-axis transition | Wall-to-desk drop, multi-level routing |
+| Curve Need                 | Channel       | Geometry                       | Use Case                               |
+| -------------------------- | ------------- | ------------------------------ | -------------------------------------- |
+| Smooth diagonal transition | S Channel     | Bezier curve path              | Gradual X/Y position shift             |
+| Arc around obstacle        | C Channel     | Circular arc (quarter to full) | Round desk legs, poles, corners        |
+| 45° angled corner          | Mitre Channel | 45° chamfered turn             | Sharper than L, softer than 90°        |
+| Vertical level change      | Height Change | Z-axis transition              | Wall-to-desk drop, multi-level routing |
 
 ## S Channel (Smooth Diagonal)
 
@@ -175,13 +175,13 @@ Arc_Angle = 90;                    // Angle of arc (0-360 degrees)
 
 ### C Channel Arc Angle Guide
 
-| Angle | Description | Use Case |
-|-------|-------------|----------|
-| 90° | Quarter circle | Standard corner replacement (softer than L) |
-| 135° | Wide turn | Gradual direction change |
-| 180° | Half circle | U-turn around obstacle |
-| 270° | Three-quarter | Spiral routing |
-| 360° | Full circle | Loop around pole/leg |
+| Angle | Description    | Use Case                                    |
+| ----- | -------------- | ------------------------------------------- |
+| 90°   | Quarter circle | Standard corner replacement (softer than L) |
+| 135°  | Wide turn      | Gradual direction change                    |
+| 180°  | Half circle    | U-turn around obstacle                      |
+| 270°  | Three-quarter  | Spiral routing                              |
+| 360°  | Full circle    | Loop around pole/leg                        |
 
 ### C Channel Configurations
 

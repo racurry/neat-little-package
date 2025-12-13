@@ -38,15 +38,15 @@ These systems form an **ecosystem** rather than competing alternatives:
 
 ### By Mounting Surface (Official Specification)
 
-| Surface Type | System(s) | Why |
-|-------------|-----------|-----|
-| Desktop/shelf | Gridfinity | Magnetic or friction-fit baseplates, easy reconfiguration |
-| Desktop (elevated) | Deskware | Modular risers with Gridfinity/OpenGrid integration |
-| Drawer (small items) | Gridfinity | Bins organize loose parts, paperclips, screws, USB drives |
-| Drawer (large items) | Neogrid | Hybrid approach uses cheap divider material with 3D-printed connectors |
-| Wall (light items) | OpenGrid | 28mm grid with front-access snaps, living-room compatible |
-| Wall (heavy items) | French Cleat | 45° gravity lock, 100kg+ capacity when mounted to studs |
-| Under desk/wall cables | Underware | Click-and-slide channels, OpenGrid-native integration |
+| Surface Type           | System(s)    | Why                                                                    |
+| ---------------------- | ------------ | ---------------------------------------------------------------------- |
+| Desktop/shelf          | Gridfinity   | Magnetic or friction-fit baseplates, easy reconfiguration              |
+| Desktop (elevated)     | Deskware     | Modular risers with Gridfinity/OpenGrid integration                    |
+| Drawer (small items)   | Gridfinity   | Bins organize loose parts, paperclips, screws, USB drives              |
+| Drawer (large items)   | Neogrid      | Hybrid approach uses cheap divider material with 3D-printed connectors |
+| Wall (light items)     | OpenGrid     | 28mm grid with front-access snaps, living-room compatible              |
+| Wall (heavy items)     | French Cleat | 45° gravity lock, 100kg+ capacity when mounted to studs                |
+| Under desk/wall cables | Underware    | Click-and-slide channels, OpenGrid-native integration                  |
 
 ### By Item Characteristics (Best Practices)
 
@@ -102,24 +102,29 @@ These systems form an **ecosystem** rather than competing alternatives:
 **Common combinations that work well:**
 
 1. **Home office:**
+
    - OpenGrid on wall (scissors, tape, phone)
    - Underware under desk (cable management)
    - Gridfinity on desktop (small accessories)
 
 2. **Workshop wall:**
+
    - French Cleat for heavy tools (drill station, shelves)
    - Frenchfinity holders for hand tools (wrenches, pliers)
    - Gridfinity adapter on cleat for small parts bins
 
 3. **Bedroom drawer:**
+
    - Neogrid dividers for clothing sections
    - Gridfinity bins within sections for accessories (watches, jewelry)
 
 4. **Kitchen drawer:**
+
    - Neogrid for utensil dividers
    - Mixed with Gridfinity for spice packets or bag clips
 
 5. **Elevated desk setup:**
+
    - Deskware risers for monitor elevation
    - Gridfinity recesses in top plate for desktop bins
    - Underware under riser for cable management
@@ -182,14 +187,14 @@ Question: "What are you organizing and where will it be mounted?"
 
 ## System Interoperability Summary (Official Specification)
 
-| System | Gridfinity | Underware | OpenGrid | French Cleat | Neogrid | Deskware |
-|--------|------------|-----------|----------|--------------|---------|----------|
-| **Gridfinity** | — | ⚙️ | ✅ | ✅ | ⚙️ | ✅ |
-| **Underware** | ⚙️ | — | ✅ | ⚙️ | ⚙️ | ✅ |
-| **OpenGrid** | ✅ | ✅ | — | ✅ | ✅ | ✅ |
-| **French Cleat** | ✅ | ⚙️ | ✅ | — | ⚙️ | ⚙️ |
-| **Neogrid** | ⚙️ | ⚙️ | ✅ | ⚙️ | — | ⚙️ |
-| **Deskware** | ✅ | ✅ | ✅ | ⚙️ | ⚙️ | — |
+| System           | Gridfinity | Underware | OpenGrid | French Cleat | Neogrid | Deskware |
+| ---------------- | ---------- | --------- | -------- | ------------ | ------- | -------- |
+| **Gridfinity**   | —          | ⚙️        | ✅       | ✅           | ⚙️      | ✅       |
+| **Underware**    | ⚙️         | —         | ✅       | ⚙️           | ⚙️      | ✅       |
+| **OpenGrid**     | ✅         | ✅        | —        | ✅           | ✅      | ✅       |
+| **French Cleat** | ✅         | ⚙️        | ✅       | —            | ⚙️      | ⚙️       |
+| **Neogrid**      | ⚙️         | ⚙️        | ✅       | ⚙️           | —       | ⚙️       |
+| **Deskware**     | ✅         | ✅        | ✅       | ⚙️           | ⚙️      | —        |
 
 **Legend:**
 
@@ -208,7 +213,7 @@ Before suggesting a system to users, verify:
 - ✓ What items need organizing? (size, weight, frequency of access)
 - ✓ Where will system be mounted? (wall, desk, drawer, under desk)
 - ✓ Is reconfigurability important? (static vs. frequent changes)
-- ✓ Weight of items? (<1kg, 1-5kg, 5-20kg, 20kg+)
+- ✓ Weight of items? (\<1kg, 1-5kg, 5-20kg, 20kg+)
 - ✓ Aesthetic requirements? (workshop vs. living room visible)
 
 **System selection rationale:**
@@ -248,12 +253,12 @@ Before suggesting a system to users, verify:
 
 For OpenSCAD code generation, the QuackWorks repository provides production-ready parametric implementations of several systems covered by this skill:
 
-| System | QuackWorks Path | Status |
-|--------|-----------------|--------|
-| Underware | `/Underware/` | Complete (9 channel types) |
-| NeoGrid | `/NeoGrid/` | Complete (6 connector types) |
-| OpenGrid Items | `/VerticalMountingSeries/` | Advanced patterns |
-| Deskware | `/Deskware/` | Complete desk system |
+| System         | QuackWorks Path            | Status                       |
+| -------------- | -------------------------- | ---------------------------- |
+| Underware      | `/Underware/`              | Complete (9 channel types)   |
+| NeoGrid        | `/NeoGrid/`                | Complete (6 connector types) |
+| OpenGrid Items | `/VerticalMountingSeries/` | Advanced patterns            |
+| Deskware       | `/Deskware/`               | Complete desk system         |
 
 **GitHub:** <https://github.com/AndyLevesque/QuackWorks>
 

@@ -198,22 +198,26 @@ Focused on cost tracking with visual burn rate indicators.
 **Ask yourself:**
 
 1. **What problem am I solving?**
+
    - If none → Don't add a status line (default is fine)
    - If cost surprise → Add cost display
    - If model confusion → Add model display
    - If git mistakes → Add branch display
 
 2. **How much information density?**
+
    - Minimal → Model + directory only
    - Standard → Model + git + cost
    - Maximum → Use community tool for multi-line
 
 3. **How performance-sensitive?**
+
    - Very → Avoid git commands, use only JSON data
    - Normal → Git commands are fine (cached by git)
    - Not concerned → External API calls acceptable
 
 4. **Custom script vs community tool?**
+
    - Need specific format → Custom script
    - Want rich features fast → Community tool
    - Want to learn → Start custom, migrate later

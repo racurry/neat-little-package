@@ -50,6 +50,7 @@ Bugs in Claude Code we are actively working around.
 **Cleanup when fixed:**
 
 1. Remove mcp-proxy workaround from `plugins/ultrahouse3000/.mcp.json`
+
 2. Revert to native HTTP transport config:
 
    ```json
@@ -64,4 +65,5 @@ Bugs in Claude Code we are actively working around.
    ```
 
 3. Remove workaround documentation from skills (search for "#9427")
+
 4. Update this file to mark bug as resolved

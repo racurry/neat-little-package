@@ -80,12 +80,12 @@ Material_Thickness = 8.5;  // MEASURE YOUR ACTUAL MATERIAL!
 
 **Common materials and actual measurements:**
 
-| Material | Nominal | Actual (measure!) | Setting |
-|----------|---------|-------------------|---------|
-| UK utility board | 8.5mm | 8.3-8.7mm | Measure |
-| US 1/4" plywood | 6.35mm | 6.0-6.5mm | Measure |
-| 6mm MDF | 6mm | 5.8-6.2mm | Measure |
-| 3mm acrylic | 3mm | 2.9-3.1mm | Measure |
+| Material         | Nominal | Actual (measure!) | Setting |
+| ---------------- | ------- | ----------------- | ------- |
+| UK utility board | 8.5mm   | 8.3-8.7mm         | Measure |
+| US 1/4" plywood  | 6.35mm  | 6.0-6.5mm         | Measure |
+| 6mm MDF          | 6mm     | 5.8-6.2mm         | Measure |
+| 3mm acrylic      | 3mm     | 2.9-3.1mm         | Measure |
 
 ### Base System Integration
 
@@ -122,14 +122,14 @@ Material_Thickness = 8.5;  // MEASURE YOUR ACTUAL MATERIAL!
 
 **NeoGrid has 6 connector types** (plus drawer label holders). Each has dedicated subpage:
 
-| Connector | Use case | Read |
-|-----------|----------|------|
-| **X Intersection** | 4-way junctions (interior grid points) | ./connector-types/x-intersection.md |
-| **T Intersection** | 3-way junctions (edges, perpendicular joins) | ./connector-types/t-intersection.md |
-| **L Intersection** | Corner junctions (90° turns) | ./connector-types/l-intersection.md |
-| **I Junction** | Straight-through connections (in-line) | ./connector-types/straight-through.md |
-| **Straight End** | Terminators (open ends with buffer) | ./connector-types/straight-end.md |
-| **Vertical Trim** | Edge trim for drawer openings | ./connector-types/vertical-trim.md |
+| Connector          | Use case                                     | Read                                  |
+| ------------------ | -------------------------------------------- | ------------------------------------- |
+| **X Intersection** | 4-way junctions (interior grid points)       | ./connector-types/x-intersection.md   |
+| **T Intersection** | 3-way junctions (edges, perpendicular joins) | ./connector-types/t-intersection.md   |
+| **L Intersection** | Corner junctions (90° turns)                 | ./connector-types/l-intersection.md   |
+| **I Junction**     | Straight-through connections (in-line)       | ./connector-types/straight-through.md |
+| **Straight End**   | Terminators (open ends with buffer)          | ./connector-types/straight-end.md     |
+| **Vertical Trim**  | Edge trim for drawer openings                | ./connector-types/vertical-trim.md    |
 
 **Drawer labels** (bonus accessory):
 
@@ -146,13 +146,13 @@ Material_Thickness = 8.5;  // MEASURE YOUR ACTUAL MATERIAL!
 
 **Quick reference:**
 
-| Material | Thickness | Cost | Pros | Cons |
-|----------|-----------|------|------|------|
-| uPVC utility board | 8.5mm | Low | Minimal paint, long lengths | UK-specific |
-| Plywood | 6mm, 8mm | Low | Strong, natural look | Needs finish |
-| MDF | 3mm, 6mm, 8mm | Very low | Cheap, smooth | Heavy, needs retention spikes |
-| Acrylic | 3mm, 6mm | Medium | Transparent, clean | Brittle, expensive |
-| Foam board | 5mm | Very low | Lightweight | Low strength |
+| Material           | Thickness     | Cost     | Pros                        | Cons                          |
+| ------------------ | ------------- | -------- | --------------------------- | ----------------------------- |
+| uPVC utility board | 8.5mm         | Low      | Minimal paint, long lengths | UK-specific                   |
+| Plywood            | 6mm, 8mm      | Low      | Strong, natural look        | Needs finish                  |
+| MDF                | 3mm, 6mm, 8mm | Very low | Cheap, smooth               | Heavy, needs retention spikes |
+| Acrylic            | 3mm, 6mm      | Medium   | Transparent, clean          | Brittle, expensive            |
+| Foam board         | 5mm           | Very low | Lightweight                 | Low strength                  |
 
 **Critical reminder**: Measure actual material thickness before printing. Nominal ≠ actual.
 
@@ -192,6 +192,7 @@ Use this decision tree to select connector types:
 **Ask these questions:**
 
 1. **How many dividers meet at junction?**
+
    - Four (cross pattern) → X Intersection
    - Three (T pattern) → T Intersection
    - Two (corner) → L Intersection
@@ -199,12 +200,14 @@ Use this decision tree to select connector types:
    - One (end of divider) → Straight End
 
 2. **Where is junction located?**
+
    - Interior grid point → X Intersection (most versatile)
    - Edge with perpendicular divider → T Intersection
    - Corner → L Intersection
    - Drawer opening edge → Vertical Trim
 
 3. **What's the layout pattern?**
+
    - Regular grid → Mostly X Intersections + edges (T, L, End)
    - Asymmetric compartments → Mix of all types as needed
 
@@ -301,6 +304,7 @@ NeoGrid_X_Intersection_Top(
 **When user says "I need connectors for X dividers"**:
 
 1. **Ask about material type and measurement**:
+
    - "What material? (MDF, plywood, acrylic, uPVC)"
    - "Have you measured thickness with calipers?"
    - "If painted, measure after painting"
@@ -312,11 +316,13 @@ NeoGrid_X_Intersection_Top(
    ```
 
 3. **Recommend test print**:
+
    - "Print ONE X Intersection (base + top) to verify fit"
    - "Divider should friction-fit securely without forcing"
    - "Adjust parameter by ±0.1-0.2mm if needed"
 
 4. **Batch printing guidance**:
+
    - "After fit verified, print remaining connectors"
    - "All connectors use same Material_Thickness"
    - "Orientation: Parts print upright as displayed in QuackWorks"
@@ -343,7 +349,7 @@ module NeoGrid_X_Intersection_Base(...) {
 }
 ```
 
-**When to use each connector type**: See connector-types/*.md for detailed geometry and use cases.
+**When to use each connector type**: See connector-types/\*.md for detailed geometry and use cases.
 
 ## Common Pitfalls
 
