@@ -6,7 +6,7 @@ Reference file for sub-agent-design skill. Read when you need to avoid common mi
 
 ### Gotcha #1: User Interaction Language
 
-**Problem:** Agent prompts assume they can ask questions or confirm actions
+**Problem:** Sub-agent prompts assume they can ask questions or confirm actions
 
 **Forbidden phrases anywhere in agent prompt:**
 

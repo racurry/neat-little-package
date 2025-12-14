@@ -14,27 +14,26 @@ This skill provides interpretive guidance for creating Claude Code agents. It he
 | Understand agent isolation model   | [Critical Architecture Understanding](#critical-architecture-understanding) |
 | Decide agent vs command vs skill   | [Decision Framework](#decision-framework)                                   |
 | Decide what goes in agent vs skill | [Agent-Skill Relationship](#agent-skill-relationship)                       |
+| Auto-load skills in an agent       | [The `skills` Field](#the-skills-field-best-practice)                       |
 | Pick tools for an agent            | [Tool Selection Philosophy](#tool-selection-philosophy)                     |
 | Write the description field        | [Description Field Design](#description-field-design)                       |
 | Avoid common mistakes              | Read `gotchas.md`                                                           |
-| Write agent system prompts         | Read `system-prompt.md`                                                     |
 | Check color for status line        | [Color Selection](#color-selection)                                         |
 | Validate before completing         | [Quality Checklist](#quality-checklist)                                     |
 
 ## Quick Start
 
-Create an agent at `.claude/agents/my-agent.md`:
+Agent file structure:
 
-```yaml
+```markdown
 ---
 name: my-agent
 description: Does X when Y. ALWAYS use when Z.
-tools: Read, Grep, Glob
+tools: Read, Grep, Glob, Skill
+skills: my-plugin:my-design-skill
 color: green
 ---
-```
 
-```markdown
 # My Agent
 
 You are a specialized agent that [purpose].
@@ -50,6 +49,34 @@ You are a specialized agent that [purpose].
 ```
 
 **Critical:** Agents operate in isolated context and return results. They cannot ask users questions.
+
+## The `skills` Field (Best Practice)
+
+The `skills` YAML field auto-loads skills when the agent starts. This is especially valuable for Box Factory agents that need design skills.
+
+```yaml
+---
+name: agent-writer
+description: Creates sub-agents. ALWAYS use when creating agents.
+tools: Read, Write, Edit, Glob, Grep, Skill, WebFetch
+skills: box-factory:sub-agent-design
+---
+```
+
+**When to use:**
+
+| Pattern            | Use Case                                                        |
+| ------------------ | --------------------------------------------------------------- |
+| `skills` field     | Agent ALWAYS needs this skill (design skills, domain knowledge) |
+| Skill tool in body | Agent conditionally loads skill based on context                |
+
+**Box Factory pattern:** Writer agents should declare their design skill dependency:
+
+- `agent-writer` → `skills: box-factory:sub-agent-design`
+- `skill-writer` → `skills: box-factory:skill-design`
+- `command-writer` → `skills: box-factory:slash-command-design`
+
+**Note:** Still include `Skill` in your `tools` list - the agent may need to load additional skills during execution.
 
 ## Official Documentation
 
@@ -87,10 +114,10 @@ User ↔ Main Claude ──→ Sub-Agent (isolated context)
 **Execution flow:**
 
 1. Main Claude decides to delegate
-1. Sub-agent receives context + task
-1. Sub-agent works autonomously in isolation
-1. Sub-agent returns complete result
-1. Main Claude integrates result and continues
+2. Sub-agent receives context + task
+3. Sub-agent works autonomously in isolation
+4. Sub-agent returns complete result
+5. Main Claude integrates result and continues
 
 **What this means for agent design:**
 
@@ -143,21 +170,16 @@ User ↔ Main Claude ──→ Sub-Agent (isolated context)
 
 **Pattern for skill-backed agents:**
 
+Prefer the `skills` YAML field (see [The `skills` Field](#the-skills-field-best-practice)) to auto-load skills at startup. The agent body then focuses on process:
+
 ```markdown
 ## Process
 
-1. **Load design skill (REQUIRED)**
-```
+1. **Follow skill guidance** for [specific aspect]:
+   - See `SKILL.md` for [topic]
+   - See `subfile.md` for [detailed topic]
 
-Use Skill tool: skill="my-plugin:my-skill"
-
-```
-
-2. **Follow skill guidance** for [specific aspect]:
-- See `SKILL.md` for [topic]
-- See `subfile.md` for [detailed topic]
-
-3. **Execute task** using skill patterns
+2. **Execute task** using skill patterns
 ```
 
 **Pattern for standalone agents (no skill):**
@@ -183,21 +205,15 @@ Use Skill tool: skill="my-plugin:my-skill"
 
 ### Tool Selection Philosophy
 
-**Match tools to autonomous responsibilities:**
+**Key constraint:** Never include AskUserQuestion—agents can't interact with users.
 
-- If agent's job is to write files → include Write/Edit
-- If agent only analyzes → Read, Grep, Glob only
-- Never include AskUserQuestion (agents can't use it)
-
-**Common mistake:** Over-restricting tools because you're thinking "safety"
-
-**Reality:** An agent whose job is generating code but only has Read tool can't do its job
-
-**Balance:** Reviewers should be read-only; builders need write access
+**General principle:** Match tools to the agent's job. Reviewers should be read-only; builders need write access.
 
 ## Color Selection
 
 The optional `color` field sets visual distinction for agents in the status line.
+
+**Note:** Color support is not documented officially. The following was verified through testing—Claude often guesses wrong colors that don't render.
 
 **Supported colors (7 total):** `red`, `green`, `blue`, `yellow`, `cyan`, `purple`, `orange`
 
@@ -251,19 +267,10 @@ The `description` field determines when Claude delegates to your agent. This is 
 Before finalizing an agent:
 
 1. **Fetch official docs** - Verify against current specification
-1. **Check structure** - Valid YAML frontmatter, required fields present
-1. **Scan for forbidden language** - No user interaction phrases
-1. **Validate tools** - Match autonomous responsibilities, no AskUserQuestion
-1. **Test description** - Specific triggering conditions, not generic
-1. **Review system prompt** - Single H1, clear structure, actionable instructions
-1. **Verify no hardcoding** - No version-specific details that will become outdated
-1. **Set color** - Choose semantic color matching agent's primary function (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red, other=orange)
-
-## Path Resolution
-
-When writing agents:
-
-1. If caller specifies path → use exact path
-1. If working in `.claude/agents/` → use that
-1. Default → `.claude/agents/` (project-level)
-1. User-level (`~/.claude/agents/`) → only when explicitly requested
+2. **Check structure** - Valid YAML frontmatter, required fields present
+3. **Scan for forbidden language** - No user interaction phrases
+4. **Validate tools** - Match autonomous responsibilities, no AskUserQuestion
+5. **Test description** - Specific triggering conditions, not generic
+6. **Review system prompt** - Single H1, clear structure, actionable instructions
+7. **Verify no hardcoding** - No version-specific details that will become outdated
+8. **Set color** - Choose semantic color matching agent's primary function (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red, other=orange)

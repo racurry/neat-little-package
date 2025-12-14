@@ -58,7 +58,7 @@ Users can customize Claude Code using components broken into roughly three categ
 
 | Component Type | Purpose                                           | When to Use                                       |
 | -------------- | ------------------------------------------------- | ------------------------------------------------- |
-| `Agent`        | Isolated AI instances that do work                | Complex logic, autonomous delegation              |
+| `Sub-agent`    | Isolated AI instances that do work                | Complex logic, autonomous delegation              |
 | `Skill`        | Knowledge loaded when needed or relevant          | Substantial interpretive guidance across contexts |
 | `Command`      | User-triggered prompts with argument substitution | Simple repeatable actions, explicit user control  |
 | `Memory`       | Persistent context and rules                      | Project knowledge, behavior shaping               |
