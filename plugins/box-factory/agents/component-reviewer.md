@@ -32,7 +32,7 @@ When reviewing a component:
    - `hooks.json` or hook scripts → Hook
    - `plugin.json` in `.claude-plugin/` → Plugin
 
-2. **Load design skills (REQUIRED)**:
+1. **Load design skills (REQUIRED)**:
 
    **First, load ecosystem architecture:**
 
@@ -42,7 +42,7 @@ When reviewing a component:
 
    **Then, load component-specific design skill:**
 
-   - Agents → `skill="box-factory:agent-design"`
+   - Agents → `skill="box-factory:sub-agent-design"`
    - Commands → `skill="box-factory:slash-command-design"`
    - Skills → `skill="box-factory:skill-design"`
    - Hooks → `skill="box-factory:hook-design"`
@@ -53,7 +53,7 @@ When reviewing a component:
    - `box-factory-architecture` provides ecosystem context (delegation, isolation, component interaction)
    - Component-specific skill provides detailed patterns for that type
 
-3. **Fetch official documentation** for current specifications:
+1. **Fetch official documentation** for current specifications:
 
    - Agents: https://code.claude.com/docs/en/sub-agents.md
    - Commands: https://code.claude.com/docs/en/slash-commands.md
@@ -62,7 +62,7 @@ When reviewing a component:
    - Tools: https://code.claude.com/docs/en/settings#tools-available-to-claude
    - Models: https://code.claude.com/docs/en/model-config.md
 
-4. **Analyze against design patterns** from skills:
+1. **Analyze against design patterns** from skills:
 
    - Single responsibility principle
    - Autonomous operation (no user interaction language)
@@ -71,7 +71,7 @@ When reviewing a component:
    - Proper structure and formatting
    - Fetch-first philosophy compliance
 
-5. **Check for common anti-patterns** specific to component type:
+1. **Check for common anti-patterns** specific to component type:
 
    - **Agents**: User interaction language, overly broad scope, tool mismatches, weak delegation triggers
    - **Commands**: Knowledge storage instead of action, complex logic requiring file I/O or decision trees not delegated to agents, missing descriptions
@@ -79,7 +79,7 @@ When reviewing a component:
    - **Hooks**: Slow execution, silent failures, security vulnerabilities, user interaction assumptions
    - **Plugins**: Components in wrong directories, premature pluginification, missing documentation
 
-6. **Validate technical correctness**:
+1. **Validate technical correctness**:
 
    - Valid YAML frontmatter (agents, commands)
    - Valid JSON structure (hooks, plugins)
@@ -87,14 +87,14 @@ When reviewing a component:
    - Proper markdown formatting
    - Correct file paths and directory structure
 
-7. **Assess Box Factory philosophy alignment**:
+1. **Assess Box Factory philosophy alignment**:
 
    - Fetch-first: Does it reference latest docs or hardcode version-specific info?
    - Low-maintenance: Is it resilient to documentation updates?
    - Composability: Does it integrate well with other components?
    - Clarity: Is the purpose immediately clear?
 
-8. **Provide structured feedback**:
+1. **Provide structured feedback**:
 
    - **Strengths**: What's well-done
    - **Issues**: Problems categorized by severity (critical, important, minor)
@@ -441,10 +441,10 @@ Provide reviews in this format:
 Return complete review in markdown format using structure above. Include:
 
 1. Clear identification of component type and location
-2. Balanced assessment (strengths and issues)
-3. Prioritized, actionable recommendations
-4. Specific examples and alternatives
-5. References to design skills and official docs
-6. Overall assessment with next steps
+1. Balanced assessment (strengths and issues)
+1. Prioritized, actionable recommendations
+1. Specific examples and alternatives
+1. References to design skills and official docs
+1. Overall assessment with next steps
 
 Make reviews comprehensive yet concise - focus on high-impact feedback over exhaustive nitpicking.

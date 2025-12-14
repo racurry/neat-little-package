@@ -67,18 +67,18 @@
 **Most common Box Factory pattern:** Commands are thin wrappers that delegate to specialized agents.
 
 ```text
-User types: /add-agent
+User types: /add-sub-agent
 
-Command: add-agent.md
+Command: add-sub-agent.md
 ├── Description: "Create a new Claude Code agent"
 ├── Arguments: $1 (agent name), $2 (purpose)
-└── Prompt: "Use the agent-writer agent to create..."
+└── Prompt: "Use the sub-agent-writer agent to create..."
 
-Agent: agent-writer.md
+Agent: sub-agent-writer.md
 ├── Isolated context
 ├── Tools: Read, Write, WebFetch
-├── Loads: agent-design skill
-└── Returns: Complete agent file
+├── Loads: sub-agent-design skill
+└── Returns: Complete sub-agent file
 ```
 
 **Why this works:**
@@ -90,7 +90,7 @@ Agent: agent-writer.md
 
 **Examples in Box Factory:**
 
-- `/add-agent` → `agent-writer`
+- `/add-sub-agent` → `sub-agent-writer`
 - `/add-command` → `slash-command-writer`
 - `/add-skill` → `skill-writer`
 
@@ -99,11 +99,11 @@ Agent: agent-writer.md
 **Progressive disclosure pattern:** Agents load skills automatically when topics become relevant.
 
 ```text
-Agent: agent-writer
+Agent: sub-agent-writer
 ├── Task: Create new agent
 ├── Topic: "agent design"
 ├── Trigger: skill-design description matches
-└── Loads: agent-design skill
+└── Loads: sub-agent-design skill
     ├── Fetches: Official docs
     ├── Provides: Best practices
     └── Guides: Creation process
@@ -118,7 +118,7 @@ Agent: agent-writer
 
 **Examples in Box Factory:**
 
-- Creating agents → loads `agent-design`
+- Creating agents → loads `sub-agent-design`
 - Creating skills → loads `skill-design`
 - Creating commands → loads `slash-command-design`
 
@@ -206,9 +206,9 @@ PreToolUse:Bash hook
 **Knowledge reuse pattern:** One skill guides multiple sub-agents and commands.
 
 ```text
-agent-design skill
+sub-agent-design skill
     ↑
-    ├── Loaded by: agent-writer agent
+    ├── Loaded by: sub-agent-writer agent
     ├── Loaded by: component-reviewer agent
     └── Loaded by: validation-agent agent
 ```
@@ -236,14 +236,14 @@ validate structure, write to disk, run tests...
 ---
 description: Create agent
 ---
-Use the agent-writer agent to create a new agent named $1 for purpose: $2
+Use the sub-agent-writer agent to create a new agent named $1 for purpose: $2
 ```
 
 **Scope violations:**
 
 | Component | Anti-Pattern            | Correct Scope        |
 | --------- | ----------------------- | -------------------- |
-| Sub-agent     | `full-stack-developer`  | `python-test-runner` |
+| Sub-agent | `full-stack-developer`  | `python-test-runner` |
 | Skill     | `all-standards`         | `api-design`         |
 | Command   | `do-everything`         | `deploy-staging`     |
 | Hook      | 10 conditional branches | Single formatter     |

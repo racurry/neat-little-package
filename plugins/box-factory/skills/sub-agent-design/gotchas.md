@@ -1,6 +1,6 @@
 # Common Gotchas and Antipatterns
 
-Reference file for agent-design skill. Read when you need to avoid common mistakes in agent creation.
+Reference file for sub-agent-design skill. Read when you need to avoid common mistakes in agent creation.
 
 ## Common Gotchas
 

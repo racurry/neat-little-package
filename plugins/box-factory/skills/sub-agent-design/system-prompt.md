@@ -1,6 +1,6 @@
 # System Prompt Best Practices
 
-Reference file for agent-design skill. Read when writing or reviewing agent system prompts.
+Reference file for sub-agent-design skill. Read when writing or reviewing agent system prompts.
 
 ## Structure
 
@@ -57,10 +57,10 @@ One paragraph explaining:
 Numbered steps for the agent's workflow:
 
 1. Load required skills (if any)
-2. Gather context
-3. Execute task
-4. Validate results
-5. Return findings
+1. Gather context
+1. Execute task
+1. Validate results
+1. Return findings
 
 ### Guidelines Section
 

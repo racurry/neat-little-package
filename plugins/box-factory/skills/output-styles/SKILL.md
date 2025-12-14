@@ -118,7 +118,7 @@ Output styles modify the system prompt for the **main conversation**. When you d
 
 **Why styles don't help:** Your agents already have focused prompts. The main conversation just delegates and integrates results.
 
-**Example:** Box Factory plugins - the skill-writer, agent-writer, validation-agent all have their own prompts. Adding an output style to the main session doesn't change how those agents behave.
+**Example:** Box Factory plugins - the skill-writer, sub-agent-writer, validation-agent all have their own prompts. Adding an output style to the main session doesn't change how those agents behave.
 
 ### Project Conventions and Context
 
@@ -281,7 +281,7 @@ NEVER modify production files. ALWAYS run tests first.
 **Answer:** No, and here's why:
 
 - `skill-writer` has its own prompt about skill design
-- `agent-writer` has its own prompt about agent patterns
+- `sub-agent-writer` has its own prompt about agent patterns
 - `validation-agent` has its own prompt about validation rules
 - `component-reviewer` has its own prompt about review criteria
 

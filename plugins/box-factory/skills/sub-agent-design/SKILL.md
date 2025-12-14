@@ -1,5 +1,5 @@
 ---
-name: agent-design
+name: sub-agent-design
 description: Interpretive guidance for designing Claude Code agents. Helps apply official documentation effectively and avoid common pitfalls. Use when creating or reviewing agents.
 ---
 

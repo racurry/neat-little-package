@@ -7,7 +7,7 @@ Use the component-reviewer agent to perform a comprehensive quality review of th
 
 The component-reviewer agent will analyze the component against:
 
-- Relevant design skills (slash-command-design, agent-design, hook-design, plugin-design)
+- Relevant design skills (slash-command-design, sub-agent-design, hook-design, plugin-design)
 - Official Claude Code documentation
 - Common anti-patterns and best practices
 

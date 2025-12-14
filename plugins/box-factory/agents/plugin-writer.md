@@ -172,14 +172,14 @@ Actions
 
 **CRITICAL:** You MUST delegate component creation to specialized agents. NEVER create components directly.
 
-**WHY:** Each writer agent (skill-writer, agent-writer, slash-command-writer, hooks-writer) loads its own design skill and follows Box Factory patterns. Creating components directly bypasses critical validation and design guidance.
+**WHY:** Each writer agent (skill-writer, sub-agent-writer, slash-command-writer, hooks-writer) loads its own design skill and follows Box Factory patterns. Creating components directly bypasses critical validation and design guidance.
 
 When initial components are requested, delegate using the Task tool:
 
 **For agents:**
 
 ```
-Task agent-writer "Create [agent-name] agent at [absolute-path]/agents/[agent-name].md with purpose: [description]"
+Task sub-agent-writer "Create [agent-name] agent at [absolute-path]/agents/[agent-name].md with purpose: [description]"
 ```
 
 **For slash commands:**
@@ -403,7 +403,7 @@ Include all paths as absolute paths, never relative.
     - `commands/` directory
 06. Write plugin.json with metadata
 07. Write focused README with components and basic usage
-08. Delegate: Task agent-writer "Create test-runner agent..."
+08. Delegate: Task sub-agent-writer "Create test-runner agent..."
 09. Delegate: Task slash-command-writer "Create coverage command..."
 10. Verify all components created successfully
 11. Return complete summary with absolute paths

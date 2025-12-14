@@ -11,11 +11,11 @@ This skill documents the user's specific README style preferences - a knowledge 
 
 **Ultra-terse:** ~20 lines total, not 50-100
 **Action-focused:** Show commands with inline comments, minimal prose
-**No fluff:** Skip philosophy, troubleshooting, file structure, version history
+**No fluff:** Skip troubleshooting, file structure, version history
 
 ## Structure Pattern (User Preference)
 
-```markdown
+````markdown
 # Plugin Name
 
 One-liner description.
@@ -28,21 +28,20 @@ One-liner description.
 ## Commands
 
 Setup
-```
 
+```
 /plugin:setup # walks through configuration
 
 ```
 
 Main Actions
-```
 
+```
 /plugin:do-thing # does the thing
 /plugin:do-thing with args # does the thing with these args
 /plugin:do-other selective stuff # does other with just the selective stuff
-
 ```
-```
+````
 
 **Key characteristics:**
 
@@ -87,7 +86,7 @@ Main Actions
 
 ### Bad (Standard README Approach)
 
-```markdown
+````markdown
 # Development Workflow Plugin
 
 Comprehensive tooling for Git and GitHub workflows with intelligent automation.
@@ -124,7 +123,7 @@ workflow capabilities. It uses the GitHub CLI when available and falls back
 to the GitHub MCP server for API operations...
 
 [... continues for 50+ more lines ...]
-```
+````
 
 **Issues:**
 
@@ -134,9 +133,9 @@ to the GitHub MCP server for API operations...
 - ❌ "How It Works" section explaining architecture
 - ❌ Prose explanations instead of code examples
 
-### Good (User's Preferred Style)
+### Good (Our Preferred Style)
 
-```markdown
+````markdown
 # DMV
 
 Git and GitHub workflow preferences for Claude.
@@ -188,7 +187,7 @@ Group Label
 /command:subcommand # what the subcommand does
 
 ```
-```
+````
 
 **Details:**
 
@@ -200,7 +199,7 @@ Group Label
 
 **Example:**
 
-```markdown
+````markdown
 Setup
 ```
 
@@ -215,7 +214,7 @@ Analysis
 /plugin:check all # comprehensive analysis
 
 ```
-```
+````
 
 ## Quality Checklist
 
@@ -248,7 +247,7 @@ Before finalizing a plugin README:
 - Version history or changelog
 - Contribution guidelines
 
-**Remember:** This user wants code examples with comments, not prose explanations.
+**Remember:** Use code examples with comments, not prose explanations.
 
 ## The Transformation Rule
 
@@ -258,10 +257,10 @@ Before finalizing a plugin README:
 Explain what it does → List features → Document components → Show examples
 ```
 
-**This user's approach:**
+**Our approach:**
 
 ```
 One-liner → 2-3 bullets → Commands with comments → Done
 ```
 
-**Length target:** Standard README = 50-100 lines. This user = ~20 lines.
+**Length target:** Standard README = 50-100 lines. We do ~20-50 lines.

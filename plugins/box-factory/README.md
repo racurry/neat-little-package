@@ -40,20 +40,20 @@ Create a new Claude Code plugin with complete scaffolding.
 
 **Usage:** `/box-factory:add-plugin`
 
-#### `/box-factory:add-agent`
+#### `/box-factory:add-sub-agent`
 
 Create a new Claude Code agent.
 
 **What it does:**
 
 - Detects context (marketplace, plugin, or standalone project)
-- Loads agent-design and box-factory-architecture skills for guidance
+- Loads sub-agent-design and box-factory-architecture skills for guidance
 - Fetches current official agent documentation
 - Creates agent with proper frontmatter and structure in the appropriate directory
 - Validates tool selection matches responsibilities
 - Ensures no user interaction language in prompt
 
-**Usage:** `/box-factory:add-agent`
+**Usage:** `/box-factory:add-sub-agent`
 
 #### `/box-factory:add-command`
 
@@ -163,10 +163,10 @@ Box Factory includes seven specialized agents that handle component creation and
 - Loads: box-factory-architecture, plugin-design skills
 - Validates: Directory structure, marketplace registration, Box Factory compliance
 
-**box-factory:agent-writer** - Creates agents following agent-design patterns
+**box-factory:sub-agent-writer** - Creates sub-agents following sub-agent-design patterns
 
 - Tools: Bash, Read, Write, WebFetch, WebSearch, Skill
-- Loads: box-factory-architecture, agent-design skills
+- Loads: box-factory-architecture, sub-agent-design skills
 - Validates: Tool selection, delegation description, no user interaction
 
 **box-factory:slash-command-writer** - Creates commands following slash-command-design patterns
@@ -205,7 +205,7 @@ Box Factory includes seven specialized agents that handle component creation and
 
 Box Factory includes comprehensive design guidance skills that provide interpretive guidance for creating high-quality Claude Code components:
 
-#### `box-factory:agent-design`
+#### `box-factory:sub-agent-design`
 
 Interpretive guidance for designing Claude Code agents and subagents.
 
@@ -362,7 +362,7 @@ Box Factory follows specific design principles that make components maintainable
 **The two-layer approach:**
 
 1. **Official Specification** - Always fetch current docs, cite them clearly
-2. **Best Practices** - Add interpretive guidance the docs don't emphasize
+1. **Best Practices** - Add interpretive guidance the docs don't emphasize
 
 **Example:** Docs say "description field for commands is optional." Best practice says "always include description - improves discoverability."
 
@@ -390,8 +390,8 @@ Box Factory follows specific design principles that make components maintainable
 **Commands are thin wrappers that delegate to specialized agents:**
 
 ```
-User → /box-factory:add-agent → agent-writer agent
-                                 ├── Loads: agent-design skill
+User → /box-factory:add-sub-agent → sub-agent-writer agent
+                                 ├── Loads: sub-agent-design skill
                                  ├── Fetches: Official docs
                                  └── Creates: agent.md file
 ```
@@ -470,19 +470,19 @@ Understanding when to use each component type is critical for good architecture.
    /plugin marketplace add /path/to/neat-little-package
    ```
 
-2. Install the plugin:
+1. Install the plugin:
 
    ```
    /plugin install box-factory@neat-little-package
    ```
 
-3. Start creating components!
+1. Start creating components!
 
 ### Manual Installation
 
 1. Clone or copy the `box-factory` directory to your plugins location
 
-2. Ensure proper structure:
+1. Ensure proper structure:
 
    ```
    plugins/box-factory/
@@ -495,19 +495,19 @@ Understanding when to use each component type is critical for good architecture.
    └── CLAUDE.md
    ```
 
-3. Use the `/plugin install` command or restart Claude Code
+1. Use the `/plugin install` command or restart Claude Code
 
 ## Quick Start Guide
 
 ### Creating Your First Plugin
 
 1. Run `/box-factory:add-plugin`
-2. The plugin-writer agent will guide you through:
+1. The plugin-writer agent will guide you through:
    - Plugin name and metadata
    - Initial components to include
    - Directory structure creation
-3. Plugin is created with proper structure, README, and plugin.json
-4. Install and test your new plugin
+1. Plugin is created with proper structure, README, and plugin.json
+1. Install and test your new plugin
 
 ### Adding Features to Existing Plugins
 
@@ -530,7 +530,7 @@ Then provide context about what knowledge the skill should provide.
 **Add an agent:**
 
 ```
-/box-factory:add-agent
+/box-factory:add-sub-agent
 ```
 
 Then provide context about what work the agent should perform.
@@ -547,7 +547,7 @@ Then provide context about what event and validation the hook should handle.
 
 Load design skills for expert guidance:
 
-- `box-factory:agent-design` - Creating agents and subagents
+- `box-factory:sub-agent-design` - Creating agents and subagents
 - `box-factory:slash-command-design` - Creating slash commands
 - `box-factory:plugin-design` - Creating and distributing plugins
 - `box-factory:hook-design` - Creating lifecycle hooks
@@ -557,9 +557,9 @@ Load design skills for expert guidance:
 These skills will:
 
 1. Fetch current official documentation
-2. Provide interpretive guidance
-3. Identify common pitfalls
-4. Suggest best practices
+1. Provide interpretive guidance
+1. Identify common pitfalls
+1. Suggest best practices
 
 ### Validating and Reviewing Components
 
@@ -688,21 +688,21 @@ Both commands provide detailed reports with file:line references and specific re
 
 1. Create or modify plugin files
 
-2. Uninstall the plugin:
+1. Uninstall the plugin:
 
    ```
    /plugin uninstall [plugin-name]@marketplace-name
    ```
 
-3. Reinstall the plugin:
+1. Reinstall the plugin:
 
    ```
    /plugin install [plugin-name]@marketplace-name
    ```
 
-4. Test the changes
+1. Test the changes
 
-5. Repeat as needed
+1. Repeat as needed
 
 ### Testing Components
 
@@ -731,11 +731,11 @@ Make a change that triggers the hook event, press CTRL-R to view execution.
 Before publishing or sharing a plugin:
 
 1. Run `/box-factory:validate-plugin` to check structure and compliance
-2. Review each component with `/box-factory:review-component`
-3. Fix any issues identified in validation reports
-4. Update documentation with `/box-factory:update-docs`
-5. Test all components end-to-end
-6. Version bump in plugin.json
+1. Review each component with `/box-factory:review-component`
+1. Fix any issues identified in validation reports
+1. Update documentation with `/box-factory:update-docs`
+1. Test all components end-to-end
+1. Version bump in plugin.json
 
 ## File Structure Reference
 
@@ -832,7 +832,7 @@ Always fetch current documentation:
 
 Use these skills for expert guidance:
 
-- `box-factory:agent-design` - Agent and subagent design
+- `box-factory:sub-agent-design` - Agent and subagent design
 - `box-factory:slash-command-design` - Command design and best practices
 - `box-factory:plugin-design` - Plugin architecture and distribution
 - `box-factory:hook-design` - Hook lifecycle and patterns
@@ -852,9 +852,9 @@ Use these skills for expert guidance:
 
 See the component files in this plugin for examples:
 
-- **Agents**: `agents/plugin-writer.md`, `agents/agent-writer.md`
-- **Commands**: `commands/add-plugin.md`, `commands/add-agent.md`
-- **Skills**: `skills/agent-design/SKILL.md`, `skills/skill-design/SKILL.md`
+- **Agents**: `agents/plugin-writer.md`, `agents/sub-agent-writer.md`
+- **Commands**: `commands/add-plugin.md`, `commands/add-sub-agent.md`
+- **Skills**: `skills/sub-agent-design/SKILL.md`, `skills/skill-design/SKILL.md`
 - **README**: This file follows Box Factory documentation patterns
 - **CLAUDE.md**: Development guidelines following Box Factory patterns
 

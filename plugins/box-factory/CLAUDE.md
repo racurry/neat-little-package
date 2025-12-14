@@ -35,7 +35,7 @@
 - Point to official docs for things Claude might not know (not basics)
 - Progressive disclosure: Core concepts → Advanced features
 - Include: Decision frameworks, common pitfalls, quality checklists
-- Keep SKILL.md < 300 lines 
+- Keep SKILL.md < 300 lines
 
 ### Agents
 
@@ -79,16 +79,16 @@
    - Skill = Knowledge that loads when relevant, interpretive guidance
    - Agent = Does actual work autonomously (writes files, runs tests)
 
-2. **Command pattern?**
+1. **Command pattern?**
 
    - Command = thin wrapper, agent = complex logic
 
-3. **Read-only vs Write?**
+1. **Read-only vs Write?**
 
    - Validation/review agents = Read, Grep, Glob, WebFetch only
    - Creation agents = Add Write, Edit as needed
 
-4. **What design skill applies?**
+1. **What design skill applies?**
 
    - Creating agents → use sub-agent-design
    - Creating commands → use slash-command-design
@@ -105,7 +105,7 @@ User → Command → Specialized Agent → Design Skill
      (thin wrap)  (complex logic)    (guidance)
 ```
 
-**Example:** `/box-factory:add-agent` → agent-writer → agent-design skill
+**Example:** `/box-factory:add-sub-agent` → sub-agent-writer → sub-agent-design skill
 
 All Box Factory components are self-documenting examples of the patterns they teach.
 
@@ -132,48 +132,47 @@ All Box Factory components are self-documenting examples of the patterns they te
 - ❌ Agents with user interaction language ("ask the user", "confirm with user")
 - ❌ Vague descriptions that don't trigger delegation
 
-
 ## Validation Workflow
 
 ### Creating Components
 
 1. Load relevant design skills
-2. Fetch official documentation
-3. Create component following patterns
-4. Self-validate against quality checklist
-5. Return complete result
+1. Fetch official documentation
+1. Create component following patterns
+1. Self-validate against quality checklist
+1. Return complete result
 
 ### Validating Components
 
 1. Load box-factory-architecture skill
-2. Load component-specific design skill
-3. Fetch official documentation
-4. Check structure, syntax, specifications
-5. Detect anti-patterns
-6. Generate detailed report with file:line references
+1. Load component-specific design skill
+1. Fetch official documentation
+1. Check structure, syntax, specifications
+1. Detect anti-patterns
+1. Generate detailed report with file:line references
 
 ### Reviewing Components
 
 1. Identify component type
-2. Load box-factory-architecture + component-specific skill
-3. Fetch official documentation
-4. Analyze against design patterns
-5. Provide prioritized feedback (critical, important, minor)
-6. Suggest specific improvements with examples
+1. Load box-factory-architecture + component-specific skill
+1. Fetch official documentation
+1. Analyze against design patterns
+1. Provide prioritized feedback (critical, important, minor)
+1. Suggest specific improvements with examples
 
 ## Component Creation Best Practices
 
 ### Writer Agents Must
 
 1. Load both box-factory-architecture AND component-specific design skill
-2. Fetch official documentation before creating
-3. Self-validate against quality checklist
-4. Delegate component creation to specialized agents (never create directly)
+1. Fetch official documentation before creating
+1. Self-validate against quality checklist
+1. Delegate component creation to specialized agents (never create directly)
 
 ### Quality Agents Must
 
 1. Load box-factory-architecture AND relevant design skills
-2. Fetch current official documentation
-3. Provide specific file:line references
-4. Distinguish between errors (blocking) and warnings (quality)
-5. Include actionable fix recommendations
+1. Fetch current official documentation
+1. Provide specific file:line references
+1. Distinguish between errors (blocking) and warnings (quality)
+1. Include actionable fix recommendations

@@ -775,12 +775,12 @@ sys.exit(0)
 **Best practices:**
 
 1. Validate and sanitize all inputs from stdin
-2. Block path traversal (`..` in paths)
-3. Use absolute paths with `$CLAUDE_PROJECT_DIR`
-4. Skip sensitive files (`.env`, credentials, `.git/`)
-5. For prompt-based hooks, be specific about criteria
-6. Set appropriate timeouts
-7. Test in isolated environments first
+1. Block path traversal (`..` in paths)
+1. Use absolute paths with `$CLAUDE_PROJECT_DIR`
+1. Skip sensitive files (`.env`, credentials, `.git/`)
+1. For prompt-based hooks, be specific about criteria
+1. Set appropriate timeouts
+1. Test in isolated environments first
 
 ## Debugging Hooks (Best Practices)
 
@@ -1032,7 +1032,7 @@ Authoritative sources for hook specifications:
 
 **Related topics:**
 
-- See agent-design skill for when to use agents instead
+- See sub-agent-design skill for when to use agents instead
 - See slash-command-design skill for user-triggered operations
 - See plugin-design skill for packaging hooks in plugins
 - See uv-scripts skill for Python-based hook implementation patterns
