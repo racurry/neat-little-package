@@ -9,13 +9,14 @@ This meta-skill teaches you how to design excellent Claude Code skills. **Skills
 
 ## Workflow Selection
 
-| If you need to...                 | Go to...                                       |
-| --------------------------------- | ---------------------------------------------- |
-| Get folder structure              | [skill-structure.md](skill-structure.md)       |
-| Write SKILL.md file               | [skill-md.md](skill-md.md)                     |
-| Decide what to include vs exclude | [knowledge-delta.md](knowledge-delta.md)       |
-| Look up a specific anti-pattern   | [common-pitfalls.md](common-pitfalls.md)       |
-| Validate before completing        | [skill-md.md](skill-md.md) (Quality Checklist) |
+| If you need to...                 | Go to...                                                                                     |
+| --------------------------------- | -------------------------------------------------------------------------------------------- |
+| Get folder structure              | [skill-structure.md](skill-structure.md)                                                     |
+| Write SKILL.md file               | [skill-md.md](skill-md.md)                                                                   |
+| Decide what to include vs exclude | [knowledge-delta.md](knowledge-delta.md)                                                     |
+| Write decision-making content     | [decision-frameworks.md](../box-factory-architecture/building-blocks/decision-frameworks.md) |
+| Look up a specific anti-pattern   | [common-pitfalls.md](common-pitfalls.md)                                                     |
+| Validate before completing        | [skill-md.md](skill-md.md) (Quality Checklist)                                               |
 
 > **Creating a skill?** Start with [skill-md.md](skill-md.md) for the template.
 
@@ -129,13 +130,14 @@ All claims must be:
 
 ## When to Create Skills
 
-### Skill vs Agent vs Command
+### Skill vs Other Components
 
-| Component   | Use When                                                                                                          |
-| ----------- | ----------------------------------------------------------------------------------------------------------------- |
-| **Skill**   | Multiple contexts need same knowledge, substantial expertise (20+ lines), teaching "how to think about" something |
-| **Agent**   | Need isolated context, autonomous delegation, doing actual work (writing files, running tests)                    |
-| **Command** | User wants explicit trigger, simple deterministic operation                                                       |
+For the full decision framework on choosing between Skills, Agents, Commands, Hooks, and Memory, load the `box-factory-architecture` skill.
+
+**Quick test:** Is this knowledge that shapes behavior, or work to be done?
+
+- Knowledge → Skill
+- Work → Agent
 
 ### Scope Guidelines
 

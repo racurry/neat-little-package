@@ -13,13 +13,14 @@ Update documentation for the plugin at $1 (or current directory if not specified
    - All files in agents/, commands/, skills/, hooks/
    - Existing README.md and CLAUDE.md (if present)
 
-2. **Load readme-style skill:**
+2. **Load plugin-design skill and read README style guidance:**
 
    ```
-   Use Skill tool: skill="box-factory:readme-style"
+   Use Skill tool: skill="box-factory:plugin-design"
+   Read: readme-style.md
    ```
 
-3. **Generate/update README.md following readme-style skill:**
+3. **Generate/update README.md following README style guidance:**
 
    - Target ~20 lines total (not 50-100)
    - One-liner description

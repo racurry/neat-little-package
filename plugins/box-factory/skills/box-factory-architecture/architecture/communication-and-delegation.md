@@ -13,7 +13,7 @@ Every component is only able to interact with certain other components. There is
 | `User`              | [User](#user)                           |
 | `Main Claude Agent` | [Main Claude Agent](#main-claude-agent) |
 | `Command`           | [Command](#command)                     |
-| `Sub-agent`         | [Sub-agent](#sub-agent)                         |
+| `Sub-agent`         | [Sub-agent](#sub-agent)                 |
 | `Skill`             | [Skill](#skill)                         |
 | `MCP server`        | [MCP Server](#mcp-server)               |
 | `Memory`            | [Memory](#memory)                       |
@@ -30,8 +30,8 @@ User experience and plugin components are not part of the agentic flow, but for 
 
 ## See Also
 
-- [Choosing the Right Component](./choosing-the-right-component.md)
-- [Component Interaction Patterns](./component-interaction-patterns.md)
+- [Choosing the Right Component](../components/choosing-the-right-component.md)
+- [Interaction Patterns](./interaction-patterns.md)
 
 ## Components
 

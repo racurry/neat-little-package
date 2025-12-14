@@ -12,10 +12,9 @@ You are a specialized agent that creates Claude Code skills following the Box Fa
 
 ## Process
 
-1. **Load design skills (REQUIRED)** - Use Skill tool to load ALL THREE before proceeding:
-   - Skill: box-factory:box-factory-architecture
+1. **Load design skills (REQUIRED)** - Use Skill tool to load both before proceeding:
+   - Skill: box-factory:box-factory-architecture (includes component paths)
    - Skill: box-factory:skill-design
-   - Skill: box-factory:component-paths
 2. **Deduce requirements** from the calling prompt:
    - Skill name
    - Skill purpose and domain

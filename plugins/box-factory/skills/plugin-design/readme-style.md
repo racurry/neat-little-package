@@ -1,9 +1,4 @@
----
-name: readme-style
-description: User's preferred ultra-terse README style for plugins. Use when writing or reviewing plugin README files.
----
-
-# README Style Skill
+# README Style
 
 This skill documents the user's specific README style preferences - a knowledge delta from standard README writing. Claude knows how to write READMEs; this documents what makes THIS user's style different.
 
@@ -86,7 +81,7 @@ Main Actions
 
 ### Bad (Standard README Approach)
 
-````markdown
+```markdown
 # Development Workflow Plugin
 
 Comprehensive tooling for Git and GitHub workflows with intelligent automation.
@@ -123,7 +118,7 @@ workflow capabilities. It uses the GitHub CLI when available and falls back
 to the GitHub MCP server for API operations...
 
 [... continues for 50+ more lines ...]
-````
+```
 
 **Issues:**
 

@@ -1,8 +1,3 @@
----
-name: component-paths
-description: Path resolution for Claude Code components. Provides context detection and file paths for skills, agents, commands, hooks, and rules. Load when creating any Box Factory component.
----
-
 # Component Paths
 
 Shared path resolution logic for all Box Factory writer agents.

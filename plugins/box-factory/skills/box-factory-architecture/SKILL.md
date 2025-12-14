@@ -5,7 +5,21 @@ description: Guidance for using Claude Code component architecture and choosing 
 
 # Box Factory Architecture
 
-This meta-skill teaches the Claude Code ecosystem architecture - how components interact, when to use each type, and how to design cohesive multi-component solutions. **This applies to both Main Claude (choosing what to create) and sub-agents (understanding their role).**
+This meta-skill teaches the Claude Code component and ecosystem architecture - how components interact, when to use each type, and how to design cohesive multi-component solutions. **This applies to both Main Claude (choosing what to create) and sub-agents (understanding their role).**
+
+## Fundamentals
+
+Three architectural concepts underpin all Claude Code component design:
+
+| Concept                     | Implication                                                                                        |
+| --------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Isolation Model**         | Only Main Claude has user access. Sub-agents cannot ask questions or see conversation history.     |
+| **Return-Based Delegation** | Agents return complete results. No mid-execution interaction - agent must have everything upfront. |
+| **Progressive Disclosure**  | Load knowledge when relevant to save tokens. Skills solve selective context loading.               |
+
+**Design test:** If your agent needs to ask questions mid-execution, redesign the delegation pattern.
+
+**Deep dive:** [Core Architectural Concepts](./architecture/core-architecture.md) - Diagrams, design implications, common misconceptions. **Traverse when:** debugging delegation issues, need to understand WHY architecture works this way. **Skip when:** table above answers your question.
 
 ## Instructions
 
@@ -15,24 +29,16 @@ This meta-skill teaches the Claude Code ecosystem architecture - how components 
 
 ## Workflow Selection
 
-| If you need...                                                      | Go to ...                                                                               |
-| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| To understand key architectural concepts                            | [Core Architectural Concepts](#core-architectural-concepts)                             |
-| To understand design patterns for multi-component workflows         | [Design Patterns in Claude Code Components](#design-patterns-in-claude-code-components) |
-| To understand which individual component to use in a given scenario | [Which Component Should I Choose](#which-component-should-i-choose)                     |
-| To understand how components can delegate and communicate           | [Component Communication & Delegation](#component-communication-and-delegation)         |
-| To see example component ecosystems                                 | [Example Component Ecosystems](#example-component-ecosystems)                           |
-| Recent documentation on all components                              | [Claude Code Official Documentation](#claude-code-official-documentation)               |
-
-## Core Architectural Concepts
-
-Key concepts:
-
-- **Isolation model**: Only the `Main Claude Agent` has user access. All other agents operate in isolated contexts.
-- **Return based model** : Agents return complete results, not partial or interactive outputs.
-- **Progressive disclosure philosophy:** Knowledge should load progressively when relevant to save tokens.
-
-For detailed explanations of architectural patterns, anti-patterns, and design philosophies, see [Core Architectural Concepts](./core-architecture.md).
+| If you need to...                                                   | Go to...                                                                                   |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Choose a component type (skill vs agent vs command vs hook)         | [Which Component Should I Choose](#which-component-should-i-choose)                        |
+| Debug delegation issues (agent not receiving data, calls failing)   | [Component Communication](#component-communication-and-delegation)                         |
+| Design multi-component workflows (command→agent→skill chains)       | [Design Patterns](#design-patterns-in-claude-code-components)                              |
+| Understand isolation model (why agents can't ask questions)         | [Fundamentals](#fundamentals)                                                              |
+| See reference implementations (complete plugin ecosystems)          | [Example Ecosystems](#example-component-ecosystems)                                        |
+| Determine file paths for new components (project vs user vs plugin) | [Component Paths](./architecture/component-paths.md)                                       |
+| Write documentation for components (skills, agents, READMEs)        | [Building Blocks](#building-blocks)                                                        |
+| Get oriented / unsure where to start                                | [Fundamentals](#fundamentals) then [Component Selection](#which-component-should-i-choose) |
 
 ## Design Patterns in Claude Code Components
 
@@ -44,11 +50,22 @@ Most common patterns used in multi-component workflows:
 | Complex agent flow triggered by command     | `User` -> `Command` -> `Agent`            |
 | Complex agent flow backed by knowledge base | `User` -> `Command` -> `Agent` -> `Skill` |
 
-For detailed references and examples of these patterns, see [Component Interaction Patterns](./component-interaction/component-interaction-patterns.md)
+**Deep dive:** [Interaction Patterns](./architecture/interaction-patterns.md) - 5 detailed patterns (Command→Agent, Agent→Skill, nested delegation, Hook+Agent, shared skills), scope anti-patterns. **Traverse when:** designing multi-component workflow, debugging component interactions, need pattern examples. **Skip when:** simple single-component task, workflow table covers your use case.
 
 ## Component Communication and Delegation
 
-For full details on component delegation and communication abilities, see [Component Communication & Delegation](./component-interaction/component-comms-delegation.md).
+Quick reference for what each component can do:
+
+| Component   | Can                                    | Cannot                                    |
+| ----------- | -------------------------------------- | ----------------------------------------- |
+| Main Claude | Ask user questions, delegate to agents | N/A (full access)                         |
+| Sub-agent   | Use tools, load skills, return results | Ask questions, see conversation history   |
+| Command     | Trigger agents, expand to prompts      | Execute logic directly, access user       |
+| Skill       | Provide guidance when loaded           | Execute code, call tools, trigger actions |
+| Hook        | Run scripts, block/modify tool calls   | Ask questions, use judgment               |
+| MCP Server  | Provide custom tools                   | Access conversation, trigger unprompted   |
+
+**Deep dive:** [Component Communication & Delegation](./architecture/communication-and-delegation.md) - CAN/CANNOT lists for each component type with examples and edge cases. **Traverse when:** need detailed interaction rules, debugging "why can't my agent do X". **Skip when:** table above answers the question.
 
 ## Which Component Should I Choose
 
@@ -56,30 +73,45 @@ Users can customize Claude Code using components broken into roughly three categ
 
 ### Components used by Claude
 
-| Component Type | Purpose                                           | When to Use                                       |
-| -------------- | ------------------------------------------------- | ------------------------------------------------- |
-| `Sub-agent`    | Isolated AI instances that do work                | Complex logic, autonomous delegation              |
-| `Skill`        | Knowledge loaded when needed or relevant          | Substantial interpretive guidance across contexts |
-| `Command`      | User-triggered prompts with argument substitution | Simple repeatable actions, explicit user control  |
-| `Memory`       | Persistent context and rules                      | Project knowledge, behavior shaping               |
-| `MCP server`   | Backend service for tool access                   | Custom tool integrations, specialized transports  |
+| Component Type | When to Use                                       | Avoid When (use instead)                              |
+| -------------- | ------------------------------------------------- | ----------------------------------------------------- |
+| `Sub-agent`    | Complex logic, autonomous delegation              | Guidance only (Skill), simple repeatable (Command)    |
+| `Skill`        | Substantial interpretive guidance across contexts | Doing work (Agent), brief context \<20 lines (Memory) |
+| `Command`      | Simple repeatable actions, explicit user control  | Complex logic (Agent), knowledge only (Skill)         |
+| `Memory`       | Project knowledge, behavior shaping               | Substantial guidance (Skill), enforcement (Hook)      |
+| `MCP server`   | Custom tool integrations, specialized transports  | Standard tools suffice (use built-in tools)           |
 
 ### Components for the UX of the User
 
-| Component Type | Purpose                                     | When to Use                                 |
-| -------------- | ------------------------------------------- | ------------------------------------------- |
-| `Hook`         | Deterministic execution at lifecycle events | Guaranteed enforcement, simple rules        |
-| `Status Line`  | User interface element showing session info | Custom session metadata display             |
-| `Output Style` | Formatting and style for agent responses    | Custom response formats, structured outputs |
+| Component Type | When to Use                                 | Avoid When (use instead)                        |
+| -------------- | ------------------------------------------- | ----------------------------------------------- |
+| `Hook`         | Guaranteed enforcement, simple rules        | Judgment calls (Agent), guidance (Skill)        |
+| `Status Line`  | Custom session metadata display             | Enforcement needed (Hook), any Claude action    |
+| `Output Style` | Custom response formats, structured outputs | Logic changes (Agent/Skill), enforcement (Hook) |
 
 ### Distribution Wrappers for Components
 
-| Component Type | Purpose                                      | When to Use                            |
-| -------------- | -------------------------------------------- | -------------------------------------- |
-| `Plugin`       | Packaging and distribution of components     | Bundling multiple components for reuse |
-| `Marketplace`  | Platform for browsing and publishing plugins | Discovering and sharing plugins        |
+| Component Type | When to Use                            | Avoid When (use instead)                  |
+| -------------- | -------------------------------------- | ----------------------------------------- |
+| `Plugin`       | Bundling multiple components for reuse | Single-project use (project components)   |
+| `Marketplace`  | Discovering and sharing plugins        | Private/internal plugins (direct install) |
 
-[For detailed breakdown of when to create each component type, see Choosing the Right Component](./choosing-the-right-component.md).
+**Deep dive:** [Choosing the Right Component](./components/choosing-the-right-component.md) - Full decision framework with KEY CHARACTERISTIC, CHOOSE IF, DO NOT CHOOSE IF, and Example User Requests for each component. **Traverse when:** ambiguous component choice, need to map user intent phrases to component type, edge cases not covered by summary. **Skip when:** summary tables clearly answer the question.
+
+## Building Blocks
+
+Reusable documentation patterns that apply across all component types:
+
+| Pattern                                                           | Purpose                                                    |
+| ----------------------------------------------------------------- | ---------------------------------------------------------- |
+| [Navigation Tables](./building-blocks/navigation-tables.md)       | Routing tables for progressive discovery                   |
+| [Decision Frameworks](./building-blocks/decision-frameworks.md)   | Structured formats for documenting choices between options |
+| [Reference Sections](./building-blocks/reference-sections.md)     | At-a-glance content design for the happy path              |
+| [Deep Dive Links](./building-blocks/deep-dive-links.md)           | Cross-reference format with traverse/skip guidance         |
+| [Quality Checklist](./building-blocks/quality-checklist.md)       | Checkbox validation at end of documents                    |
+| [Anti-Pattern Catalog](./building-blocks/anti-pattern-catalog.md) | Structure for documenting common mistakes                  |
+
+Use these patterns when writing documentation for any component type (skills, agents, commands, READMEs).
 
 ## Claude Code Official Documentation
 
@@ -104,4 +136,37 @@ agents/code-reviewer.md    # Code review agent, looks up guidelines from skill.
 skills/code-review-guidelines.md    # Skill with guidance on code review best practices.
 ```
 
-[See Example Component Ecosystems](./example-component-ecosystems.md) for reference implementations of example systems.
+**Deep dive:** [Example Component Ecosystems](./examples/example-component-ecosystems.md) - 3 complete ecosystems (Testing, Documentation, Code Quality) with architecture diagrams and interaction flows. **Traverse when:** need reference implementation, learning multi-component patterns, planning similar ecosystem. **Skip when:** understanding single component, simple use case.
+
+## Anti-Patterns
+
+Common architecture mistakes. See linked design skills for detailed guidance.
+
+| Pitfall                    | Symptom                                              | Fix                                                              | Details                                                 |
+| -------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------- |
+| User interaction in agents | Agent prompt contains "ask the user", "confirm with" | Remove - agents are isolated, return complete results            | [sub-agent-design](../sub-agent-design/SKILL.md)        |
+| Wrong granularity          | Agent for simple task, skill for 10-line guidance    | Match complexity: Command < Agent < Skill based on scope         | [Component Selection](#which-component-should-i-choose) |
+| Missing tool permissions   | Agent fails silently or can't complete task          | Add required tools (esp. Skill tool if loading skills)           | [sub-agent-design](../sub-agent-design/SKILL.md)        |
+| Vague agent descriptions   | Main Claude doesn't delegate when it should          | Use strong triggers: "MUST BE USED when...", "ALWAYS use for..." | [sub-agent-design](../sub-agent-design/SKILL.md)        |
+| Over-engineering           | Plugin for single-project use                        | Use project-level components until reuse is proven               | [plugin-design](../plugin-design/SKILL.md)              |
+
+## Quality Checklist
+
+Before finalizing component architecture:
+
+**Fundamentals:**
+
+- [ ] Agents have no user interaction language ("ask", "confirm", "clarify")
+- [ ] Agents return complete results (not partial or interactive)
+- [ ] Progressive disclosure applied (skills for substantial guidance, memory for brief)
+
+**Component Selection:**
+
+- [ ] Component type matches task complexity (see [Which Component Should I Choose](#which-component-should-i-choose))
+- [ ] "Avoid When" conditions checked for each component
+
+**Tool Permissions:**
+
+- [ ] Agent tools match responsibilities (Read-only for reviewers, Write for creators)
+- [ ] Skill tool included if agent loads skills
+- [ ] Task tool included if agent delegates to sub-agents

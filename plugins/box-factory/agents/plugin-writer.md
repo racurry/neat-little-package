@@ -131,13 +131,13 @@ Create metadata at `.claude-plugin/plugin.json`:
 
 ### 6. Write README.md
 
-**REQUIRED:** Load the readme-style skill before writing:
+**REQUIRED:** Read the README style guidance from plugin-design skill:
 
 ```
-Use Skill tool: skill="box-factory:readme-style"
+Read: readme-style.md (from plugin-design skill)
 ```
 
-Follow the ultra-terse style from that skill. Target ~20 lines:
+Follow the ultra-terse style from that guidance. Target ~20 lines:
 
 ```markdown
 # Plugin Name

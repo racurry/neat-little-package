@@ -13,6 +13,7 @@ This skill provides interpretive guidance and best practices for creating Claude
 | --------------------------------- | ---------------------------------------------------------------------------- |
 | Understand plugin fundamentals    | [Core Understanding](#core-understanding)                                    |
 | Configure plugin.json             | [Plugin Manifest](#plugin-manifest-pluginjson---official-specification)      |
+| Write the plugin README           | [readme-style.md](readme-style.md)                                           |
 | Bundle MCP servers with plugin    | [MCP Server Configuration](#mcp-server-configuration-best-practices)         |
 | Set up marketplace distribution   | [Marketplace Distribution](#marketplace-distribution-official-specification) |
 | Decide if plugin is right pattern | [Decision Framework](#decision-framework)                                    |
