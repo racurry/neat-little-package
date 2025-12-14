@@ -7,6 +7,14 @@ description: Meta-skill that teaches how to design Claude Code skills following 
 
 This meta-skill teaches you how to design excellent Claude Code skills. **Skills are unique among Claude Code components** - they provide progressive knowledge disclosure and guidance that loads when relevant.
 
+## Fundamentals
+
+**Everything in this skill is built on top of the box-factory-architecture skill.  Load that first!**
+
+TOODO:
+- Make sure to document that supporting md files/subpages should include Navigation Tables using the same criteria as SKILL.md documentation
+
+
 ## Workflow Selection
 
 | If you need to...                 | Go to...                                                                                     |
