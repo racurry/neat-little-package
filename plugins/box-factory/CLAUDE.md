@@ -13,11 +13,11 @@
 
 - Layer 1: Official specs (what docs explicitly say)
 - Layer 2: Best practices (interpretive guidance, gotchas, anti-patterns)
-- Always distinguish which layer you're in
+- Always distinguish which layer you're in when it would otherwise confuse Claude (eg, claude might think an opinion is 'factually incorrect')
 
 **Evidence-Based**
 
-- Claims must be grounded in official docs OR clearly marked as opinions
+- Claims must be grounded in official docs OR clearly marked as preferences/best practices
 - Never present best practices as official requirements
 
 **Delegation Pattern**
@@ -44,7 +44,7 @@
 
 - ✅ Include: User-specific preferences, edge cases, decision frameworks, things Claude gets wrong, new tech
 - ❌ Exclude: Basic commands Claude knows, standard workflows, general best practices
-- Result: Focused skills (~50-150 lines) that add real value
+- Result: Focused skills (~100-300 lines) that add real value in SKILL.md files.  Richer data is left in sub-pages if needed
 
 **Example Application:**
 
@@ -61,7 +61,7 @@
 - ✓ Defers to official docs (no hardcoded version-specific details)
 - ✓ Includes decision frameworks and common pitfalls
 - ✓ Provides quality checklist
-- ✓ Focused scope (~50-150 lines typical)
+- ✓ Focused scope (<300 lines lines typical)
 
 ### Agents
 

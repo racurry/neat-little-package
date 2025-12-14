@@ -30,6 +30,16 @@ Fetch the official skills documentation for current syntax and features:
 
 **Key insight:** Skills solve the "you can't put everything in the system prompt" problem.
 
+```text
+Base Prompt (always loaded)
+    ↓
+Topic becomes relevant
+    ↓
+Skill loads automatically
+    ↓
+Provides specialized knowledge
+```
+
 - **Without skills:** Important knowledge buried in long prompts or forgotten
 - **With skills:** Knowledge loads automatically when topics become relevant
 - **Value proposition:** Right information at the right time, without token bloat

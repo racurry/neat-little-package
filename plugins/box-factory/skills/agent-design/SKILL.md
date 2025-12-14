@@ -61,22 +61,44 @@ You are a specialized agent that [purpose].
 
 ## Critical Architecture Understanding
 
-Agents operate in **isolated context** with a **return-based model**:
+**The #1 thing to understand:** Claude Code uses **isolated contexts** with **return-based delegation**.
 
 ```text
-User ↔ Main Claude → Agent (isolated, returns results)
+User ↔ Main Claude ──→ Sub-Agent (isolated context)
+                        │
+                        └──→ Returns final result
+                             (no back-and-forth)
 ```
 
 **Critical implications:**
 
-- Agents CAN'T ask users questions
-- Agents CAN'T interact with users directly
-- Agents SHOULD do actual work (run code, write files, analyze code) when appropriate
-- Main agent handles ALL user communication
+- Agents **CANNOT** ask users questions
+- Agents **CANNOT** see main conversation history
+- Agents **CAN** do autonomous work (write files, run tests, analyze code)
+- Main Claude handles **ALL** user communication
+- Delegation is **one-way** (call → return, not interactive)
 
-**The key distinction:** No user interaction (no asking questions, no confirming), but full ability to do autonomous work within scope.
+**Why this matters:** Every design decision flows from this architecture. The "cannot see history" point is especially important—you must provide all necessary context in the agent prompt. Agents can't "continue from where we left off" or reference "our earlier discussion."
 
-**Common misconception:** If your agent prompt includes phrases like "ask the user", "gather from user", "clarify with user" - you've misunderstood the architecture.
+**Common misconception:** "Agents are just like functions"—No, they're isolated AI instances with their own context and tool access. If your agent prompt includes phrases like "ask the user" or "clarify with user", you've misunderstood the architecture.
+
+### The Return-Based Model
+
+**Execution flow:**
+
+1. Main Claude decides to delegate
+1. Sub-agent receives context + task
+1. Sub-agent works autonomously in isolation
+1. Sub-agent returns complete result
+1. Main Claude integrates result and continues
+
+**What this means for agent design:**
+
+- **No mid-execution interaction**—agent can't pause and ask for clarification
+- **Agent must have everything it needs upfront**—all context in the prompt
+- **Results must be complete and actionable**—main Claude shouldn't need to ask follow-ups
+
+**Design test:** If your agent needs to ask questions mid-execution, redesign the delegation pattern. Either provide more context upfront, or split into multiple agents.
 
 ## Decision Framework
 
@@ -229,19 +251,19 @@ The `description` field determines when Claude delegates to your agent. This is 
 Before finalizing an agent:
 
 1. **Fetch official docs** - Verify against current specification
-2. **Check structure** - Valid YAML frontmatter, required fields present
-3. **Scan for forbidden language** - No user interaction phrases
-4. **Validate tools** - Match autonomous responsibilities, no AskUserQuestion
-5. **Test description** - Specific triggering conditions, not generic
-6. **Review system prompt** - Single H1, clear structure, actionable instructions
-7. **Verify no hardcoding** - No version-specific details that will become outdated
-8. **Set color** - Choose semantic color matching agent's primary function (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red, other=orange)
+1. **Check structure** - Valid YAML frontmatter, required fields present
+1. **Scan for forbidden language** - No user interaction phrases
+1. **Validate tools** - Match autonomous responsibilities, no AskUserQuestion
+1. **Test description** - Specific triggering conditions, not generic
+1. **Review system prompt** - Single H1, clear structure, actionable instructions
+1. **Verify no hardcoding** - No version-specific details that will become outdated
+1. **Set color** - Choose semantic color matching agent's primary function (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red, other=orange)
 
 ## Path Resolution
 
 When writing agents:
 
 1. If caller specifies path → use exact path
-2. If working in `.claude/agents/` → use that
-3. Default → `.claude/agents/` (project-level)
-4. User-level (`~/.claude/agents/`) → only when explicitly requested
+1. If working in `.claude/agents/` → use that
+1. Default → `.claude/agents/` (project-level)
+1. User-level (`~/.claude/agents/`) → only when explicitly requested
