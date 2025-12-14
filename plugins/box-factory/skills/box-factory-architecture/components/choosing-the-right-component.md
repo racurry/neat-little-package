@@ -1,14 +1,15 @@
 # Which Component Should I Choose
 
-| Component      | Go to...                                     |
-| -------------- | -------------------------------------------- |
-| `Sub-agent`        | [Sub-agent](#when-to-create-a-sub-agent)            |
-| `Skill`        | [Skill](#when-to-create-a-skill)             |
-| `Command`      | [Command](#when-to-create-a-command)         |
-| `Hook`         | [Hook](#when-to-create-a-hook)               |
-| `Memory`       | [Memory](#when-to-use-memory)                |
-| `Status Line`  | [Status Line](#when-to-use-a-status-line)    |
-| `Output Style` | [Output Style](#when-to-use-an-output-style) |
+| Component                  | Go to...                                       |
+| -------------------------- | ---------------------------------------------- |
+| `Sub-agent` (aka subagent) | [Sub-agent](#when-to-create-a-sub-agent)       |
+| `Skill`                    | [Skill](#when-to-create-a-skill)               |
+| `Command`                  | [Command](#when-to-create-a-command)           |
+| `Hook`                     | [Hook](#when-to-create-a-hook)                 |
+| `Memory`                   | [Memory](#when-to-use-memory)                  |
+| `MCP Server`               | [MCP Server](#when-to-configure-an-mcp-server) |
+| `Status Line`              | [Status Line](#when-to-use-a-status-line)      |
+| `Output Style`             | [Output Style](#when-to-use-an-output-style)   |
 
 ## When to create a `Sub-agent`
 
@@ -120,6 +121,34 @@ Memory refers to CLAUDE.md files and .claude/rules/ directories that provide per
   - `CLAUDE.md` with "This project uses pnpm, not npm"
   - `.claude/rules/api.md` with glob `api/**` for REST conventions
   - `~/.claude/CLAUDE.md` with commit message preferences
+
+## When to configure an `MCP Server`
+
+MCP (Model Context Protocol) servers provide custom tools that extend Claude's capabilities.
+
+- KEY CHARACTERISTIC:
+  - External tool integration via standardized protocol.
+- CHOOSE IF:
+  - Need to connect Claude to external systems (databases, APIs, services)
+  - Want to expose custom tools beyond built-in capabilities
+  - Integration requires specialized transport (HTTP, stdio, SSE)
+  - Tool functionality is reusable across conversations
+- DO NOT CHOOSE IF:
+  - Built-in tools suffice (Read, Write, Bash, etc.)
+  - CLI or API alternative exists and suffices (prefer lighter-weight integration)
+  - One-off scripting task (use [Hook](#when-to-create-a-hook) or Bash)
+  - Need guidance, not tools (use [Skill](#when-to-create-a-skill))
+  - Simple automation (use [Command](#when-to-create-a-command) with Bash)
+- EXAMPLE USER REQUESTS:
+  - "I want Claude to query our Postgres database directly"
+  - "Connect Claude to our internal API"
+  - "Let Claude interact with Home Assistant"
+  - "Add GitHub tools beyond what gh CLI provides"
+- EXAMPLE COMPONENTS:
+  - `github` MCP server - GitHub API integration
+  - `postgres` MCP server - Database queries
+  - `homeassistant` MCP server - Smart home control
+  - Custom HTTP MCP server for internal APIs
 
 ## When to use a `Status Line`
 

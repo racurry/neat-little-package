@@ -30,7 +30,7 @@ User experience and plugin components are not part of the agentic flow, but for 
 
 ## See Also
 
-- [Choosing the Right Component](../components/choosing-the-right-component.md)
+- [Choosing the Right Component](./choosing-the-right-component.md)
 - [Interaction Patterns](./interaction-patterns.md)
 
 ## Components

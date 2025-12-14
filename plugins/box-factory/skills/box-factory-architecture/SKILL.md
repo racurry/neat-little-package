@@ -9,17 +9,20 @@ This meta-skill teaches the Claude Code component and ecosystem architecture - h
 
 ## Fundamentals
 
-Three architectural concepts underpin all Claude Code component design:
+Four foundational principles underpin all Claude Code component design:
 
-| Concept                     | Implication                                                                                        |
-| --------------------------- | -------------------------------------------------------------------------------------------------- |
-| **Isolation Model**         | Only Main Claude has user access. Sub-agents cannot ask questions or see conversation history.     |
-| **Return-Based Delegation** | Agents return complete results. No mid-execution interaction - agent must have everything upfront. |
-| **Progressive Disclosure**  | Load knowledge when relevant to save tokens. Skills solve selective context loading.               |
+| Principle                   | Implication                                                                                            |
+| --------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Isolation Model**         | Only Main Claude has user access. Sub-agents cannot ask questions or see conversation history.         |
+| **Return-Based Delegation** | Sub-agents return complete results. No mid-execution interaction - agent must have everything upfront. |
+| **Progressive Disclosure**  | Load knowledge when relevant to save tokens. Skills solve selective context loading.                   |
+| **Knowledge Delta Filter**  | Document only what Claude doesn't know. Skip base knowledge; include user-specific delta.              |
 
-**Design test:** If your agent needs to ask questions mid-execution, redesign the delegation pattern.
+**Design test:** If your sub-agent needs to ask questions mid-execution, redesign the delegation pattern.
 
-**Deep dive:** [Core Architectural Concepts](./architecture/core-architecture.md) - Diagrams, design implications, common misconceptions. **Traverse when:** debugging delegation issues, need to understand WHY architecture works this way. **Skip when:** table above answers your question.
+**Deep dive:** [Core Architectural Concepts](./principles/core-architecture.md) - Diagrams, design implications, common misconceptions. **Traverse when:** debugging delegation issues, need to understand WHY architecture works this way. **Skip when:** table above answers your question.
+
+**Deep dive:** [Knowledge Delta Filter](./principles/knowledge-delta-filter.md) - Decision framework for content inclusion, examples across component types. **Traverse when:** writing any component content, reviewing for bloat, unsure what to include/exclude. **Skip when:** already know the delta principle, content is clearly user-specific.
 
 ## Instructions
 
@@ -36,7 +39,7 @@ Three architectural concepts underpin all Claude Code component design:
 | Design multi-component workflows (command→agent→skill chains)       | [Design Patterns](#design-patterns-in-claude-code-components)                              |
 | Understand isolation model (why agents can't ask questions)         | [Fundamentals](#fundamentals)                                                              |
 | See reference implementations (complete plugin ecosystems)          | [Example Ecosystems](#example-component-ecosystems)                                        |
-| Determine file paths for new components (project vs user vs plugin) | [Component Paths](./architecture/component-paths.md)                                       |
+| Determine file paths for new components (project vs user vs plugin) | [Component Paths](./components/component-paths.md)                                         |
 | Write documentation for components (skills, agents, READMEs)        | [Building Blocks](#building-blocks)                                                        |
 | Get oriented / unsure where to start                                | [Fundamentals](#fundamentals) then [Component Selection](#which-component-should-i-choose) |
 
@@ -50,22 +53,22 @@ Most common patterns used in multi-component workflows:
 | Complex agent flow triggered by command     | `User` -> `Command` -> `Agent`            |
 | Complex agent flow backed by knowledge base | `User` -> `Command` -> `Agent` -> `Skill` |
 
-**Deep dive:** [Interaction Patterns](./architecture/interaction-patterns.md) - 5 detailed patterns (Command→Agent, Agent→Skill, nested delegation, Hook+Agent, shared skills), scope anti-patterns. **Traverse when:** designing multi-component workflow, debugging component interactions, need pattern examples. **Skip when:** simple single-component task, workflow table covers your use case.
+**Deep dive:** [Interaction Patterns](./components/interaction-patterns.md) - 5 detailed patterns (Command→Agent, Agent→Skill, nested delegation, Hook+Agent, shared skills), scope anti-patterns. **Traverse when:** designing multi-component workflow, debugging component interactions, need pattern examples. **Skip when:** simple single-component task, workflow table covers your use case.
 
 ## Component Communication and Delegation
 
 Quick reference for what each component can do:
 
-| Component   | Can                                    | Cannot                                    |
-| ----------- | -------------------------------------- | ----------------------------------------- |
-| Main Claude | Ask user questions, delegate to agents | N/A (full access)                         |
-| Sub-agent   | Use tools, load skills, return results | Ask questions, see conversation history   |
-| Command     | Trigger agents, expand to prompts      | Execute logic directly, access user       |
-| Skill       | Provide guidance when loaded           | Execute code, call tools, trigger actions |
-| Hook        | Run scripts, block/modify tool calls   | Ask questions, use judgment               |
-| MCP Server  | Provide custom tools                   | Access conversation, trigger unprompted   |
+| Component                | Can                                    | Cannot                                    |
+| ------------------------ | -------------------------------------- | ----------------------------------------- |
+| Main Claude              | Ask user questions, delegate to agents | N/A (full access)                         |
+| Sub-agent (aka subagent) | Use tools, load skills, return results | Ask questions, see conversation history   |
+| Command                  | Trigger agents, expand to prompts      | Execute logic directly, access user       |
+| Skill                    | Provide guidance when loaded           | Execute code, call tools, trigger actions |
+| Hook                     | Run scripts, block/modify tool calls   | Ask questions, use judgment               |
+| MCP Server               | Provide custom tools                   | Access conversation, trigger unprompted   |
 
-**Deep dive:** [Component Communication & Delegation](./architecture/communication-and-delegation.md) - CAN/CANNOT lists for each component type with examples and edge cases. **Traverse when:** need detailed interaction rules, debugging "why can't my agent do X". **Skip when:** table above answers the question.
+**Deep dive:** [Component Communication & Delegation](./components/communication-and-delegation.md) - CAN/CANNOT lists for each component type with examples and edge cases. **Traverse when:** need detailed interaction rules, debugging "why can't my agent do X". **Skip when:** table above answers the question.
 
 ## Which Component Should I Choose
 
@@ -117,13 +120,13 @@ Use these patterns when writing documentation for any component type (skills, ag
 
 **Claude Code changes rapidly and is post-training knowledge.** Fetch these docs when designing components to ensure current specifications:
 
-- <https://docs.anthropic.com/en/docs/claude-code/sub-agents> - Agent architecture and isolation model
-- <https://docs.anthropic.com/en/docs/claude-code/slash-commands> - Command structure and triggering
-- <https://docs.anthropic.com/en/docs/claude-code/hooks> - Hook lifecycle and execution
-- <https://docs.anthropic.com/en/docs/claude-code/plugins> - Plugin packaging and distribution
-- <https://docs.anthropic.com/en/docs/claude-code/mcp> - MCP server configuration and transports
-- <https://docs.anthropic.com/en/docs/claude-code/memory> - CLAUDE.md, rules, and project memory
-- <https://docs.anthropic.com/en/docs/claude-code/skills> - Skill definition and loading
+- <https://code.claude.com/docs/en/sub-agents> - Agent architecture and isolation model
+- <https://code.claude.com/docs/en/slash-commands> - Command structure and triggering
+- <https://code.claude.com/docs/en/hooks> - Hook lifecycle and execution
+- <https://code.claude.com/docs/en/plugins> - Plugin packaging and distribution
+- <https://code.claude.com/docs/en/mcp> - MCP server configuration and transports
+- <https://code.claude.com/docs/en/memory> - CLAUDE.md, rules, and project memory
+- <https://code.claude.com/docs/en/skills> - Skill definition and loading
 
 ## Example Component Ecosystems
 
