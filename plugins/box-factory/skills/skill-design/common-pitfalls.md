@@ -2,6 +2,20 @@
 
 Reference for anti-patterns in skill design. Look up specific pitfalls when reviewing or debugging skills.
 
+## Quick Reference
+
+| Pitfall                                                                         | Symptom                         | Fix                                          |
+| ------------------------------------------------------------------------------- | ------------------------------- | -------------------------------------------- |
+| [#1 Duplicating docs](#pitfall-1-duplicating-official-documentation)            | Hardcoded lists that change     | Point to official docs, interpret don't copy |
+| [#2 Version-specific](#pitfall-2-hardcoding-version-specific-details)           | Tool names, model IDs inline    | Reference docs, teach philosophy             |
+| [#3 Opinions as specs](#pitfall-3-presenting-opinions-as-official-requirements) | "MUST" without citation         | Mark as "(Best Practices)"                   |
+| [#4 Kitchen sink](#pitfall-4-kitchen-sink-skills)                               | >3 domains in one skill         | Split into focused skills                    |
+| [#5 No triggers](#pitfall-5-no-clear-triggering-conditions)                     | Vague description               | Add "Use when..." conditions                 |
+| [#6 Base knowledge](#pitfall-6-documenting-claudes-base-knowledge)              | Documenting git/npm/etc basics  | Apply knowledge delta filter                 |
+| [#7 Monolithic reference](#pitfall-7-monolithic-reference-skills)               | Independent domains in one file | Split into subpages                          |
+
+______________________________________________________________________
+
 ## Pitfall #1: Duplicating Official Documentation
 
 **Problem:** Skill becomes outdated copy of docs
@@ -291,17 +305,3 @@ skills/home-assistant/
 - Each subpage is self-contained
 - Navigation table helps agent choose what to load
 - Subpages can be updated independently
-
-______________________________________________________________________
-
-## Quick Reference
-
-| Pitfall                 | Symptom                         | Fix                                          |
-| ----------------------- | ------------------------------- | -------------------------------------------- |
-| #1 Duplicating docs     | Hardcoded lists that change     | Point to official docs, interpret don't copy |
-| #2 Version-specific     | Tool names, model IDs inline    | Reference docs, teach philosophy             |
-| #3 Opinions as specs    | "MUST" without citation         | Mark as "(Best Practices)"                   |
-| #4 Kitchen sink         | >3 domains in one skill         | Split into focused skills                    |
-| #5 No triggers          | Vague description               | Add "Use when..." conditions                 |
-| #6 Base knowledge       | Documenting git/npm/etc basics  | Apply knowledge delta filter                 |
-| #7 Monolithic reference | Independent domains in one file | Split into subpages                          |

@@ -7,75 +7,21 @@ Universal patterns for skill folder layout and SKILL.md organization.
 ```text
 my-skill/
 ├── SKILL.md              # Required (uppercase)
+├── subtopic/             # Optional subfolder for related subfiles
+    └── subtopic-main.md  # Optional subfile in subfolder
+    └── sub-extra.md      # Optional additional subfile
 ├── topic-one.md          # Optional subfiles (any descriptive names)
 ├── topic-two.md
-└── scripts/              # Optional (if skill has automation)
+└── scripts/              # Optional (if skill has any supporting script files)
     └── helper.py
+    └── helpo.sh
 ```
 
 Only `SKILL.md` has a required name. Everything else is optional and can use any descriptive names.
 
-## SKILL.md Template
+## Guidance for Splitting Content into Subfiles
 
-```markdown
----
-name: my-skill
-description: "[What it does]. Use when: [trigger 1], [trigger 2], [trigger 3]."
----
-
-# [Skill Name]
-
-[One sentence: what this skill provides and why]
-
-## Workflow Selection
-
-| If you need to... | Go to... |
-|-------------------|----------|
-| [Task 1] | [Section or file] |
-| [Task 2] | [Section or file] |
-| [Task 3] | [Section or file] |
-
-## [Core Content]
-
-[Your skill's main content - organized by topic]
-
-## Quality Checklist
-
-[Validation items specific to this skill's domain]
-```
-
-## Workflow Selection (Required)
-
-Every skill needs a Workflow Selection table as the first content section.
-
-**Purpose:** Route agents to the right place without processing everything.
-
-**Format:**
-
-- "If you need to..." column describes the task
-- "Go to..." column links to section anchors OR subfiles
-- Conditions must be specific enough to evaluate
-
-**Good routing:**
-
-```markdown
-| If you need to... | Go to... |
-|-------------------|----------|
-| Format a commit message | [Message Format](#message-format) |
-| Handle pre-commit failure | [Pre-Commit Edge Case](#pre-commit-edge-case) |
-| Configure advanced options | [advanced-config.md](advanced-config.md) |
-```
-
-**Bad routing:**
-
-```markdown
-| Task | Reference |
-|------|-----------|
-| More info | [details.md](details.md) |
-| Help | [troubleshooting.md](troubleshooting.md) |
-```
-
-## When to Split into Subfiles
+When deciding whether to keep all content in a single `SKILL.md` or split into subfiles, consider the following criteria:
 
 **Keep in single SKILL.md when:**
 
@@ -89,87 +35,111 @@ Every skill needs a Workflow Selection table as the first content section.
 - Independent topics that don't reference each other
 - Agent only needs one topic per task
 - Any topic exceeds ~150 lines
-- Content is lookup/reference style (not teaching)
+- Content is lookup/reference style
 
 **Decision test:** Would loading the full skill waste context on irrelevant sections?
 
 - Yes → Split into subfiles
 - No → Keep unified
 
-## Size Guidance
+## Subfile Organization
 
-| Component           | Target             | Hard Limit |
-| ------------------- | ------------------ | ---------- |
-| SKILL.md (any type) | 50-200 lines       | 300 lines  |
-| Subfiles            | 100-200 lines each | 250 lines  |
-| Quick Start section | ≤20 lines          | —          |
-
-**No exceptions.** Even teaching/philosophy skills with interconnected content should keep SKILL.md under 300 lines and offload details to subfiles. The main file provides navigation and core concepts; subfiles contain the depth.
-
-## Scripts Folder
-
-Add `scripts/` when the skill includes automation:
+When using subfiles, organize them by topic with descriptive names. Subfiles can be standalone markdown files or grouped into subfolders for related content.
 
 ```text
 my-skill/
 ├── SKILL.md
-└── scripts/
-    ├── main-operation.py
-    └── helper.py
+├── topic-one.md
+└── related-topics/
+    ├── subtopic-a.md
+    └── subtopic-b.md
 ```
 
-Document scripts in SKILL.md:
+## Navigation Tables
+
+Every file with multiple sections should have a navigation table near the top with anchor links. This enables progressive disclosure - agents scan the table, jump to what they need, skip the rest.
+
+**Pattern:**
 
 ```markdown
-## Scripts
+# File Title
 
-| Script | Purpose | When to use |
-|--------|---------|-------------|
-| `scripts/main-operation.py` | [What] | [Condition] |
+Brief intro sentence.
+
+## Quick Reference
+
+| Topic | Description |
+|-------|-------------|
+| [Section One](#section-one) | What this covers |
+| [Section Two](#section-two) | What this covers |
+
+---
+
+## Section One
+...
 ```
 
-## Quality Checklist
+**Applies to:**
 
-Before completing any skill:
+- SKILL.md (required - called "Workflow Selection")
+- Subfiles with 3+ sections (strongly recommended)
+- Reference/lookup files (essential)
 
-**Structure:**
+**Skip when:**
 
-- ✓ SKILL.md exists (uppercase)
-- ✓ Workflow Selection table present
-- ✓ Routing conditions are specific
+- File has only 1-2 short sections
+- Content is meant to be read sequentially (rare)
 
-**Content:**
+## Scripts Folder
 
-- ✓ Applies knowledge delta filter (only what Claude doesn't know)
-- ✓ Subfiles are self-contained if present
-- ✓ No README.md or CHANGELOG.md in skill folder
+Add `scripts/` when the skill includes executable automation (linting helpers, validation scripts, etc.):
 
-**Size:**
+```text
+my-skill/
+├── SKILL.md
+├── guidance.md
+└── scripts/
+    ├── helper.py
+    └── validate.sh
+```
 
-- ✓ SKILL.md appropriate for content type
-- ✓ Subfiles under 250 lines each
-- ✓ Split if independent sections and over 200 lines total
+## Non-Markdown Assets
+
+Template files, configuration examples, or reference assets live alongside markdown:
+
+```text
+my-skill/
+├── SKILL.md
+├── template.json
+├── example.yaml
+└── assets/
+    ├── diagram.png
+    └── config-sample.ini
+```
 
 ## Examples
 
-**User preferences skill (single file, ~150 lines):**
+These examples illustrate common patterns, not rigid categories. Your skill's structure should match its content.
+
+**User preferences skill (single file):**
 
 ```text
 git-workflow/
 └── SKILL.md    # Commit format, pre-commit retry, all interconnected
 ```
 
-**Teaching skill (single file, ~500 lines):**
+**Teaching skill (philosophy + reference subfiles):**
 
 ```text
 skill-design/
-├── SKILL.md              # Core philosophy
-├── skill-structure.md    # This file - structure reference
+├── SKILL.md              # Core philosophy + navigation
+├── skill-structure.md    # Folder layout reference
+├── skill-md.md           # SKILL.md file requirements
 ├── knowledge-delta.md    # What to include/exclude
 └── common-pitfalls.md    # Anti-patterns lookup
 ```
 
-**Reference skill (multiple subfiles):**
+**Reference skill (navigation + atomic pages):**
 
 ```text
 home-assistant/

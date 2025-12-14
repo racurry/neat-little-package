@@ -6,150 +6,55 @@
 
 - Skills MUST defer to official docs via WebFetch (never hardcode model names, tool lists, syntax)
 - Agents MUST fetch current specifications before creating components
-- Apply knowledge delta filter (only document what Claude doesn't know)
+- All components MUST apply knowledge delta filter (only document what Claude doesn't know)
 - Documentation changes; principles don't
 
 **Two-Layer Approach**
 
 - Layer 1: Official specs (what docs explicitly say)
-- Layer 2: Best practices (interpretive guidance, gotchas, anti-patterns)
+- Layer 2: Best practices (interpretive guidance, gotchas, anti-patterns, user preferences)
 - Always distinguish which layer you're in when it would otherwise confuse Claude (eg, claude might think an opinion is 'factually incorrect')
-
-**Evidence-Based**
-
-- Claims must be grounded in official docs OR clearly marked as preferences/best practices
-- Never present best practices as official requirements
 
 **Delegation Pattern**
 
 - Commands are thin wrappers
 - Agents do complex work in isolation
-- Skills provide interpretive guidance
+- Skills provide guidance to the main agent or sub-agents
 - Hooks enforce deterministic rules
-- All Box Factory commands delegate to specialized agents
-
-## Component Patterns
-
-### Skills
-
-**Structure:**
-
-- Doc references: Point to official docs for things Claude might not know (not basics)
-- Progressive disclosure: Core concepts → Advanced features
-- Mark sections: "(Official Specification)" vs "(Best Practices)"
-- Include: Decision frameworks, common pitfalls, quality checklists
-- Filename: `SKILL.md` (uppercase) in `skills/[name]/` subdirectory
 
 **Knowledge Delta Filter (Critical):**
 
 - ✅ Include: User-specific preferences, edge cases, decision frameworks, things Claude gets wrong, new tech
 - ❌ Exclude: Basic commands Claude knows, standard workflows, general best practices
-- Result: Focused skills (~100-300 lines) that add real value in SKILL.md files.  Richer data is left in sub-pages if needed
+- Focused components that add real value in documentation and prompts
 
-**Example Application:**
+## Component Patterns
 
-```markdown
-❌ Bad: 480 lines documenting all git commands
-✅ Good: 80 lines documenting user's specific commit format + pre-commit hook retry logic
-```
+### Skills
 
-**Quality Checklist:**
-
-- ✓ Applies knowledge delta filter (only documents what Claude doesn't know)
-- ✓ Points to docs for things Claude might not know (not common tools/workflows)
-- ✓ Uses two-layer approach with clear section headings
-- ✓ Defers to official docs (no hardcoded version-specific details)
-- ✓ Includes decision frameworks and common pitfalls
-- ✓ Provides quality checklist
-- ✓ Focused scope (<300 lines lines typical)
+- Point to official docs for things Claude might not know (not basics)
+- Progressive disclosure: Core concepts → Advanced features
+- Include: Decision frameworks, common pitfalls, quality checklists
+- Keep SKILL.md < 300 lines 
 
 ### Agents
-
-**Structure:**
 
 - No user interaction language ("ask the user" = forbidden)
 - Tools match autonomous responsibilities
 - Strong delegation in description ("ALWAYS use when...", "MUST BE USED when...")
-- Reference design skills for guidance
-- Model: haiku (simple), sonnet (balanced), opus (complex reasoning)
-
-**Tool Selection (Critical):**
-
-- **Skill tool:** Include if agent loads ANY skills (99% of agents do)
-- **Task tool:** Include if agent delegates to other agents
-- **Read/Write/Edit:** Match to read-only vs creation responsibilities
-- **Bash:** Only if running commands
-- **WebFetch/WebSearch:** If fetching docs or searching
-
-**Loading Design Skills:**
-
-```markdown
-# Agent Process
-
-1. **Load design skills (REQUIRED)** - Use Skill tool to load both skills BEFORE proceeding
-
-```
-
-Use Skill tool: skill="box-factory:box-factory-architecture"
-Use Skill tool: skill="box-factory:agent-design"
-
-```
-```
-
-**Quality Checklist:**
-
-- ✓ Follows relevant design skill patterns
-- ✓ Defers to official docs (no hardcoded specifics)
-- ✓ Distinguishes specs from best practices
-- ✓ Includes examples with before/after
-- ✓ No user interaction language in agents
-- ✓ Tools match responsibilities
-- ✓ Clear, specific descriptions for autonomous delegation
-- ✓ Includes Skill tool if loading any skills
-- ✓ Includes Task tool if delegating to other agents
+- Reference skills for guidance when appropriate
 
 ### Commands
 
-**Structure:**
-
-- Delegation pattern: Keep command simple, delegate to specialized agent
+- Delegation pattern: Keep command simple, delegate to specialized agent for complex work
 - Always include `description` field (improves discoverability)
 - Use `argument-hint` for expected arguments
 - Let agents handle complexity, validation, and decision-making
 
-**Example Pattern:**
-
-```markdown
----
-description: Create a new agent with specified name and purpose
-argument-hint: agent-name purpose
----
-
-Delegate to the agent-writer agent to create a new Claude Code agent.
-
-The agent-writer will:
-- Load agent-design and box-factory-architecture skills
-- Fetch official documentation
-- Create agent with proper structure
-- Validate tool selection and delegation description
-- Ensure no user interaction language
-```
-
-**Quality Checklist:**
-
-- ✓ Includes description field in frontmatter
-- ✓ Delegates to specialized agent for complex work
-- ✓ Uses argument-hint if accepting arguments
-- ✓ Single, focused responsibility
-- ✓ No complex logic in command prompt
-
 ### Hooks
-
-**Structure:**
 
 - Fast execution (< 60s or set custom timeout)
 - Quote all variables: `"$VAR"` not `$VAR`
-- Exit 2 = blocking (use sparingly, security/safety only)
 - Validate inputs (path traversal, sensitive files)
 
 **Language Selection:**
@@ -165,14 +70,6 @@ The agent-writer will:
 - Skip sensitive files (.env, credentials)
 - Use absolute paths with environment variables
 
-**Quality Checklist:**
-
-- ✓ Fast execution (< 60s or custom timeout configured)
-- ✓ All variables quoted properly
-- ✓ Exit codes appropriate (0, 2, other)
-- ✓ Security validated (no path traversal, sanitized inputs)
-- ✓ Proper error messages to stderr
-
 ## Decision Framework
 
 **When creating Box Factory components, ask:**
@@ -184,7 +81,6 @@ The agent-writer will:
 
 2. **Command pattern?**
 
-   - ALL Box Factory commands delegate to specialized agents
    - Command = thin wrapper, agent = complex logic
 
 3. **Read-only vs Write?**
@@ -194,17 +90,12 @@ The agent-writer will:
 
 4. **What design skill applies?**
 
-   - Creating agents → use agent-design
+   - Creating agents → use sub-agent-design
    - Creating commands → use slash-command-design
    - Creating skills → use skill-design
    - Creating hooks → use hooks-design
    - Creating plugins → use plugin-design
-
-5. **Apply knowledge delta filter?**
-
-   - For skills: Only document what Claude doesn't already know
-   - Would Claude get this wrong without the skill?
-   - Is this specific to this user/project/context?
+   - Creating marketplace → use plugin-design
 
 ## Architecture
 
@@ -225,7 +116,6 @@ All Box Factory components are self-documenting examples of the patterns they te
 - ✓ Follows relevant design skill patterns
 - ✓ Defers to official docs (no hardcoded specifics)
 - ✓ Applies knowledge delta filter (skills only)
-- ✓ Distinguishes specs from best practices
 - ✓ Includes examples with before/after
 - ✓ No user interaction language in agents
 - ✓ Tools match responsibilities
@@ -233,37 +123,15 @@ All Box Factory components are self-documenting examples of the patterns they te
 - ✓ Task tool included if agent delegates
 - ✓ Clear, specific descriptions for autonomous delegation
 
-## Anti-Patterns (Forbidden)
-
-**In Skills:**
+## Anti-Patterns
 
 - ❌ Duplicating official documentation
 - ❌ Hardcoding version-specific details (models, tools, syntax)
-- ❌ Presenting opinions as official requirements
 - ❌ Documenting basic commands Claude already knows
 - ❌ Comprehensive documentation instead of knowledge delta
-
-**In Agents:**
-
-- ❌ User interaction language ("ask the user", "confirm with user")
-- ❌ Tool mismatches (reviewer with Write, generator with Read-only)
+- ❌ Agents with user interaction language ("ask the user", "confirm with user")
 - ❌ Vague descriptions that don't trigger delegation
-- ❌ Agent loads skills but Skill tool not in tools list
-- ❌ Agent delegates but Task tool not in tools list
 
-**In Commands:**
-
-- ❌ Reimplementing agent logic in command prompt
-- ❌ Complex argument parsing (let agents handle)
-- ❌ Missing description field
-- ❌ Knowledge storage instead of action
-
-**In Hooks:**
-
-- ❌ Unquoted shell variables
-- ❌ User interaction assumptions
-- ❌ Slow operations without timeouts
-- ❌ Path traversal vulnerabilities
 
 ## Validation Workflow
 
@@ -309,216 +177,3 @@ All Box Factory components are self-documenting examples of the patterns they te
 3. Provide specific file:line references
 4. Distinguish between errors (blocking) and warnings (quality)
 5. Include actionable fix recommendations
-
-## Knowledge Delta Examples
-
-### Bad (480-line git-workflow skill)
-
-````markdown
-# Git Workflow Skill
-
-## Common Git Operations
-
-**Checking Repository Status:**
-```bash
-git status  # Shows staged, unstaged, and untracked files
-````
-
-**See detailed diff:**
-
-```bash
-git diff  # Unstaged changes
-git diff --staged  # Staged changes
-```
-
-[... 450+ lines documenting standard git commands ...]
-
-````
-
-**Why it fails:** Claude already knows all standard git commands. 95% redundant content.
-
-### Good (80-line git-workflow skill):
-
-```markdown
-# Git Workflow Skill
-
-This skill documents workflow preferences specific to this user. For standard git knowledge, Claude relies on base training.
-
-## Commit Message Requirements (User Preference)
-
-**This user requires:**
-- Terse, single-line format (max ~200 characters)
-- No emojis or decorative elements
-- No attribution text (no "Co-Authored-By:", no "Generated with Claude Code")
-
-## Pre-Commit Hook Edge Case (Critical)
-
-**Problem:** Pre-commit hooks modify files during commit, causing failure.
-
-**Workflow:**
-1. Attempt: `git commit -m "message"`
-2. Hook modifies files (auto-format)
-3. Commit FAILS (working directory changed)
-4. Stage modifications: `git add .`
-5. Retry ONCE: `git commit --amend --no-edit`
-````
-
-**Why it works:** 100% valuable delta knowledge. Focused on what Claude doesn't know.
-
-## MCP Server Configuration
-
-**Full guidance:**
-
-- Load `mcp-config` skill for project/user MCP setup (any project)
-- Load `plugin-design` skill for bundling MCP servers with plugins
-
-### Transport Selection
-
-- **HTTP transport** for remote/cloud MCP servers (Claude Code supports natively)
-- **Stdio transport** for local tools/binaries (npx, custom commands)
-- **Never use mcp-proxy** - Claude Code handles HTTP directly (unlike Claude Desktop)
-
-### Structure (Best Practices)
-
-- ✓ Use external `.mcp.json` files (not inline in plugin.json)
-- ✓ All secrets use `${ENV_VAR}` references (never hardcoded)
-- ✓ README documents required environment variables
-- ✓ For OAuth servers: document "run `/mcp` to authenticate"
-- ✓ Clear instructions for obtaining credentials
-- ✓ Example export commands provided
-
-### Anti-Patterns (Forbidden)
-
-- ❌ Inline MCP configuration in plugin.json
-- ❌ Hardcoded secrets or API keys
-- ❌ Empty string placeholders instead of ${ENV_VAR}
-- ❌ Undocumented environment variables
-- ❌ Using mcp-proxy for Claude Code (unnecessary)
-
-## Testing Strategy
-
-### Component Testing
-
-**Agents:** Load directly via Task tool or let delegation trigger
-
-**Commands:** Execute via `/command-name` and verify behavior
-
-**Skills:** Load via Skill tool and test in various contexts
-
-**Hooks:** Trigger event and check CTRL-R logs
-
-### Integration Testing
-
-Test complete workflows:
-
-1. User types command
-2. Command delegates to agent
-3. Agent loads relevant skills
-4. Agent creates/validates component
-5. Verify result matches expectations
-
-### Validation Testing
-
-Run `/box-factory:validate-plugin` on:
-
-- Box Factory itself (self-validation)
-- New plugins created by Box Factory
-- Modified components
-
-## Documentation Standards
-
-### Plugin README.md (General Guidance)
-
-**Ultra-terse.** Load the `readme-style` skill for full guidance. Key points:
-
-- Target ~20 lines total (not 50-100)
-- One-liner description at top
-- 2-3 terse bullets in Overview
-- Commands in code blocks with inline `#` comments
-- NO prose explanations - action-focused only
-
-**Anti-patterns (forbidden in plugin READMEs):**
-
-- ❌ "Components" sections listing agents/skills
-- ❌ "Features" sections with prose descriptions
-- ❌ "Philosophy", "How It Works", or design explanations
-- ❌ Troubleshooting, file structure, version history
-- ❌ Verbose installation beyond setup command
-- ❌ Any section that explains rather than shows actions
-
-### Box Factory's Own README (Special Case)
-
-Box Factory is a meta-plugin that creates other plugins. Its README is intentionally comprehensive because it documents plugin creation patterns. **Do not use it as a template for simple plugins.**
-
-### CLAUDE.md
-
-**Structure:**
-
-1. Philosophy and principles
-2. Component patterns
-3. Decision frameworks
-4. Anti-patterns
-
-**Tone:**
-
-- Developer-facing guidelines
-- Prescriptive patterns
-- Clear do/don't distinctions
-
-## Box Factory Self-Consistency
-
-**Critical principle:** Box Factory uses its own patterns to create itself.
-
-**What this means:**
-
-- Every skill follows skill-design patterns
-- Every agent follows agent-design patterns
-- Every command follows slash-command-design patterns
-- Every component exemplifies what it teaches
-
-**Benefits:**
-
-- Self-documenting ecosystem
-- Living examples of best practices
-- Dogfooding ensures patterns work
-- Trust through demonstration
-
-## Development Workflow
-
-### Adding New Components
-
-1. Determine component type (agent, command, skill, hook)
-2. Use relevant `/box-factory:add-*` command or create manually
-3. Follow design skill patterns
-4. Self-validate against quality checklist
-5. Test component in isolation
-6. Test integration with other components
-7. Run `/box-factory:validate-plugin`
-8. Fix any validation issues
-9. Update documentation with `/box-factory:update-docs`
-
-### Modifying Existing Components
-
-1. Read component and relevant design skill
-2. Make changes following patterns
-3. Validate against quality checklist
-4. Test changes thoroughly
-5. Run `/box-factory:review-component` for feedback
-6. Fix any issues
-7. Update documentation if needed
-
-### Version Management
-
-**Semantic Versioning:**
-
-- **Major (X.0.0):** Breaking changes, incompatible API changes
-- **Minor (x.Y.0):** New features, backward-compatible additions
-- **Patch (x.y.Z):** Bug fixes, backward-compatible improvements
-
-**Before Release:**
-
-1. Validate all components
-2. Review all components
-3. Update documentation
-4. Test end-to-end workflows
-5. Update version in plugin.json

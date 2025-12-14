@@ -5,18 +5,19 @@ description: Meta-skill that teaches how to design Claude Code skills following 
 
 # Skill Design Skill
 
-This meta-skill teaches you how to design excellent Claude Code skills. **Skills are unique among Claude Code components** - they provide progressive knowledge disclosure and interpretive guidance that loads when relevant.
+This meta-skill teaches you how to design excellent Claude Code skills. **Skills are unique among Claude Code components** - they provide progressive knowledge disclosure and guidance that loads when relevant.
 
 ## Workflow Selection
 
-| If you need to...                 | Go to...                                                     |
-| --------------------------------- | ------------------------------------------------------------ |
-| Get folder structure and template | [skill-structure.md](skill-structure.md)                     |
-| Decide what to include vs exclude | [knowledge-delta.md](knowledge-delta.md)                     |
-| Look up a specific anti-pattern   | [common-pitfalls.md](common-pitfalls.md)                     |
-| Validate before completing        | [skill-structure.md](skill-structure.md) (Quality Checklist) |
+| If you need to...                 | Go to...                                       |
+| --------------------------------- | ---------------------------------------------- |
+| Get folder structure              | [skill-structure.md](skill-structure.md)       |
+| Write SKILL.md file               | [skill-md.md](skill-md.md)                     |
+| Decide what to include vs exclude | [knowledge-delta.md](knowledge-delta.md)       |
+| Look up a specific anti-pattern   | [common-pitfalls.md](common-pitfalls.md)       |
+| Validate before completing        | [skill-md.md](skill-md.md) (Quality Checklist) |
 
-> **Creating a skill?** Start with [skill-structure.md](skill-structure.md) for the template.
+> **Creating a skill?** Start with [skill-md.md](skill-md.md) for the template.
 
 ## Official Documentation
 
@@ -46,13 +47,13 @@ Provides specialized knowledge
 
 **Decision test:** Does this information need to be available across multiple contexts, but not always?
 
-### Skills vs System Prompts vs CLAUDE.md
+### Skills vs System Prompts vs Memory (eg CLAUDE.md)
 
 | Component          | Use For                                                                                                     |
 | ------------------ | ----------------------------------------------------------------------------------------------------------- |
 | **Skills**         | Substantial procedural expertise (20+ lines), domain knowledge needed sporadically, interpretive frameworks |
 | **System prompts** | Always-relevant instructions, core behavior, universal constraints                                          |
-| **CLAUDE.md**      | Project-specific context, repository structure, team conventions, always-loaded information                 |
+| **Memory**         | Project-specific context, repository structure, team conventions, always-loaded information                 |
 
 ### The Knowledge Delta Principle
 
@@ -99,21 +100,18 @@ For syntax details or recent changes, fetch:
 
 - What the docs explicitly say
 - Required fields and syntax
-- Mark with headings: `## X (Official Specification)`
+- Mark accordingly: `(Official Specification)`
 
-**Layer 2: Best Practices**
+**Layer 2: Best Practices or User Preference**
 
 - What the docs don't emphasize
 - Common gotchas and anti-patterns
-- Mark with headings: `## X (Best Practices)`
+- Mark accordingly: `## X (Best Practices)`
 
 **Example:**
 
 ```markdown
-## Frontmatter Fields (Official Specification)
-
-The `description` field is optional and defaults to first line.
-
+<!-- Official specification lists the `description` field is optional and defaults to first line. -->
 ## Description Field Design (Best Practices)
 
 Always include `description` even though it's optional - improves discoverability.
