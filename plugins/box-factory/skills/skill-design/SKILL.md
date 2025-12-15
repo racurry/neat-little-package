@@ -9,11 +9,7 @@ This meta-skill teaches you how to design excellent Claude Code skills. **Skills
 
 ## Fundamentals
 
-**Everything in this skill is built on top of the box-factory-architecture skill.  Load that first!**
-
-TOODO:
-- Make sure to document that supporting md files/subpages should include Navigation Tables using the same criteria as SKILL.md documentation
-
+**Everything in this skill is built on top of the box-factory-architecture skill. Load that first!**
 
 ## Workflow Selection
 
@@ -26,7 +22,7 @@ TOODO:
 | Look up a specific anti-pattern   | [common-pitfalls.md](common-pitfalls.md)                                                     |
 | Validate before completing        | [skill-md.md](skill-md.md) (Quality Checklist)                                               |
 
-> **Creating a skill?** Start with [skill-md.md](skill-md.md) for the template.
+> **Creating a skill?** Start with [skill-md.md](skill-md.md) for the template and quality checklist. **Traverse when:** writing any SKILL.md file, validating before completion.
 
 ## Official Documentation
 
@@ -68,7 +64,9 @@ Provides specialized knowledge
 
 **Critical:** Skills should only document what Claude doesn't already know.
 
-Claude's training includes common tools, standard workflows, and general best practices. Skills that duplicate this waste tokens. See [knowledge-delta.md](knowledge-delta.md) for the full include/exclude guidance.
+Claude's training includes common tools, standard workflows, and general best practices. Skills that duplicate this waste tokens.
+
+**Deep dive:** [knowledge-delta.md](knowledge-delta.md) - Full include/exclude criteria with decision test. **Traverse when:** deciding what content to include, reviewing for bloat. **Skip when:** clear user-specific content, already understand delta principle.
 
 **Quick test:** Would Claude get this wrong without the skill? If no, don't include it.
 
@@ -136,6 +134,8 @@ All claims must be:
 
 **Avoid:** Presenting opinions as official requirements.
 
+**Deep dive:** [common-pitfalls.md](common-pitfalls.md) - Catalog of anti-patterns with symptoms and fixes. **Traverse when:** reviewing skills, debugging why a skill isn't working, checking for common mistakes. **Skip when:** creating new skill from scratch, following patterns above.
+
 ## When to Create Skills
 
 ### Skill vs Other Components
@@ -179,7 +179,7 @@ plugin-name/
 
 Only `SKILL.md` has a required name. Subfiles can use any descriptive names.
 
-See [skill-structure.md](skill-structure.md) for complete folder layouts per skill type.
+**Deep dive:** [skill-structure.md](skill-structure.md) - Complete folder layouts, splitting guidance, navigation table patterns. **Traverse when:** structuring complex skills, deciding subfile organization, adding scripts or assets. **Skip when:** simple single-file skill, basic structure questions answered above.
 
 ## Documentation References
 

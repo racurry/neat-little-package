@@ -2,6 +2,19 @@
 
 Universal patterns for skill folder layout and SKILL.md organization.
 
+## Quick Reference
+
+| Topic                                                                   | Description                    |
+| ----------------------------------------------------------------------- | ------------------------------ |
+| [Folder Structure](#folder-structure)                                   | Basic skill folder layout      |
+| [Guidance for Splitting](#guidance-for-splitting-content-into-subfiles) | When to split vs keep unified  |
+| [Subfile Organization](#subfile-organization)                           | Organizing subfolders          |
+| [Subfile Content Structure](#subfile-content-structure)                 | What goes inside each subfile  |
+| [Navigation Tables](#navigation-tables)                                 | Progressive disclosure pattern |
+| [Scripts Folder](#scripts-folder)                                       | Executable automation          |
+| [Non-Markdown Assets](#non-markdown-assets)                             | Templates, configs, images     |
+| [Examples](#examples)                                                   | Common structure patterns      |
+
 ## Folder Structure
 
 ```text
@@ -54,6 +67,63 @@ my-skill/
     ├── subtopic-a.md
     └── subtopic-b.md
 ```
+
+## Subfile Content Structure
+
+Subfiles follow a lighter structure than SKILL.md. They're self-contained reference documents, not entry points.
+
+**Required elements:**
+
+| Element               | Purpose                            | When to Include |
+| --------------------- | ---------------------------------- | --------------- |
+| Title (`# Name`)      | Identify the subfile               | Always          |
+| Brief intro           | Set context (1-2 sentences)        | Always          |
+| Quick Reference table | Navigation for multi-section files | 3+ sections     |
+
+**Optional elements (include when valuable):**
+
+| Element               | Include When                              |
+| --------------------- | ----------------------------------------- |
+| Quality Checklist     | Multiple requirements easy to miss        |
+| Anti-Patterns section | 3+ non-obvious mistakes worth documenting |
+| Deep Dive Links       | Subfile references other detailed content |
+
+**Subfile template:**
+
+```markdown
+# [Topic Name]
+
+[1-2 sentence description of what this file covers]
+
+## Quick Reference
+
+| Topic | Description |
+|-------|-------------|
+| [Section One](#section-one) | What this covers |
+| [Section Two](#section-two) | What this covers |
+
+## [Section One]
+
+[Content organized for scanning - tables, bullet points, examples]
+
+## [Section Two]
+
+[More content...]
+
+## Quality Checklist (optional)
+
+- [ ] Validation item
+- [ ] Another item
+```
+
+**Key differences from SKILL.md:**
+
+- No frontmatter (only SKILL.md needs `name` and `description`)
+- No "Workflow Selection" (use "Quick Reference" instead)
+- No "Official Documentation" section (SKILL.md handles that)
+- Simpler structure - just the reference content
+
+**Deep dive:** [document-structure.md](../box-factory-architecture/building-blocks/document-structure.md) - Full template with section purposes and inclusion criteria. **Traverse when:** need comprehensive structure guidance, deciding which optional sections to include. **Skip when:** subfile template above covers your needs.
 
 ## Navigation Tables
 

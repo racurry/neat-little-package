@@ -2,6 +2,16 @@
 
 The most important principle for skill content: **only document what Claude doesn't already know**.
 
+## Quick Reference
+
+| Topic                                                      | Description                                           |
+| ---------------------------------------------------------- | ----------------------------------------------------- |
+| [Why This Matters](#why-this-matters)                      | Token waste and maintenance burden                    |
+| [What to Include](#what-to-include-the-delta)              | User preferences, edge cases, decision frameworks     |
+| [What to Exclude](#what-to-exclude-claude-already-knows)   | Basic commands, standard workflows, general practices |
+| [Decision Test](#decision-test)                            | Question framework for content decisions              |
+| [Example: Git Workflow Skill](#example-git-workflow-skill) | Before/after comparison                               |
+
 ## Why This Matters
 
 Claude's training includes extensive knowledge of common development tools, standard workflows, well-established frameworks, and general best practices. Skills that duplicate this base knowledge waste tokens and create maintenance burden without adding value.

@@ -2,6 +2,15 @@
 
 Every skill must have a `SKILL.md` (uppercase) in its root folder.
 
+## Quick Reference
+
+| Topic                                   | Description                                      |
+| --------------------------------------- | ------------------------------------------------ |
+| [Template](#template)                   | SKILL.md starter template                        |
+| [Required Sections](#required-sections) | Frontmatter, intro, workflow table, core content |
+| [Size Guidance](#size-guidance)         | Line limits for skills and subfiles              |
+| [Quality Checklist](#quality-checklist) | Pre-completion validation                        |
+
 ## Template
 
 ```markdown
@@ -74,9 +83,9 @@ The main body of the skill, organized by topic. For complex skills, this may be 
 | Component           | Target             | Hard Limit |
 | ------------------- | ------------------ | ---------- |
 | SKILL.md (any type) | 50-200 lines       | 300 lines  |
-| Subfiles            | 100-200 lines each | 250 lines  |
+| Subfiles            | 100-300 lines each | 500 lines  |
 
-Even teaching skills with interconnected content should keep SKILL.md under 300 lines and offload details to subfiles. Main file provides navigation and core concepts; subfiles contain depth.
+Even teaching skills with interconnected content should keep SKILL.md under 300 lines and offload details to subfiles. Main file provides navigation and core concepts; subfiles contain depth. Subfiles have more room for expansion (up to 500 lines) since they're loaded selectively.
 
 ## Quality Checklist
 
@@ -98,5 +107,5 @@ Before completing any skill:
 **Size:**
 
 - [ ] SKILL.md under 300 lines
-- [ ] Subfiles under 250 lines each
+- [ ] Subfiles under 500 lines each
 - [ ] Split if independent sections and over 200 lines total
