@@ -8,6 +8,7 @@
 - Agents MUST fetch current specifications before creating components
 - All components MUST apply knowledge delta filter (only document what Claude doesn't know)
 - Documentation changes; principles don't
+- Version bumps are automated via pre-commit hook
 
 **Two-Layer Approach**
 
@@ -79,16 +80,16 @@
    - Skill = Knowledge that loads when relevant, interpretive guidance
    - Agent = Does actual work autonomously (writes files, runs tests)
 
-1. **Command pattern?**
+2. **Command pattern?**
 
    - Command = thin wrapper, agent = complex logic
 
-1. **Read-only vs Write?**
+3. **Read-only vs Write?**
 
    - Validation/review agents = Read, Grep, Glob, WebFetch only
    - Creation agents = Add Write, Edit as needed
 
-1. **What design skill applies?**
+4. **What design skill applies?**
 
    - Creating agents → use sub-agent-design
    - Creating commands → use slash-command-design
@@ -137,42 +138,42 @@ All Box Factory components are self-documenting examples of the patterns they te
 ### Creating Components
 
 1. Load relevant design skills
-1. Fetch official documentation
-1. Create component following patterns
-1. Self-validate against quality checklist
-1. Return complete result
+2. Fetch official documentation
+3. Create component following patterns
+4. Self-validate against quality checklist
+5. Return complete result
 
 ### Validating Components
 
 1. Load box-factory-architecture skill
-1. Load component-specific design skill
-1. Fetch official documentation
-1. Check structure, syntax, specifications
-1. Detect anti-patterns
-1. Generate detailed report with file:line references
+2. Load component-specific design skill
+3. Fetch official documentation
+4. Check structure, syntax, specifications
+5. Detect anti-patterns
+6. Generate detailed report with file:line references
 
 ### Reviewing Components
 
 1. Identify component type
-1. Load box-factory-architecture + component-specific skill
-1. Fetch official documentation
-1. Analyze against design patterns
-1. Provide prioritized feedback (critical, important, minor)
-1. Suggest specific improvements with examples
+2. Load box-factory-architecture + component-specific skill
+3. Fetch official documentation
+4. Analyze against design patterns
+5. Provide prioritized feedback (critical, important, minor)
+6. Suggest specific improvements with examples
 
 ## Component Creation Best Practices
 
 ### Writer Agents Must
 
 1. Load both box-factory-architecture AND component-specific design skill
-1. Fetch official documentation before creating
-1. Self-validate against quality checklist
-1. Delegate component creation to specialized agents (never create directly)
+2. Fetch official documentation before creating
+3. Self-validate against quality checklist
+4. Delegate component creation to specialized agents (never create directly)
 
 ### Quality Agents Must
 
 1. Load box-factory-architecture AND relevant design skills
-1. Fetch current official documentation
-1. Provide specific file:line references
-1. Distinguish between errors (blocking) and warnings (quality)
-1. Include actionable fix recommendations
+2. Fetch current official documentation
+3. Provide specific file:line references
+4. Distinguish between errors (blocking) and warnings (quality)
+5. Include actionable fix recommendations
