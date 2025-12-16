@@ -144,6 +144,7 @@ def main():
     }
 
     if not plugins_to_bump:
+        print("  No plugins changed; no version bump needed")
         sys.exit(0)
 
     # Interactive prompt
