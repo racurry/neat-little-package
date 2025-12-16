@@ -3,18 +3,14 @@
 # dependencies = []
 # ///
 """
-Git pre-commit hook: Auto-bump plugin versions with Claude analysis.
+Auto-bump plugin versions with Claude analysis.
 
 Detects plugins with staged changes, asks Claude to determine appropriate
 semver bump level (major/minor/patch), and stages the version updates.
-
-Usage:
-    ln -sf ../../helpers/pre-commit .git/hooks/pre-commit
-    # or
-    git config core.hooksPath helpers
 """
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -56,7 +52,21 @@ def get_diff(plugin_name: str) -> str:
 
 
 def prompt_user() -> bool:
-    """Ask user if they want to run version analysis."""
+    """Ask user if they want to run version analysis.
+
+    Controlled by VERSION_BUMP env var:
+      - unset or "prompt": Interactive prompt (default yes if non-interactive)
+      - "yes" or "auto": Skip prompt, proceed with analysis
+      - "no" or "skip": Skip prompt, don't bump
+    """
+    mode = os.environ.get("VERSION_BUMP", "prompt").lower()
+
+    if mode in ("yes", "auto"):
+        return True
+    if mode in ("no", "skip"):
+        return False
+
+    # Default: prompt mode
     if not sys.stdin.isatty():
         return True  # Non-interactive (CI, etc.) - proceed
 

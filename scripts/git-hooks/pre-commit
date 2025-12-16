@@ -1,0 +1,4 @@
+#!/bin/sh
+# Git pre-commit hook - delegates to bump_plugin_versions.py
+SCRIPT_DIR="$(dirname "$(readlink -f "$0" 2>/dev/null || realpath "$0")")"
+exec "$SCRIPT_DIR/../bump_plugin_versions.py"
