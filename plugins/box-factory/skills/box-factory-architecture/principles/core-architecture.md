@@ -61,3 +61,28 @@ Provides specialized knowledge
 ```
 
 **Why this matters:** Skills solve the "selective context" problem that CLAUDE.md and system prompts can't.
+
+## Component Independence (Coupling Principle)
+
+**Problem:** Components reference each other's internal file structure.
+
+```markdown
+**Deep dive:** [decision-frameworks.md](../other-skill/building-blocks/decision-frameworks.md)
+```
+
+**Why this fails:**
+
+- Internal file structure may change
+- Components may be reorganized
+- Plugins may be distributed separately
+- All direct paths become broken links
+
+**Solution:** Reference components by identity, not internal structure.
+
+```markdown
+**Deep dive:** The box-factory-architecture skill's guidance on decision frameworks...
+```
+
+**Design principle:** A component's name and purpose are its public interface. Its internal file organization is an implementation detail.
+
+**Why this matters:** Claude Code components are independently maintainable units. Cross-component references should survive internal reorganization.

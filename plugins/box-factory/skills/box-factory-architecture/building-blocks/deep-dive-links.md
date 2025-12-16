@@ -27,6 +27,29 @@ Deep Dive Links appear wherever there's optional deeper content:
 | Navigation Tables                             | In "Go to..." column when external file has much more detail |
 | Inline mentions                               | When referencing a topic covered in depth elsewhere          |
 
+## Cross-Component References
+
+When linking to content in another component (especially another skill), use **indirect references** rather than direct file paths.
+
+**Direct path (fragile):**
+
+```markdown
+**Deep dive:** [decision-frameworks.md](../other-skill/building-blocks/decision-frameworks.md) - ...
+```
+
+**Indirect reference (resilient):**
+
+```markdown
+**Deep dive:** The box-factory-architecture skill's guidance on decision frameworks covers full templates with structured choice formats. **Traverse when:** ...
+```
+
+**Why:** Components are independently maintainable. Internal file structure may change; the component's name and purpose are its stable public interface.
+
+| Reference Type      | Approach                                        |
+| ------------------- | ----------------------------------------------- |
+| Same component      | Direct paths OK (`./subdir/file.md`)            |
+| Different component | Indirect references ("the X skill's Y section") |
+
 ## Examples
 
 ### Good Deep Dive Link
@@ -91,12 +114,13 @@ Reference what's already available:
 
 ## Anti-Patterns
 
-| Anti-Pattern              | Problem                     | Fix                                                     |
-| ------------------------- | --------------------------- | ------------------------------------------------------- |
-| "See X for more"          | No content description      | Describe what X contains                                |
-| Tautological conditions   | "Traverse when you need it" | Use specific, recognizable scenarios                    |
-| Missing skip guidance     | Agent always traverses      | Add clear "skip when"                                   |
-| Vague content description | "Details about X"           | Describe format/structure: "Decision framework with..." |
+| Anti-Pattern               | Problem                       | Fix                                                     |
+| -------------------------- | ----------------------------- | ------------------------------------------------------- |
+| "See X for more"           | No content description        | Describe what X contains                                |
+| Tautological conditions    | "Traverse when you need it"   | Use specific, recognizable scenarios                    |
+| Missing skip guidance      | Agent always traverses        | Add clear "skip when"                                   |
+| Vague content description  | "Details about X"             | Describe format/structure: "Decision framework with..." |
+| Cross-component file paths | Internal structure may change | Use indirect references ("the X skill's Y section")     |
 
 ## Quality Checklist
 
@@ -107,3 +131,4 @@ Before finalizing a Deep Dive Link:
 - [ ] "Skip when" references what's already available in current context
 - [ ] Agent can decide without reading the linked file
 - [ ] Neither condition is tautological ("when you need it" / "when you don't")
+- [ ] Cross-component references use indirect format (skill name + topic), not file paths

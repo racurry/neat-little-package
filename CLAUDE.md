@@ -63,6 +63,8 @@ uv run --with pytest pytest ./path/to/tests/
 
 **Two-Layer Approach**: Distinguish official specs (what docs say) from best practices (interpretive guidance). Mark which layer you're in.
 
+**Component Independence**: When referencing content in another component (especially another skill), use indirect references ("the X skill's guidance on Y") rather than direct file paths. Internal structure is an implementation detail; a component's name and purpose are its public interface.
+
 ## Plugin-Specific Guidelines
 
 Each plugin has its own CLAUDE.md with detailed conventions. Refer to the plugin-specific file when working within that plugin.

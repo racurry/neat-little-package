@@ -13,14 +13,14 @@ This meta-skill teaches you how to design excellent Claude Code skills. **Skills
 
 ## Workflow Selection
 
-| If you need to...                 | Go to...                                                                                     |
-| --------------------------------- | -------------------------------------------------------------------------------------------- |
-| Get folder structure              | [skill-structure.md](skill-structure.md)                                                     |
-| Write SKILL.md file               | [skill-md.md](skill-md.md)                                                                   |
-| Decide what to include vs exclude | [knowledge-delta.md](knowledge-delta.md)                                                     |
-| Write decision-making content     | [decision-frameworks.md](../box-factory-architecture/building-blocks/decision-frameworks.md) |
-| Look up a specific anti-pattern   | [common-pitfalls.md](common-pitfalls.md)                                                     |
-| Validate before completing        | [skill-md.md](skill-md.md) (Quality Checklist)                                               |
+| If you need to...                 | Go to...                                                     |
+| --------------------------------- | ------------------------------------------------------------ |
+| Get folder structure              | [skill-structure.md](skill-structure.md)                     |
+| Write SKILL.md file               | [skill-md.md](skill-md.md)                                   |
+| Decide what to include vs exclude | [knowledge-delta.md](knowledge-delta.md)                     |
+| Write decision-making content     | box-factory-architecture skill (decision frameworks section) |
+| Look up a specific anti-pattern   | [common-pitfalls.md](common-pitfalls.md)                     |
+| Validate before completing        | [skill-md.md](skill-md.md) (Quality Checklist)               |
 
 > **Creating a skill?** Start with [skill-md.md](skill-md.md) for the template and quality checklist. **Traverse when:** writing any SKILL.md file, validating before completion.
 

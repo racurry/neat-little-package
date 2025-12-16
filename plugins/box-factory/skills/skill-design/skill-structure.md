@@ -123,7 +123,7 @@ Subfiles follow a lighter structure than SKILL.md. They're self-contained refere
 - No "Official Documentation" section (SKILL.md handles that)
 - Simpler structure - just the reference content
 
-**Deep dive:** [document-structure.md](../box-factory-architecture/building-blocks/document-structure.md) - Full template with section purposes and inclusion criteria. **Traverse when:** need comprehensive structure guidance, deciding which optional sections to include. **Skip when:** subfile template above covers your needs.
+**Deep dive:** The box-factory-architecture skill's guidance on document structure covers full templates with section purposes and inclusion criteria. **Traverse when:** need comprehensive structure guidance, deciding which optional sections to include. **Skip when:** subfile template above covers your needs.
 
 ## Navigation Tables
 
