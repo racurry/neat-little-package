@@ -15,17 +15,21 @@ This skill adds sub-agent-specific guidance on top of that foundation.
 
 ## Workflow Selection
 
-| If you need to...                      | Go to...                                                      |
-| -------------------------------------- | ------------------------------------------------------------- |
-| Understand sub-agent isolation model   | `box-factory-architecture` skill (load first)                 |
-| Decide sub-agent vs command vs skill   | `box-factory-architecture` skill (component selection)        |
-| Decide what goes in sub-agent vs skill | [Sub-agent-Skill Relationship](#sub-agent-skill-relationship) |
-| Auto-load skills in a sub-agent        | [The `skills` Field](#the-skills-field-best-practice)         |
-| Pick tools for a sub-agent             | [Tool Selection Philosophy](#tool-selection-philosophy)       |
-| Write the description field            | [Description Field Design](#description-field-design)         |
-| Avoid common mistakes                  | Read `gotchas.md`                                             |
-| Check color for status line            | [Color Selection](#color-selection)                           |
-| Validate before completing             | [Quality Checklist](#quality-checklist)                       |
+| If you need to...                      | Go to...                                                                   |
+| -------------------------------------- | -------------------------------------------------------------------------- |
+| Understand sub-agent isolation model   | `box-factory-architecture` skill (load first)                              |
+| Decide sub-agent vs command vs skill   | `box-factory-architecture` skill (component selection)                     |
+| Decide what goes in sub-agent vs skill | [Sub-agent-Skill Relationship](#sub-agent-skill-relationship)              |
+| Auto-load skills in a sub-agent        | [The `skills` Field](#the-skills-field-best-practice)                      |
+| Pick tools for a sub-agent             | [Tool Selection Philosophy](#tool-selection-philosophy)                    |
+| Know which tool is forbidden           | [Never Include AskUserQuestion](#never-include-askuserquestion)            |
+| Understand why creators need Bash      | [Bash is Foundational for Creators](#bash-is-foundational-for-creators)    |
+| Pair WebFetch with skills              | [WebFetch Pairs with Skills](#webfetch-pairs-with-skills-for-verification) |
+| Determine file path for new sub-agent  | `box-factory-architecture` skill (component-paths)                         |
+| Write the description field            | [Description Field Design](#description-field-design)                      |
+| Avoid common mistakes                  | Read `gotchas.md`                                                          |
+| Check color for status line            | [Color Selection](#color-selection)                                        |
+| Validate before completing             | [Quality Checklist](#quality-checklist)                                    |
 
 ## Quick Start
 
@@ -172,9 +176,42 @@ Prefer the `skills` YAML field (see [The `skills` Field](#the-skills-field-best-
 
 ## Tool Selection Philosophy
 
-**Key constraint:** Never include AskUserQuestion—sub-agents can't interact with users.
-
 **General principle:** Match tools to the sub-agent's job. Reviewers should be read-only; builders need write access.
+
+### Never Include AskUserQuestion
+
+Sub-agents operate in isolation and cannot interact with users. The AskUserQuestion tool will fail silently or cause unexpected behavior. If your sub-agent needs clarification, it must infer from context or make reasonable assumptions.
+
+### Bash is Foundational for Creators
+
+Any sub-agent with creative responsibilities needs Bash, regardless of output type. Even a sub-agent that only produces markdown files needs shell operations:
+
+| Operation             | Why Bash                                                        |
+| --------------------- | --------------------------------------------------------------- |
+| Directory scaffolding | `mkdir -p` for nested structures (Write doesn't create parents) |
+| File organization     | `mv`, `cp` for restructuring                                    |
+| Post-write formatting | `mdformat`, linters, formatters                                 |
+| Structure inspection  | `ls` to understand existing layout                              |
+| Git operations        | `git mv` for tracked renames                                    |
+
+**Rule of thumb:** If a sub-agent creates files, include Bash. The Write tool handles file content; Bash handles the filesystem orchestration around it.
+
+### WebFetch Pairs with Skills for Verification
+
+When a sub-agent loads skills via the `skills` field (especially for specifications or rapidly-changing domains), also include WebFetch:
+
+```yaml
+tools: Read, Write, Edit, Glob, Grep, Skill, WebFetch
+skills: box-factory:sub-agent-design
+```
+
+**Why:** Skills encode knowledge delta (interpretive guidance beyond docs), but the underlying specifications change. Sub-agents should verify current official docs against skill guidance when uncertain.
+
+**Pattern:** The sub-agent's process should include a step like:
+
+> "If uncertain about current spec, fetch official documentation to verify"
+
+This maintains the low-maintenance-first philosophy—skills provide stable interpretive guidance while WebFetch catches spec drift.
 
 ## Color Selection
 

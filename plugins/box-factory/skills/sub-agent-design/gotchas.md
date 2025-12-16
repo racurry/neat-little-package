@@ -91,3 +91,40 @@ Refer to tools documentation for current capabilities
 - Potential conflicts (sub-agent and skill disagree)
 
 **Solution:** If sub-agent loads a skill, defer knowledge to the skill. Sub-agent focuses on process.
+
+### Gotcha #4: Proceeding Without Required Skills
+
+**Problem:** Sub-agent declares skill dependency via `skills` field, but proceeds anyway when the skill fails to load
+
+**Why it matters:** If a sub-agent has a hard dependency on a skill (declared in `skills` field), that skill contains the domain knowledge the sub-agent needs. Without it, the sub-agent will likely produce incorrect or low-quality output.
+
+**What you'll see:**
+
+- Sub-agent attempts task without loaded guidance
+- Output doesn't follow expected patterns
+- Validation failures or subtle quality issues
+
+**Solution:** Sub-agents with hard skill dependencies should fail fast:
+
+```markdown
+## Process
+
+1. **Verify skill loaded** - If skill-design guidance is not available, report failure and stop
+2. **Proceed with task** using skill guidance
+```
+
+**Error handling pattern:**
+
+```markdown
+## Error Handling
+
+| Situation | Action |
+| --- | --- |
+| Required skill fails to load | Report failure immediately, do not attempt task |
+| Optional skill fails to load | Note limitation, proceed with degraded capability |
+```
+
+**Key distinction:**
+
+- `skills` field dependency = hard requirement → fail if missing
+- Conditional skill loading in body = soft requirement → may proceed with limitations
