@@ -214,6 +214,32 @@ class ToolResult:
 
 
 # =============================================================================
+# File Content Checks
+# =============================================================================
+
+# Git conflict marker patterns - must match at line start
+CONFLICT_MARKERS = (b"<<<<<<<", b"=======", b">>>>>>>")
+
+
+def has_conflict_markers(file_path: str) -> bool:
+    """Check if file contains git conflict markers.
+
+    Files mid-merge should not be formatted as formatters may corrupt
+    the conflict markers, making resolution difficult.
+    """
+    try:
+        with open(file_path, "rb") as f:
+            for line in f:
+                stripped = line.lstrip()
+                for marker in CONFLICT_MARKERS:
+                    if stripped.startswith(marker):
+                        return True
+        return False
+    except (OSError, IOError):
+        return False
+
+
+# =============================================================================
 # Config Detection Functions
 # =============================================================================
 
@@ -637,6 +663,10 @@ def lint_file(
         Tuple of (formatted_output, exit_code)
     """
     if not Path(file_path).is_file():
+        return "", 0
+
+    # Skip files with git conflict markers - formatters may corrupt them
+    if has_conflict_markers(file_path):
         return "", 0
 
     ext = Path(file_path).suffix.lower()

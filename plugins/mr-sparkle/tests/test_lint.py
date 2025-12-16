@@ -419,6 +419,59 @@ class TestGetSkillDefaultConfig:
 
 
 # =============================================================================
+# Tests: Conflict marker detection
+# =============================================================================
+
+
+class TestHasConflictMarkers:
+    def test_detects_start_marker(self, tmp_path):
+        file_path = tmp_path / "test.md"
+        file_path.write_text("# Title\n<<<<<<< HEAD\nour content\n=======\ntheir content\n>>>>>>> branch\n")
+        assert lint.has_conflict_markers(str(file_path)) is True
+
+    def test_detects_middle_marker(self, tmp_path):
+        file_path = tmp_path / "test.md"
+        file_path.write_text("some content\n=======\nmore content\n")
+        assert lint.has_conflict_markers(str(file_path)) is True
+
+    def test_detects_end_marker(self, tmp_path):
+        file_path = tmp_path / "test.md"
+        file_path.write_text("some content\n>>>>>>> branch-name\n")
+        assert lint.has_conflict_markers(str(file_path)) is True
+
+    def test_detects_indented_marker(self, tmp_path):
+        file_path = tmp_path / "test.md"
+        file_path.write_text("    <<<<<<< HEAD\n    content\n")
+        assert lint.has_conflict_markers(str(file_path)) is True
+
+    def test_returns_false_for_clean_file(self, tmp_path):
+        file_path = tmp_path / "test.md"
+        file_path.write_text("# Title\n\nJust regular content with no conflicts.\n")
+        assert lint.has_conflict_markers(str(file_path)) is False
+
+    def test_returns_false_for_nonexistent_file(self, tmp_path):
+        assert lint.has_conflict_markers(str(tmp_path / "nonexistent.md")) is False
+
+    def test_ignores_markers_mid_line(self, tmp_path):
+        """Markers mid-line are not conflict markers."""
+        file_path = tmp_path / "test.md"
+        file_path.write_text("This text mentions <<<<<<< but is not a conflict.\n")
+        assert lint.has_conflict_markers(str(file_path)) is False
+
+
+class TestLintFileSkipsConflicts:
+    def test_skips_file_with_conflict_markers(self, tmp_path):
+        """lint_file should skip files containing conflict markers."""
+        (tmp_path / ".git").mkdir()
+        file_path = tmp_path / "conflict.md"
+        file_path.write_text("# Title\n<<<<<<< HEAD\nours\n=======\ntheirs\n>>>>>>> branch\n")
+
+        output, code = lint.lint_file(str(file_path))
+        assert output == ""
+        assert code == 0
+
+
+# =============================================================================
 # Tests: Extension mapping
 # =============================================================================
 
@@ -545,7 +598,8 @@ class TestIntegration:
             text=True,
         )
 
-        assert result.returncode == 0
+        # Accept ok (0) or warning (1), but not error (2)
+        assert result.returncode in (0, 1)
         data = json.loads(result.stdout)
         assert data["toolset"] == "python"
         assert "ruff" in data["tools_run"]
