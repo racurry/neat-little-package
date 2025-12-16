@@ -1,29 +1,35 @@
 ---
 name: sub-agent-design
-description: Interpretive guidance for designing Claude Code agents. Helps apply official documentation effectively and avoid common pitfalls. Use when creating or reviewing agents.
+description: Interpretive guidance for designing Claude Code sub-agents. Helps apply official documentation effectively and avoid common pitfalls. ALWAYS use when creating or reviewing sub-agents (aka agents or subagents).
 ---
 
-# Agent Design
+# Sub-agent Design
 
-This skill provides interpretive guidance for creating Claude Code agents. It helps you understand what the docs mean and how to create excellent agents.
+This skill provides interpretive guidance for creating Claude Code sub-agents (aka Subagents aka Agents). It helps you understand what the docs mean and how to create excellent sub-agents.
+
+## Fundamentals
+
+**Everything in this skill is built on top of the box-factory-architecture skill. Load that first!**
+
+This skill adds sub-agent-specific guidance on top of that foundation.
 
 ## Workflow Selection
 
-| If you need to...                  | Go to...                                                                    |
-| ---------------------------------- | --------------------------------------------------------------------------- |
-| Understand agent isolation model   | [Critical Architecture Understanding](#critical-architecture-understanding) |
-| Decide agent vs command vs skill   | [Decision Framework](#decision-framework)                                   |
-| Decide what goes in agent vs skill | [Agent-Skill Relationship](#agent-skill-relationship)                       |
-| Auto-load skills in an agent       | [The `skills` Field](#the-skills-field-best-practice)                       |
-| Pick tools for an agent            | [Tool Selection Philosophy](#tool-selection-philosophy)                     |
-| Write the description field        | [Description Field Design](#description-field-design)                       |
-| Avoid common mistakes              | Read `gotchas.md`                                                           |
-| Check color for status line        | [Color Selection](#color-selection)                                         |
-| Validate before completing         | [Quality Checklist](#quality-checklist)                                     |
+| If you need to...                      | Go to...                                                      |
+| -------------------------------------- | ------------------------------------------------------------- |
+| Understand sub-agent isolation model   | `box-factory-architecture` skill (load first)                 |
+| Decide sub-agent vs command vs skill   | `box-factory-architecture` skill (component selection)        |
+| Decide what goes in sub-agent vs skill | [Sub-agent-Skill Relationship](#sub-agent-skill-relationship) |
+| Auto-load skills in a sub-agent        | [The `skills` Field](#the-skills-field-best-practice)         |
+| Pick tools for a sub-agent             | [Tool Selection Philosophy](#tool-selection-philosophy)       |
+| Write the description field            | [Description Field Design](#description-field-design)         |
+| Avoid common mistakes                  | Read `gotchas.md`                                             |
+| Check color for status line            | [Color Selection](#color-selection)                           |
+| Validate before completing             | [Quality Checklist](#quality-checklist)                       |
 
 ## Quick Start
 
-Agent file structure:
+Sub-agent file structure:
 
 ```markdown
 ---
@@ -36,7 +42,7 @@ color: green
 
 # My Agent
 
-You are a specialized agent that [purpose].
+You are a specialized sub-agent that [purpose].
 
 ## Process
 
@@ -45,19 +51,19 @@ You are a specialized agent that [purpose].
 
 ## Constraints
 
-- Never include "ask the user" phrases (agents can't interact with users)
+- Never include "ask the user" phrases (sub-agents can't interact with users)
 ```
 
-**Critical:** Agents operate in isolated context and return results. They cannot ask users questions.
+**Critical:** Sub-agents operate in isolated context and return results. They cannot ask users questions.
 
 ## The `skills` Field (Best Practice)
 
-The `skills` YAML field auto-loads skills when the agent starts. This is especially valuable for Box Factory agents that need design skills.
+The `skills` YAML field auto-loads skills when the sub-agent starts. This is especially valuable for Box Factory sub-agents that need design skills.
 
 ```yaml
 ---
 name: agent-writer
-description: Creates sub-agents. ALWAYS use when creating agents.
+description: Creates sub-agents. ALWAYS use when creating sub-agents.
 tools: Read, Write, Edit, Glob, Grep, Skill, WebFetch
 skills: box-factory:sub-agent-design
 ---
@@ -65,112 +71,73 @@ skills: box-factory:sub-agent-design
 
 **When to use:**
 
-| Pattern            | Use Case                                                        |
-| ------------------ | --------------------------------------------------------------- |
-| `skills` field     | Agent ALWAYS needs this skill (design skills, domain knowledge) |
-| Skill tool in body | Agent conditionally loads skill based on context                |
+| Pattern            | Choose When                                     | Avoid When                                    |
+| ------------------ | ----------------------------------------------- | --------------------------------------------- |
+| `skills` field     | Domain is fixed; always needs same skill        | Different skills needed based on context      |
+| Skill tool in body | Domain varies; skill depends on runtime context | Same skill always needed (use `skills` field) |
+| No skill           | No relevant skill exists                        | A skill exists with guidance Claude needs     |
 
-**Box Factory pattern:** Writer agents should declare their design skill dependency:
+**Box Factory pattern:** Writer sub-agents should declare their design skill dependency:
 
 - `agent-writer` → `skills: box-factory:sub-agent-design`
 - `skill-writer` → `skills: box-factory:skill-design`
 - `command-writer` → `skills: box-factory:slash-command-design`
 
-**Note:** Still include `Skill` in your `tools` list - the agent may need to load additional skills during execution.
+**Note:** Still include `Skill` in your `tools` list - the sub-agent may need to load additional skills during execution.
+
+**Example of conditional skill loading** (Skill tool in body pattern):
+
+```markdown
+---
+name: component-validator
+description: Validates Claude Code components. MUST BE USED when validating plugins or components.
+tools: Read, Grep, Glob, Skill, WebFetch
+---
+
+# Component Validator
+
+## Process
+
+1. **Identify component type** from file structure
+2. **Load relevant design skill:**
+   - Plugin → `Skill box-factory:plugin-design`
+   - Sub-agent → `Skill box-factory:sub-agent-design`
+   - Skill → `Skill box-factory:skill-design`
+   - Command → `Skill box-factory:slash-command-design`
+3. **Validate** against loaded skill's patterns
+```
+
+This sub-agent can't declare a single skill upfront because which skill it needs depends on what component type it discovers at runtime.
 
 ## Official Documentation
 
-**Claude Code changes rapidly and is post-training knowledge.** Fetch these docs when creating agents to ensure current syntax:
+**Claude Code changes rapidly and is post-training knowledge.** Fetch these docs when creating sub-agents to ensure current syntax:
 
 - **<https://code.claude.com/docs/en/sub-agents.md>** - Core specification and examples
 - **<https://code.claude.com/docs/en/settings#tools-available-to-claude>** - Verify tool names
 - **<https://code.claude.com/docs/en/model-config.md>** - Current model options
 
-## Critical Architecture Understanding
+## Sub-agent-Skill Relationship
 
-**The #1 thing to understand:** Claude Code uses **isolated contexts** with **return-based delegation**.
-
-```text
-User ↔ Main Claude ──→ Sub-Agent (isolated context)
-                        │
-                        └──→ Returns final result
-                             (no back-and-forth)
-```
-
-**Critical implications:**
-
-- Agents **CANNOT** ask users questions
-- Agents **CANNOT** see main conversation history
-- Agents **CAN** do autonomous work (write files, run tests, analyze code)
-- Main Claude handles **ALL** user communication
-- Delegation is **one-way** (call → return, not interactive)
-
-**Why this matters:** Every design decision flows from this architecture. The "cannot see history" point is especially important—you must provide all necessary context in the agent prompt. Agents can't "continue from where we left off" or reference "our earlier discussion."
-
-**Common misconception:** "Agents are just like functions"—No, they're isolated AI instances with their own context and tool access. If your agent prompt includes phrases like "ask the user" or "clarify with user", you've misunderstood the architecture.
-
-### The Return-Based Model
-
-**Execution flow:**
-
-1. Main Claude decides to delegate
-2. Sub-agent receives context + task
-3. Sub-agent works autonomously in isolation
-4. Sub-agent returns complete result
-5. Main Claude integrates result and continues
-
-**What this means for agent design:**
-
-- **No mid-execution interaction**—agent can't pause and ask for clarification
-- **Agent must have everything it needs upfront**—all context in the prompt
-- **Results must be complete and actionable**—main Claude shouldn't need to ask follow-ups
-
-**Design test:** If your agent needs to ask questions mid-execution, redesign the delegation pattern. Either provide more context upfront, or split into multiple agents.
-
-## Decision Framework
-
-### Agent vs Command vs Skill
-
-**Use Agent when:**
-
-- Need isolated context (won't pollute main conversation)
-- Want autonomous delegation (triggered by context)
-- Require specific tool restrictions
-- Task runs as part of larger workflows
-
-**Use Command when:**
-
-- User explicitly triggers it
-- Simple, straightforward task
-- No need for context isolation
-
-**Use Skill when:**
-
-- Knowledge needed by multiple contexts
-- Procedural expertise that's substantial
-- Progressive disclosure would save tokens
-
-### Agent-Skill Relationship
-
-**Core principle:** When an agent loads a skill, knowledge lives in the skill; the agent focuses on process.
+**Core principle:** When a sub-agent loads a skill, knowledge lives in the skill; the sub-agent focuses on process.
 
 **Decision logic:**
 
-| Agent has backing skill? | Where knowledge goes            | Agent contains                       |
-| ------------------------ | ------------------------------- | ------------------------------------ |
-| Yes, loads a skill       | Skill contains domain knowledge | Process, mechanics, validation steps |
-| No backing skill         | Agent contains domain knowledge | Both process AND knowledge           |
+| Sub-agent has backing skill? | Where knowledge goes            | Sub-agent contains                   |
+| ---------------------------- | ------------------------------- | ------------------------------------ |
+| Yes, loads a skill           | Skill contains domain knowledge | Process, mechanics, validation steps |
+| No backing skill             | Sub-agent contains it           | Both process AND knowledge           |
 
 **Why this matters:**
 
-- Avoids duplication (same knowledge in agent AND skill)
-- Single source of truth (update skill, all agents benefit)
-- Smaller agent prompts (less context consumed)
-- Skills are reusable across multiple agents
+- Avoids duplication (same knowledge in sub-agent AND skill)
+- Single source of truth (update skill, all sub-agents benefit)
+- Smaller sub-agent prompts (less context consumed)
+- Skills are reusable across multiple sub-agents
 
-**Pattern for skill-backed agents:**
+**Pattern for skill-backed sub-agents:**
 
-Prefer the `skills` YAML field (see [The `skills` Field](#the-skills-field-best-practice)) to auto-load skills at startup. The agent body then focuses on process:
+Prefer the `skills` YAML field (see [The `skills` Field](#the-skills-field-best-practice)) to auto-load skills at startup. The sub-agent body then focuses on process:
 
 ```markdown
 ## Process
@@ -182,14 +149,14 @@ Prefer the `skills` YAML field (see [The `skills` Field](#the-skills-field-best-
 2. **Execute task** using skill patterns
 ```
 
-**Pattern for standalone agents (no skill):**
+**Pattern for standalone sub-agents (no skill):**
 
 ```markdown
 ## Process
 
 1. **Understand requirements** [process step]
 
-2. **Apply domain knowledge** [embedded in agent]:
+2. **Apply domain knowledge** [embedded in sub-agent]:
    - Guideline one
    - Guideline two
    - Decision framework here
@@ -197,21 +164,24 @@ Prefer the `skills` YAML field (see [The `skills` Field](#the-skills-field-best-
 3. **Execute task** [process step]
 ```
 
-**Anti-pattern:** Agent loads skill but also embeds same knowledge inline. This causes:
+**Anti-pattern:** Sub-agent loads skill but also embeds same knowledge inline. This causes:
 
 - Maintenance burden (update two places)
 - Context waste (duplicate content loaded)
-- Potential conflicts (agent and skill disagree)
+- Potential conflicts (sub-agent and skill disagree)
 
-### Tool Selection Philosophy
+## Tool Selection Philosophy
 
-**Key constraint:** Never include AskUserQuestion—agents can't interact with users.
+**Key constraint:** Never include AskUserQuestion—sub-agents can't interact with users.
 
-**General principle:** Match tools to the agent's job. Reviewers should be read-only; builders need write access.
+**General principle:** Match tools to the sub-agent's job. Reviewers should be read-only; builders need write access.
 
 ## Color Selection
 
-The optional `color` field sets visual distinction for agents in the status line.
+The `color` field sets visual distinction for sub-agents in the status line.
+
+- **Official spec:** Optional
+- **Box Factory requirement:** Required for all sub-agents
 
 **Note:** Color support is not documented officially. The following was verified through testing—Claude often guesses wrong colors that don't render.
 
@@ -221,15 +191,15 @@ The optional `color` field sets visual distinction for agents in the status line
 
 **Semantic mapping:**
 
-| Color    | Category   | Use For                                           |
-| -------- | ---------- | ------------------------------------------------- |
-| `blue`   | Creators   | Agents that create/write files, components, code  |
-| `green`  | Quality    | Validators, reviewers, checkers, analyzers        |
-| `yellow` | Operations | Git, deployment, CI/CD, system tasks              |
-| `purple` | Meta       | Agents that create other agents                   |
-| `cyan`   | Research   | Exploration, documentation, research agents       |
-| `red`    | Safety     | Security checks, destructive operations, warnings |
-| `orange` | Other      | Agents that don't fit other categories (reserved) |
+| Color    | Category   | Use For                                               |
+| -------- | ---------- | ----------------------------------------------------- |
+| `blue`   | Creators   | Sub-agents that create/write files, components, code  |
+| `green`  | Quality    | Validators, reviewers, checkers, analyzers            |
+| `yellow` | Operations | Git, deployment, CI/CD, system tasks                  |
+| `purple` | Meta       | Sub-agents that create other sub-agents               |
+| `cyan`   | Research   | Exploration, documentation, research sub-agents       |
+| `red`    | Safety     | Security checks, destructive operations, warnings     |
+| `orange` | Other      | Sub-agents that don't fit other categories (reserved) |
 
 **Example:**
 
@@ -243,28 +213,27 @@ color: green
 **Guidelines:**
 
 - Match color to primary function, not secondary features
-- Be consistent within a plugin (all quality agents green)
-- Reserve `orange` for agents that don't fit established categories
-- Colors are optional but improve UX for multi-agent workflows
+- Be consistent within a plugin (all quality sub-agents green)
+- Reserve `orange` for sub-agents that don't fit established categories
 
 ## Description Field Design
 
-The `description` field determines when Claude delegates to your agent. This is critical for autonomous invocation.
+The `description` field determines when Main Claude delegates to your sub-agent. This is critical for autonomous invocation.
 
 **Official requirement:** "Natural language explanation of when to invoke the subagent"
 
-**Quality test:** Would Claude invoke this agent based on context alone, or only when explicitly asked?
+**Quality test:** Would Main Claude invoke this sub-agent based on context alone, or only when explicitly asked?
 
 **Guidelines:**
 
 - State WHEN to use (triggering conditions), not just WHAT it does
 - Be specific about context and use cases
-- Test empirically - if your agent isn't being invoked automatically, revise the description
+- Test empirically - if your sub-agent isn't being invoked automatically, revise the description
 - Avoid overly generic descriptions that match too many scenarios
 
 ## Quality Checklist
 
-Before finalizing an agent:
+Before finalizing a sub-agent:
 
 1. **Fetch official docs** - Verify against current specification
 2. **Check structure** - Valid YAML frontmatter, required fields present
@@ -273,4 +242,4 @@ Before finalizing an agent:
 5. **Test description** - Specific triggering conditions, not generic
 6. **Review system prompt** - Single H1, clear structure, actionable instructions
 7. **Verify no hardcoding** - No version-specific details that will become outdated
-8. **Set color** - Choose semantic color matching agent's primary function (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red, other=orange)
+8. **Set color** - Choose semantic color matching sub-agent's primary function (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red, other=orange)
