@@ -20,6 +20,7 @@ This skill adds sub-agent-specific guidance on top of that foundation.
 | Understand sub-agent isolation model   | `box-factory-architecture` skill (load first)                              |
 | Decide sub-agent vs command vs skill   | `box-factory-architecture` skill (component selection)                     |
 | Decide what goes in sub-agent vs skill | [Sub-agent-Skill Relationship](#sub-agent-skill-relationship)              |
+| Structure the agent body               | [Agent Body Structure](#agent-body-structure)                              |
 | Auto-load skills in a sub-agent        | [The `skills` Field](#the-skills-field-best-practice)                      |
 | Pick tools for a sub-agent             | [Tool Selection Philosophy](#tool-selection-philosophy)                    |
 | Know which tool is forbidden           | [Never Include AskUserQuestion](#never-include-askuserquestion)            |
@@ -27,7 +28,7 @@ This skill adds sub-agent-specific guidance on top of that foundation.
 | Pair WebFetch with skills              | [WebFetch Pairs with Skills](#webfetch-pairs-with-skills-for-verification) |
 | Determine file path for new sub-agent  | `box-factory-architecture` skill (component-paths)                         |
 | Write the description field            | [Description Field Design](#description-field-design)                      |
-| Avoid common mistakes                  | Read `gotchas.md`                                                          |
+| Avoid common mistakes                  | [Common Gotchas](gotchas.md)                                               |
 | Check color for status line            | [Color Selection](#color-selection)                                        |
 | Validate before completing             | [Quality Checklist](#quality-checklist)                                    |
 
@@ -46,7 +47,7 @@ color: green
 
 # My Agent
 
-You are a specialized sub-agent that [purpose].
+This sub-agent [purpose].
 
 ## Process
 
@@ -59,6 +60,73 @@ You are a specialized sub-agent that [purpose].
 ```
 
 **Critical:** Sub-agents operate in isolated context and return results. They cannot ask users questions.
+
+## Agent Body Structure
+
+The body of a sub-agent (everything after YAML frontmatter) defines its system prompt.
+
+**Required:**
+
+| Section  | Purpose                           |
+| -------- | --------------------------------- |
+| H1 Title | Agent identity. Single H1 only.   |
+| Process  | Numbered steps the agent follows. |
+
+**Optional:**
+
+| Section        | When to Include                                    |
+| -------------- | -------------------------------------------------- |
+| Opening line   | Brief statement of purpose (one sentence after H1) |
+| Prerequisites  | Skills or conditions required before starting      |
+| Constraints    | Behavioral rules during execution                  |
+| Error Handling | Table of edge cases and responses                  |
+
+**Section naming:**
+
+- "Prerequisites" = things that must be true before starting (skill availability, environment)
+- "Constraints" = behavioral limitations during execution
+- "Error Handling" = edge case responses (typically a table)
+
+**Minimal agent:**
+
+```markdown
+# Agent Name
+
+## Process
+
+1. **Step one**
+2. **Step two**
+```
+
+**Full agent:**
+
+```markdown
+# Agent Name
+
+This sub-agent [purpose].
+
+## Prerequisites
+
+The following skills must be available. If they are not, report failure and stop:
+
+- skill-one
+- skill-two
+
+## Process
+
+1. **Understand requirements** from the caller
+2. **Design** using loaded skill guidance
+3. **Execute** the task
+4. **Validate** against quality checklist
+5. **Report results**
+
+## Error Handling
+
+| Situation | Action |
+| --- | --- |
+| Required skills not loaded | Report failure, do not attempt task |
+| Unclear requirements | Make reasonable assumptions, document them |
+```
 
 ## The `skills` Field (Best Practice)
 
@@ -146,9 +214,7 @@ Prefer the `skills` YAML field (see [The `skills` Field](#the-skills-field-best-
 ```markdown
 ## Process
 
-1. **Follow skill guidance** for [specific aspect]:
-   - See `SKILL.md` for [topic]
-   - See `subfile.md` for [detailed topic]
+1. **Design** using loaded skill guidance for [specific aspect]
 
 2. **Execute task** using skill patterns
 ```

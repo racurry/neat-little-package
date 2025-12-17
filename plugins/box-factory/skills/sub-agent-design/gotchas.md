@@ -13,6 +13,7 @@ Reference file for sub-agent-design skill. Read when you need to avoid common mi
 - "ask the user", "gather from user", "clarify with user"
 - "request from user", "prompt the user", "wait for input"
 - "check with user", "verify with user", "confirm with user"
+- "gather requirements", "gather input"
 
 **Replace with:**
 
@@ -49,6 +50,29 @@ Refer to tools documentation for current capabilities
 - Code reviewer with Write/Edit (should be read-only)
 
 **Solution:** Grant minimal necessary permissions for the sub-agent's actual work
+
+### Gotcha #4: Proceeding Without Required Skills
+
+**Problem:** Sub-agent needs specific skills but proceeds without them, producing low-quality output.
+
+**Why it matters:** Skills declared via `skills` field contain domain knowledge the sub-agent needs. Without that knowledge loaded, output will likely be incorrect or miss important patterns.
+
+**Solution:** State required skills as a constraint:
+
+```markdown
+## Constraints
+
+- Skills foo-skill and bar-skill must be available. If not, report failure and stop.
+```
+
+Claude understands "must be available" - it will try to load via Skill tool if not auto-loaded. Only if both paths fail does it stop.
+
+**Hard vs soft requirements:**
+
+| Dependency Type                   | Pattern                                        | On Failure                                        |
+| --------------------------------- | ---------------------------------------------- | ------------------------------------------------- |
+| Hard (declared in `skills` field) | `must be available... report failure and stop` | Stop immediately                                  |
+| Soft (conditional in body)        | Load via Skill tool when needed                | Note limitation, proceed with degraded capability |
 
 ## Common Antipatterns
 
@@ -91,40 +115,3 @@ Refer to tools documentation for current capabilities
 - Potential conflicts (sub-agent and skill disagree)
 
 **Solution:** If sub-agent loads a skill, defer knowledge to the skill. Sub-agent focuses on process.
-
-### Gotcha #4: Proceeding Without Required Skills
-
-**Problem:** Sub-agent declares skill dependency via `skills` field, but proceeds anyway when the skill fails to load
-
-**Why it matters:** If a sub-agent has a hard dependency on a skill (declared in `skills` field), that skill contains the domain knowledge the sub-agent needs. Without it, the sub-agent will likely produce incorrect or low-quality output.
-
-**What you'll see:**
-
-- Sub-agent attempts task without loaded guidance
-- Output doesn't follow expected patterns
-- Validation failures or subtle quality issues
-
-**Solution:** Sub-agents with hard skill dependencies should fail fast:
-
-```markdown
-## Process
-
-1. **Verify skill loaded** - If skill-design guidance is not available, report failure and stop
-2. **Proceed with task** using skill guidance
-```
-
-**Error handling pattern:**
-
-```markdown
-## Error Handling
-
-| Situation | Action |
-| --- | --- |
-| Required skill fails to load | Report failure immediately, do not attempt task |
-| Optional skill fails to load | Note limitation, proceed with degraded capability |
-```
-
-**Key distinction:**
-
-- `skills` field dependency = hard requirement → fail if missing
-- Conditional skill loading in body = soft requirement → may proceed with limitations
