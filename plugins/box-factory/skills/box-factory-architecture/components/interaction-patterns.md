@@ -220,6 +220,41 @@ sub-agent-design skill
 - Update skill → improves all consumers
 - Token efficient (load once, use many times)
 
+### Pattern 6: Reliability vs. DRY Tradeoff (Inlined Checklists)
+
+**Process enforcement pattern:** When validation MUST happen, inline critical checklist items rather than just referencing the skill.
+
+```text
+sub-agent-design skill
+    ├── Quality Checklist (source of truth, with explanations)
+    │
+sub-agent-writer agent
+    └── Inlined checklist items (terse, in Process section)
+        └── "If ANY fails: Fix before reporting"
+```
+
+**Why inline:**
+
+- References can be skipped or satisfied superficially
+- Inlined items force explicit verification
+- Critical validation becomes part of the process flow
+
+**What to inline vs. reference:**
+
+| Inline (reliability)             | Reference (DRY)            |
+| -------------------------------- | -------------------------- |
+| Quality checklist items (terse)  | Explanations and rationale |
+| Blocking validation requirements | Decision frameworks        |
+| Items that MUST NOT be skipped   | Examples and patterns      |
+
+**The tradeoff:**
+
+- "Update skill → improves all consumers" partially breaks
+- Each checklist typically has ONE consumer agent (bounded impact)
+- Reliability gains outweigh maintenance cost for critical validation
+
+**See also:** [Knowledge Delta Filter - Exceptions](../principles/knowledge-delta-filter.md#exceptions-for-reliability-patterns)
+
 ## Anti-Patterns
 
 **Command with complex logic:**

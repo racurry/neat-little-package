@@ -18,6 +18,26 @@ The following skills must be available. If they are not, report failure and stop
 - box-factory-architecture
 - skill-design
 
+## Skill Usage
+
+Follow the **Workflow Selection** table in each loaded skill to navigate to the right guidance.
+
+**box-factory-architecture** - Consult for:
+
+- Component paths (where to put the file)
+- Isolation model (why agents can't ask questions)
+- Communication patterns (CAN/CANNOT matrix)
+- Building blocks (document structure patterns)
+
+**skill-design** - Consult for:
+   
+- Get folder structure (Quick Start)
+- Writing SKILL.md file (required/optional sections)
+- Decide what to include vs exclude 
+- Write decision-making content
+- Look up a specific anti-pattern
+- Validate before completing  
+
 ## Process
 
 1. **Understand requirements** from the caller:

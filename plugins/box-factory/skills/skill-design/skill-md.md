@@ -45,9 +45,14 @@ YAML frontmatter with `name` and `description`. The description should indicate 
 
 One to three sentences explaining what the skill provides. Sets context for everything that follows.
 
+### Fundamentals
+
+Any required knowledge that must be read and applied by any agent reading the skill. Cannot be deferred to progressive disclosure.  Any prerequisites would go here.  This section can be omitted if there is no such content
+
+
 ### Workflow Selection Table
 
-Routes agents to the right place without processing everything.
+Routes agents to the right place without processing everything.  See box-factory:box-factory-architecture's "Navigation Table" for more info if needed.
 
 **Format:**
 
@@ -85,7 +90,7 @@ The main body of the skill, organized by topic. For complex skills, this may be 
 | SKILL.md (any type) | 50-200 lines       | 300 lines  |
 | Subfiles            | 100-300 lines each | 500 lines  |
 
-Even teaching skills with interconnected content should keep SKILL.md under 300 lines and offload details to subfiles. Main file provides navigation and core concepts; subfiles contain depth. Subfiles have more room for expansion (up to 500 lines) since they're loaded selectively.
+All skills should keep SKILL.md under 300 lines and offload details to subfiles. Main file provides navigation and core concepts; subfiles contain depth. Subfiles have more room for expansion (up to 500 lines) since they're loaded selectively.
 
 ## Quality Checklist
 
@@ -95,6 +100,7 @@ Before completing any skill:
 
 - [ ] SKILL.md exists (uppercase)
 - [ ] Frontmatter has name and description
+- [ ] Fundamentals & prerequisites present (if needed)
 - [ ] Workflow Selection table present
 - [ ] Routing conditions are specific
 

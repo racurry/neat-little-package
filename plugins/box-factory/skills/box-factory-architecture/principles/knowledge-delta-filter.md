@@ -194,3 +194,53 @@ Result: User-specific requirements Claude wouldn't assume
 Components should only contain knowledge that bridges the gap between what Claude knows and what Claude needs to know for this specific context.
 
 **Target:** Focused, high-value delta knowledge - not comprehensive documentation of things Claude already knows.
+
+## Exceptions for Reliability Patterns
+
+The delta principle targets redundant BASE KNOWLEDGE (Claude's training). Some patterns intentionally duplicate content BETWEEN COMPONENTS for reliability:
+
+**Inlined quality checklists:**
+
+When an agent loads a skill with a quality checklist, the agent may inline the checklist items in its Process section. This ensures validation can't be skipped.
+
+```markdown
+## In the skill (source of truth):
+Quality Checklist with explanations and rationale
+
+## In the agent (inlined for reliability):
+7. **Validate** - ALL items must pass:
+   - [ ] Item one
+   - [ ] Item two
+```
+
+**Why this isn't a delta violation:**
+
+- Delta applies to Claude's BASE knowledge (training data)
+- Inlining is about PROCESS ENFORCEMENT between components
+- Checklist items are terse (1-2 lines); explanations stay in skill
+- The tradeoff: reliability over perfect DRY
+
+**Navigation pointers (Skill Usage sections):**
+
+Agents that load skills include a "Skill Usage" section with pointers to skill sections. This is routing metadata, not duplicated knowledge.
+
+```markdown
+**my-skill** - Consult for:
+- [Aspect A] (Section Name)
+- [Aspect B] (Section Name)
+```
+
+**Why this isn't a delta violation:**
+
+- Pointers are not content
+- Section names are stable identifiers
+- Enables effective skill traversal without embedding skill content
+
+**Decision test for exceptions:**
+
+| Pattern                            | Delta Violation? | Why                  |
+| ---------------------------------- | ---------------- | -------------------- |
+| Inline skill explanations in agent | YES              | Duplicates knowledge |
+| Inline checklist items (terse)     | NO               | Process enforcement  |
+| Skill Usage navigation pointers    | NO               | Routing metadata     |
+| Copy decision frameworks to agent  | YES              | Duplicates knowledge |

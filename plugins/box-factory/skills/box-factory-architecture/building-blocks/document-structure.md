@@ -4,12 +4,12 @@ Standard skeleton for component documentation. Claude uses this when creating sk
 
 ## Applying to Component Types
 
-| Component Type | Structure                                                  |
-| -------------- | ---------------------------------------------------------- |
-| Skills         | Full structure with all sections                           |
-| Agents         | Navigation tables for workflow routing, quality checklists |
-| CLAUDE.md      | Decision frameworks for project conventions                |
-| READMEs        | Abbreviated (fundamentals, reference, skip checklists)     |
+| Component Type | Structure                                                                          |
+| -------------- | ---------------------------------------------------------------------------------- |
+| Skills         | Full structure with all sections                                                   |
+| Agents         | Skill Usage (if loads skills), Process with navigation, inlined quality checklists |
+| CLAUDE.md      | Decision frameworks for project conventions                                        |
+| READMEs        | Abbreviated (fundamentals, reference, skip checklists)                             |
 
 ## Section Inclusion Criteria
 

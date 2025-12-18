@@ -22,6 +22,8 @@ This skill adds sub-agent-specific guidance on top of that foundation.
 | Decide what goes in sub-agent vs skill | [Sub-agent-Skill Relationship](#sub-agent-skill-relationship)              |
 | Structure the agent body               | [Agent Body Structure](#agent-body-structure)                              |
 | Auto-load skills in a sub-agent        | [The `skills` Field](#the-skills-field-best-practice)                      |
+| Write Skill Usage section              | [Skill Usage Section Pattern](#skill-usage-section-pattern)                |
+| Inline validation checklist            | [Inlining Quality Checklists](#inlining-quality-checklists)                |
 | Pick tools for a sub-agent             | [Tool Selection Philosophy](#tool-selection-philosophy)                    |
 | Know which tool is forbidden           | [Never Include AskUserQuestion](#never-include-askuserquestion)            |
 | Understand why creators need Bash      | [Bash is Foundational for Creators](#bash-is-foundational-for-creators)    |
@@ -74,16 +76,18 @@ The body of a sub-agent (everything after YAML frontmatter) defines its system p
 
 **Optional:**
 
-| Section        | When to Include                                    |
-| -------------- | -------------------------------------------------- |
-| Opening line   | Brief statement of purpose (one sentence after H1) |
-| Prerequisites  | Skills or conditions required before starting      |
-| Constraints    | Behavioral rules during execution                  |
-| Error Handling | Table of edge cases and responses                  |
+| Section        | When to Include                                            |
+| -------------- | ---------------------------------------------------------- |
+| Opening line   | Brief statement of purpose (one sentence after H1)         |
+| Prerequisites  | Skills or conditions required before starting              |
+| Skill Usage    | **When agent loads skills via `skills` field** (see below) |
+| Constraints    | Behavioral rules during execution                          |
+| Error Handling | Table of edge cases and responses                          |
 
 **Section naming:**
 
 - "Prerequisites" = things that must be true before starting (skill availability, environment)
+- "Skill Usage" = navigation pointers for loaded skills (what to consult each for)
 - "Constraints" = behavioral limitations during execution
 - "Error Handling" = edge case responses (typically a table)
 
@@ -98,7 +102,7 @@ The body of a sub-agent (everything after YAML frontmatter) defines its system p
 2. **Step two**
 ```
 
-**Full agent:**
+**Full agent (with skills):**
 
 ```markdown
 # Agent Name
@@ -112,12 +116,32 @@ The following skills must be available. If they are not, report failure and stop
 - skill-one
 - skill-two
 
+## Skill Usage
+
+Follow the **Workflow Selection** table in each loaded skill to navigate to the right guidance.
+
+**skill-one** - Consult for:
+
+- [Aspect A] (Section Name)
+- [Aspect B] (Section Name)
+
+**skill-two** - Consult for:
+
+- [Aspect C] (Section Name)
+- [Aspect D] (Section Name)
+
 ## Process
 
 1. **Understand requirements** from the caller
-2. **Design** using loaded skill guidance
+2. **Design** by navigating loaded skills:
+   - Follow skill-one for [specific decisions]
+   - Consult skill-two for [other decisions]
 3. **Execute** the task
-4. **Validate** against quality checklist
+4. **Validate** - ALL items must pass before completing:
+   - [ ] Checklist item one
+   - [ ] Checklist item two
+   - [ ] Checklist item three
+   **If ANY item fails:** Fix before reporting results.
 5. **Report results**
 
 ## Error Handling
@@ -127,6 +151,12 @@ The following skills must be available. If they are not, report failure and stop
 | Required skills not loaded | Report failure, do not attempt task |
 | Unclear requirements | Make reasonable assumptions, document them |
 ```
+
+**Why this structure works:**
+
+- **Skill Usage** tells the agent WHERE to look (navigation pointers, not duplicated content)
+- **Process step 2** references specific skills for specific decisions
+- **Process step 4** inlines the checklist so it can't be skipped
 
 ## The `skills` Field (Best Practice)
 
@@ -181,6 +211,98 @@ tools: Read, Grep, Glob, Skill, WebFetch
 
 This sub-agent can't declare a single skill upfront because which skill it needs depends on what component type it discovers at runtime.
 
+## Skill Usage Section Pattern
+
+**When an agent loads skills via the `skills` field, include a Skill Usage section.** This teaches the agent HOW to traverse the loaded skills, not just THAT they're loaded.
+
+**Problem it solves:** Skills auto-load content, but the agent might not know which parts to consult for which decisions. Generic instructions like "use the skill" don't guide navigation.
+
+**Structure:**
+
+```markdown
+## Skill Usage
+
+Follow the **Workflow Selection** table in each loaded skill to navigate to the right guidance.
+
+**skill-name** - Consult for:
+
+- [What to look up] (Section Name in skill)
+- [Another aspect] (Another Section)
+```
+
+**Key principles:**
+
+| Principle                        | Why It Matters                                           |
+| -------------------------------- | -------------------------------------------------------- |
+| Navigation pointers, not content | Avoids duplication; skill remains single source of truth |
+| Reference section names          | Stable pointers; section names change rarely             |
+| Specific aspects per skill       | Agent knows which skill answers which question           |
+
+**Example (concrete):**
+
+```markdown
+## Skill Usage
+
+Follow the **Workflow Selection** table in each loaded skill.
+
+**box-factory-architecture** - Consult for:
+
+- Component paths (where to put files)
+- Isolation model (why agents can't ask questions)
+- Communication patterns (CAN/CANNOT matrix)
+
+**sub-agent-design** - Consult for:
+
+- YAML frontmatter structure (Quick Start)
+- Tool selection (Tool Selection Philosophy)
+- Color selection (Color Selection)
+```
+
+**When to skip:** If agent loads no skills or loads them conditionally via Skill tool (runtime decision), Skill Usage section is not needed.
+
+## Inlining Quality Checklists
+
+**For critical validation, inline the checklist in the Process section.** Don't just reference a skill's checklist—agents may skip the reference.
+
+**Problem it solves:** "Validate against the skill's checklist" is easy to skip or satisfy superficially. Inlined checklists force explicit verification.
+
+**Pattern:**
+
+```markdown
+4. **Validate** - ALL items must pass before completing:
+
+   - [ ] Item one
+   - [ ] Item two
+   - [ ] Item three
+
+   **If ANY item fails:** Fix before reporting results.
+```
+
+**What to inline:**
+
+| Inline                            | Reference (don't inline)                |
+| --------------------------------- | --------------------------------------- |
+| Validation checklists (blocking)  | Guidance and context (informational)    |
+| Required checks before completion | Decision frameworks (for understanding) |
+| Items that MUST NOT be skipped    | Examples and patterns (for learning)    |
+
+**Balance:** Inline only the checklist items themselves (1-2 lines each). Keep explanations and rationale in the skill. This maintains single source of truth while ensuring validation happens.
+
+**Example (from sub-agent creation):**
+
+```markdown
+7. **Validate** - ALL items must pass before completing:
+
+   - [ ] Fetched official docs (or noted why skipped)
+   - [ ] Valid YAML frontmatter with required fields
+   - [ ] No forbidden language ("ask the user", "confirm with")
+   - [ ] Tools match autonomous responsibilities
+   - [ ] Description has specific triggering conditions
+   - [ ] Color set with semantic meaning
+
+   **If ANY item fails:** Fix before reporting results.
+```
+
 ## Official Documentation
 
 **Claude Code changes rapidly and is post-training knowledge.** Fetch these docs when creating sub-agents to ensure current syntax:
@@ -209,15 +331,30 @@ This sub-agent can't declare a single skill upfront because which skill it needs
 
 **Pattern for skill-backed sub-agents:**
 
-Prefer the `skills` YAML field (see [The `skills` Field](#the-skills-field-best-practice)) to auto-load skills at startup. The sub-agent body then focuses on process:
+Prefer the `skills` YAML field (see [The `skills` Field](#the-skills-field-best-practice)) to auto-load skills at startup. The sub-agent body then focuses on process, with a **Skill Usage section** providing navigation:
 
 ```markdown
+## Skill Usage
+
+Follow the **Workflow Selection** table in each loaded skill.
+
+**my-skill** - Consult for:
+
+- [Aspect A] (Section Name)
+- [Aspect B] (Section Name)
+
 ## Process
 
-1. **Design** using loaded skill guidance for [specific aspect]
-
-2. **Execute task** using skill patterns
+1. **Design** by navigating loaded skills:
+   - Consult my-skill for [specific decisions]
+2. **Execute task**
+3. **Validate** - ALL items must pass:
+   - [ ] Checklist item from skill
+   - [ ] Another item
+   **If ANY fails:** Fix before reporting.
 ```
+
+See [Skill Usage Section Pattern](#skill-usage-section-pattern) and [Inlining Quality Checklists](#inlining-quality-checklists) for detailed guidance.
 
 **Pattern for standalone sub-agents (no skill):**
 
@@ -346,3 +483,7 @@ Before finalizing a sub-agent:
 6. **Review system prompt** - Single H1, clear structure, actionable instructions
 7. **Verify no hardcoding** - No version-specific details that will become outdated
 8. **Set color** - Choose semantic color matching sub-agent's primary function (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red, other=orange)
+9. **If agent loads skills via `skills` field:**
+   - Skill Usage section present with navigation pointers
+   - Process steps reference specific skill sections
+   - Quality checklist inlined in validation step (not just referenced)
