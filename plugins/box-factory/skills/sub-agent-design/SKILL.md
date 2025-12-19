@@ -232,11 +232,20 @@ Follow the **Workflow Selection** table in each loaded skill to navigate to the 
 
 **Key principles:**
 
-| Principle                        | Why It Matters                                           |
-| -------------------------------- | -------------------------------------------------------- |
-| Navigation pointers, not content | Avoids duplication; skill remains single source of truth |
-| Reference section names          | Stable pointers; section names change rarely             |
-| Specific aspects per skill       | Agent knows which skill answers which question           |
+| Principle                         | Why It Matters                                                      |
+| --------------------------------- | ------------------------------------------------------------------- |
+| Navigation pointers, not content  | Avoids duplication; skill remains single source of truth            |
+| Reference section names           | Stable pointers; section names change rarely                        |
+| Specific aspects per skill        | Agent knows which skill answers which question                      |
+| **No cross-component file paths** | Skill internals are implementation details from agent's perspective |
+
+**Critical prohibition:** When an agent references a skill it loads, use **indirect references** (section names, concept names) NOT the skill's internal file paths. A skill's internal file structure is an implementation detail from the agent's perspective.
+
+- ✅ `(Quick Start)` - section name in skill
+- ✅ `(Tool Selection Philosophy)` - section name in skill
+- ✅ `(the skill's guidance on X)` - indirect reference
+- ❌ `(gotchas.md)` - skill's internal file (agent shouldn't know this)
+- ❌ `(skill-structure.md)` - skill's internal file
 
 **Example (concrete):**
 
@@ -485,5 +494,6 @@ Before finalizing a sub-agent:
 8. **Set color** - Choose semantic color matching sub-agent's primary function (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red, other=orange)
 9. **If agent loads skills via `skills` field:**
    - Skill Usage section present with navigation pointers
+   - Navigation pointers use indirect references (section names), NOT skill's internal file paths
    - Process steps reference specific skill sections
    - Quality checklist inlined in validation step (not just referenced)

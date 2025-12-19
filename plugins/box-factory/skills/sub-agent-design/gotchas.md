@@ -51,7 +51,40 @@ Refer to tools documentation for current capabilities
 
 **Solution:** Grant minimal necessary permissions for the sub-agent's actual work
 
-### Gotcha #4: Proceeding Without Required Skills
+### Gotcha #4: Cross-Component File References
+
+**Problem:** Agent's Skill Usage section references a skill's internal file paths
+
+**What you'll see:**
+
+```markdown
+**my-skill** - Consult for:
+
+- Folder structure (skill-structure.md)
+- Quality checks (validation.md)
+```
+
+**Why it fails:**
+
+- Skill's internal file structure is an implementation detail from the agent's perspective
+- Skills may reorganize their internal structure
+- Creates brittle coupling across component boundaries
+- Violates component isolation principle
+
+**Correct pattern:**
+
+```markdown
+**my-skill** - Consult for:
+
+- Folder structure (Quick Start section)
+- Quality checks (Quality Checklist section)
+```
+
+**Rule:** When an agent references a skill it loads, use section names or indirect references - never the skill's internal file paths.
+
+**Note:** This is about cross-component boundaries. Within a skill, SKILL.md can freely reference its own subfiles (like `gotchas.md`) - that's internal navigation within one component.
+
+### Gotcha #5: Proceeding Without Required Skills
 
 **Problem:** Sub-agent needs specific skills but proceeds without them, producing low-quality output.
 

@@ -11,12 +11,34 @@ This meta-skill teaches the Claude Code component and ecosystem architecture - h
 
 Four foundational principles underpin all Claude Code component design:
 
-| Principle                   | Implication                                                                                            |
-| --------------------------- | ------------------------------------------------------------------------------------------------------ |
-| **Isolation Model**         | Only Main Claude has user access. Sub-agents cannot ask questions or see conversation history.         |
-| **Return-Based Delegation** | Sub-agents return complete results. No mid-execution interaction - agent must have everything upfront. |
-| **Progressive Disclosure**  | Load knowledge when relevant to save tokens. Skills solve selective context loading.                   |
-| **Knowledge Delta Filter**  | Document only what Claude doesn't know. Skip base knowledge; include user-specific delta.              |
+### Isolation Model
+
+Components operate independently, and have limited access to the user or each other.  
+
+These are our RULES (based on spec & best practices):
+
+- Only Main Claude has user access
+- Sub-agents:
+  - CANNOT: ask the user questions, see conversation history, reference Skill files by name
+  - CAN: use tools, load skills, reference Skill content by subject
+- Skills:
+  - CANNOT: reference any other component (single exception: Box Factory skills can reference Box Factory Architecture as a prerequisite)
+  - CAN: Provide information and instruction
+- Commands:
+  - CANNOT: execute logic, access user directly
+  - CAN: trigger Sub-agents, reference Skills
+
+### Return-Based Delegation  
+
+Sub-agents return complete results. No mid-execution interaction - agent must have everything upfront.
+
+### Progressive Disclosure
+
+Load knowledge only when relevant (this preserves context and saves tokens). Use Skills tosolve selective context loading.
+
+### Knowledge Delta Filter
+
+Document only what Claude doesn't know. Skip base knowledge; include user-specific delta.
 
 **Design test:** If your sub-agent needs to ask questions mid-execution, redesign the delegation pattern.
 

@@ -82,6 +82,7 @@ Follow the **Workflow Selection** table in each loaded skill to navigate to the 
    - [ ] Color set with semantic meaning (creator=blue, quality=green, ops=yellow, meta=purple, research=cyan, safety=red)
    - [ ] **If agent loads skills via `skills` field:**
      - Skill Usage section with navigation pointers
+     - Navigation pointers use indirect references (section names), NOT skill's internal file paths
      - Process steps reference specific skill sections
      - Quality checklist inlined (not just referenced)
 

@@ -4,7 +4,7 @@ description: Creates Claude Skills. ALWAYS use when creating, updating, or modif
 tools: Bash, Read, Write, Edit, WebFetch, Glob, Grep, Skill
 skills: box-factory:box-factory-architecture, box-factory:skill-design
 model: sonnet
-color: blue
+color: purple
 ---
 
 # Skill Writer
@@ -30,13 +30,13 @@ Follow the **Workflow Selection** table in each loaded skill to navigate to the 
 - Building blocks (document structure patterns)
 
 **skill-design** - Consult for:
-   
-- Get folder structure (Quick Start)
-- Writing SKILL.md file (required/optional sections)
-- Decide what to include vs exclude 
-- Write decision-making content
-- Look up a specific anti-pattern
-- Validate before completing  
+
+- Folder structure (Quick Start section)
+- SKILL.md file requirements (SKILL.md Structure section)
+- Knowledge delta filter (Knowledge Delta section)
+- Decision frameworks (box-factory-architecture Building Blocks)
+- Anti-patterns (Common Pitfalls section)
+- Quality checklist (Quality Checklist section)
 
 ## Process
 
@@ -46,18 +46,45 @@ Follow the **Workflow Selection** table in each loaded skill to navigate to the 
    - Skill purpose and domain
    - Required capabilities
 
-2. **Design the skill**
+2. **Determine file path** using box-factory-architecture component-paths guidance:
 
-   - Use box-factory-architecture for design patterns, restrictions, best practices, and file paths
-   - Use skill-design for skill-specific process and requirements
+   - If caller specifies path: use that exact path
+   - If in plugin context: use `skills/` relative to plugin root
+   - Otherwise: use `.claude/skills/`
 
-3. **Write the skill directory and files**
+3. **Design the skill** by navigating loaded skills:
 
-4. **Verify** by reading the skill file(s) back
+   - Follow skill-design for structure, content, and quality requirements
+   - Use box-factory-architecture for design patterns, restrictions, and best practices
 
-5. **Validate** against loaded skill's quality checklist
+4. **Fetch official documentation** if uncertain about current spec:
 
-6. **Report results:**
+   - <https://code.claude.com/docs/en/skills> for syntax verification
+
+5. **Write the skill directory and files** using Bash for directory scaffolding:
+
+   - Use `mkdir -p` for nested structures
+   - Create SKILL.md with Write tool
+   - Create any subfiles as needed
+
+6. **Verify** by reading the skill file(s) back
+
+7. **Validate** - ALL items must pass before completing:
+
+   - [ ] Fetched official docs (or noted why skipped)
+   - [ ] Valid skill structure (SKILL.md in named directory)
+   - [ ] Fundamentals section present with core principles
+   - [ ] Workflow Selection table with navigation pointers
+   - [ ] Decision frameworks use structured format (tables, before/after)
+   - [ ] Deep dive links include traverse/skip guidance
+   - [ ] Quality checklist inlined at end
+   - [ ] No hardcoded version-specific details
+   - [ ] Applied knowledge delta filter (user-specific content only)
+   - [ ] Two-layer approach (official specs vs best practices marked clearly)
+
+   **If ANY item fails:** Fix before reporting results.
+
+8. **Report results:**
 
    - File path created
    - Skill summary
