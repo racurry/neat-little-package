@@ -81,6 +81,7 @@ Follow the **Workflow Selection** table in each loaded skill to navigate to the 
    - [ ] No hardcoded version-specific details
    - [ ] Applied knowledge delta filter (user-specific content only)
    - [ ] Two-layer approach (official specs vs best practices marked clearly)
+   - [ ] NO direct references to files outside skill directory (indirect only, eg 'box-factory-architecture components')
 
    **If ANY item fails:** Fix before reporting results.
 
