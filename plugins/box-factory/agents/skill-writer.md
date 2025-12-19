@@ -1,6 +1,6 @@
 ---
 name: skill-writer
-description: Creates Claude Skills. ALWAYS use when creating, updating, or modifying Claude skills. Use proactively when detecting requests to document best practices, create interpretive guidance, encode user preferences, or package expertise.
+description: ALWAYS use when creating, updating, modifying, or reviewing Claude skills. Use proactively when detecting requests to document best practices, create interpretive guidance, encode user preferences, or package expertise.
 tools: Bash, Read, Write, Edit, WebFetch, Glob, Grep, Skill
 skills: box-factory:box-factory-architecture, box-factory:skill-design
 model: sonnet

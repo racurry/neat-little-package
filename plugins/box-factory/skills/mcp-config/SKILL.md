@@ -1,11 +1,11 @@
 ---
 name: mcp-config
-description: Interpretive guidance for configuring MCP servers in Claude Code projects. Covers transport selection, scopes, authentication, and security patterns. Use when adding MCP servers to any project (not just plugins).
+description: Guidance for configuring MCP servers in Claude Code projects. Covers transport selection, scopes, authentication, and security patterns. Use whenever adding MCP servers - projects, plugins, or any context.
 ---
 
 # MCP Configuration Skill
 
-This skill provides guidance for configuring MCP (Model Context Protocol) servers in Claude Code projects. For bundling MCP servers in plugins, see the `plugin-design` skill instead.
+This skill provides guidance for configuring MCP (Model Context Protocol) servers for Claude Code. For bundling MCP servers in plugins, see the `plugin-design` skill instead.
 
 ## Official Documentation
 
@@ -17,14 +17,14 @@ This skill provides guidance for configuring MCP (Model Context Protocol) server
 
 Use this table to navigate to relevant sections:
 
-| Task                                          | Section                                                                      |
-| --------------------------------------------- | ---------------------------------------------------------------------------- |
-| Understand the gotcha with plugin MCP servers | [Plugin MCP Namespacing](#plugin-mcp-namespacing-critical-knowledge)         |
-| Work around HTTP env var bug in plugins       | [Plugin HTTP Transport Bug](#plugin-http-transport-bug-temporary-workaround) |
-| Decide HTTP vs stdio transport                | [Transport Selection](#transport-type-selection-best-practices)              |
-| Choose project vs user vs local scope         | [Configuration Scopes](#configuration-scopes-official-specification)         |
-| Structure secrets safely                      | [Authentication Patterns](#authentication-patterns-best-practices)           |
-| Validate before committing                    | [Quality Checklist](#quality-checklist)                                      |
+| Task                                  | Section                                                              |
+| ------------------------------------- | -------------------------------------------------------------------- |
+| Decide if MCP is the right tool       | [Tool Selection Philosophy](#tool-selection-philosophy-opinionated)  |
+| Understand plugin MCP gotchas         | [plugin-mcp.md](./plugin-mcp.md) (subpage)                           |
+| Decide HTTP vs stdio transport        | [Transport Selection](#transport-type-selection-best-practices)      |
+| Choose project vs user vs local scope | [Configuration Scopes](#configuration-scopes-official-specification) |
+| Structure secrets safely              | [security-auth.md](./security-auth.md) (subpage)                     |
+| Validate before committing            | [Quality Checklist](#quality-checklist)                              |
 
 ## Quick Start
 
@@ -68,73 +68,58 @@ MCP servers connect Claude Code to external tools, databases, and APIs. They're 
 
 This skill covers project and user configuration. For plugin bundling, load `plugin-design` skill.
 
-## Plugin MCP Namespacing (Critical Knowledge)
+## Tool Selection Philosophy (Opinionated)
 
-**Claude Code automatically namespaces plugin MCP servers:**
+**Before adding any MCP server, apply this hierarchy:**
 
-```
-plugin:dmv:github
-plugin:ultrahouse3000:homeassistant
-```
+### 1. Prefer Native CLI Tools Over MCP
 
-### The Duplication Trap
+If a dedicated CLI tool exists, use it instead of MCP:
 
-If two plugins both define a `"github"` server, you get **two separate servers**:
+| Service | Prefer       | Over              |
+| ------- | ------------ | ----------------- |
+| GitHub  | `gh` CLI     | GitHub MCP server |
+| Linear  | `linear` CLI | Linear MCP server |
+| AWS     | `aws` CLI    | AWS MCP server    |
 
-| Plugin A's .mcp.json | Plugin B's .mcp.json | Result                                  |
-| -------------------- | -------------------- | --------------------------------------- |
-| `"github": {...}`    | `"github": {...}`    | `plugin:a:github` AND `plugin:b:github` |
+**Why:** CLI tools are battle-tested, have better error messages, don't consume context window, and Claude already knows how to use them.
 
-**Both run. Both consume context. Both provide duplicate tools.**
+### 2. Prefer Remote Official MCP Over Local/Community
 
-### Guidance (Opinionated)
+When MCP is appropriate, prefer in this order:
 
-**Don't bundle common MCP servers in plugins.** Instead:
+1. **Remote official** - vendor-hosted (e.g., `https://mcp.notion.com/mcp`)
+2. **Local official** - vendor-published npm packages (`@modelcontextprotocol/server-*`)
+3. **Community** - third-party implementations (last resort)
 
-1. **Document as prerequisites** - README says "requires GitHub MCP server"
-2. **Let users configure once** - at project or user scope
-3. **Only bundle plugin-specific servers** - custom servers you wrote for that plugin
+**Why:** Official servers have better maintenance, security updates, and API compatibility.
 
-**Why:** User-level config (`~/.claude.json`) or project config (`.mcp.json`) gives one shared server. Plugin bundling creates per-plugin duplicates.
+### 3. Prefer `.mcp.json` Over `settings.json`
 
-## Plugin HTTP Transport Bug (Temporary Workaround)
+Store MCP configuration in `.mcp.json` files, not IDE `settings.json`:
 
-**Bug:** [#9427](https://github.com/anthropics/claude-code/issues/9427) - `url` field env var interpolation broken for plugins.
+| Approach        | Use                                           |
+| --------------- | --------------------------------------------- |
+| `.mcp.json`     | ✅ Portable, version-controlled, IDE-agnostic |
+| `settings.json` | ❌ IDE-specific, mixes concerns               |
 
-| Field  | Plugin Interpolation                |
-| ------ | ----------------------------------- |
-| `url`  | ❌ Broken - literal `${VAR}` passed |
-| `args` | ✅ Works                            |
-| `env`  | ✅ Works (pass-through)             |
-
-**Workaround:** For HTTP MCP servers needing env vars in plugins, use `mcp-proxy` via stdio:
-
-```json
-{
-  "mcpServers": {
-    "my-http-server": {
-      "command": "npx",
-      "args": ["-y", "@anthropic-ai/mcp-proxy", "http", "${MY_SERVER_URL}api/endpoint"]
-    }
-  }
-}
-```
-
-**Remove this workaround when #9427 is fixed.** Revert to native HTTP transport: `"type": "http", "url": "${VAR}..."`
+**Why:** `.mcp.json` is the Claude Code standard, works across editors, and keeps MCP config separate from IDE settings.
 
 ## Configuration Scopes (Official Specification)
 
 ### Scope Hierarchy
 
-```
-Local (highest precedence)
+```text
+Local (project-specific in ~/.claude.json, highest precedence)
   ↓
 Project (.mcp.json in repo)
   ↓
-User (~/.claude.json)
+User (~/.claude.json, cross-project)
   ↓
 Managed (enterprise, lowest)
 ```
+
+**Key insight:** "Local" scope means project-specific but still stored in `~/.claude.json` under the project path, not in the project directory itself. This keeps credentials out of your repo while allowing per-project overrides.
 
 **Local** overrides **Project** overrides **User** overrides **Managed**.
 
@@ -148,6 +133,8 @@ Managed (enterprise, lowest)
 
 **Project scope** creates/updates `.mcp.json` at project root - check this into version control for team sharing.
 
+**Security note:** Project-scoped MCP servers require user approval before first use (prevents malicious repo configs from auto-running). Reset approvals with: `claude mcp reset-project-choices`
+
 ## Transport Type Selection (Best Practices)
 
 ### Decision Framework
@@ -159,90 +146,6 @@ Managed (enterprise, lowest)
 | Legacy remote      | `--transport sse`  | Only if HTTP unavailable    |
 
 **Default to HTTP for remote servers** - it's the modern approach and Claude Code handles it natively.
-
-## Authentication Patterns (Best Practices)
-
-### API Key / Bearer Token
-
-```bash
-# Via CLI
-claude mcp add --transport http api https://api.example.com/mcp \
-  --header "Authorization: Bearer ${API_KEY}"
-```
-
-### OAuth Authentication
-
-For servers requiring OAuth (browser-based auth):
-
-1. Add server: `claude mcp add --transport http oauth-service https://mcp.service.com/mcp`
-2. Inside Claude Code, run `/mcp`
-3. Browser opens for OAuth flow
-4. Tokens stored and auto-refreshed
-
-**OAuth works for:** Services implementing MCP OAuth spec (Home Assistant, some SaaS providers).
-
-### Environment Variables for Secrets
-
-**Always use `${VAR}` syntax** - never hardcode credentials:
-
-```json
-{
-  "github": {
-    "command": "npx",
-    "args": ["-y", "@modelcontextprotocol/server-github"],
-    "env": {
-      "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
-    }
-  }
-}
-```
-
-Team members set their own env vars locally.
-
-## Security Practices (Best Practices)
-
-### Do
-
-- Use `${ENV_VAR}` for all secrets
-- Keep credentials out of git history
-- Use project scope for team servers (secrets stay local)
-- Document required env vars in README
-- Use read-only scopes when possible
-
-### Don't
-
-- Hardcode API keys or tokens
-- Commit `.env` files (add to `.gitignore`)
-- Use empty string placeholders (`""`) instead of `${VAR}`
-- Give MCP servers broader access than needed
-
-### README Documentation Pattern
-
-When adding project-scoped MCP servers, document in README:
-
-````markdown
-## MCP Servers
-
-This project uses the following MCP servers:
-
-### GitHub Server
-
-Provides GitHub API access for issue management.
-
-**Setup:**
-1. Create a GitHub personal access token with `repo` scope
-2. Set environment variable:
-   ```bash
-   export GITHUB_PERSONAL_ACCESS_TOKEN="ghp_..."
-````
-
-### Cloud Service
-
-**Setup:**
-
-1. Run `/mcp` in Claude Code to authenticate via OAuth
-
-```
 
 ## Decision Framework
 
@@ -293,4 +196,3 @@ Before committing `.mcp.json`:
 - **Bundling MCP in plugins:** Load `plugin-design` skill
 - **Troubleshooting OAuth:** Run `/mcp` command in Claude Code
 - **Finding MCP servers:** Search npm for `@modelcontextprotocol/server-*` packages
-```
