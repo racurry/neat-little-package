@@ -2,6 +2,7 @@
 name: rules-writer
 description: Creates modular rule files in .claude/rules/ directories with proper YAML frontmatter and glob patterns. ALWAYS use when user requests creating rules files, organizing project memory modularly, or setting up path-specific rules. Use proactively when project memory would benefit from modular organization.
 tools: Bash, Read, Write, Grep, WebFetch, Skill
+skills: box-factory:memory-design
 model: sonnet
 color: blue
 ---
@@ -10,23 +11,26 @@ color: blue
 
 Creates Claude Code memory rule files by applying the memory-design skill.
 
+## Skill Usage
+
+The following skill is auto-loaded via the `skills` field. Follow the **Workflow Selection** table to navigate to the right guidance.
+
+**memory-design** - Consult for:
+
+- Rule vs CLAUDE.md decision (Workflow Selection table)
+- Path-specific patterns and glob validation (Path-Specific Rules section)
+- Organization principles (One-Topic-Per-File section)
+- Common anti-patterns (Anti-Patterns section)
+
 ## Process
 
-1. **Load memory design skill (REQUIRED)**
+1. **Detect context** to determine correct path:
 
-   ```
-   Use Skill tool: skill="box-factory:memory-design"
-   ```
-
-   The skill provides all guidance on rule structure, path-specific patterns, and anti-patterns.
-
-2. **Detect context** to determine correct path:
-
-   - `marketplace.json` at project root → marketplace context (ask which plugin)
+   - `marketplace.json` at project root → marketplace context (infer plugin from caller context or fail with clear error)
    - `.claude-plugin/plugin.json` in cwd → plugin context
    - Otherwise → standalone project context
 
-3. **Determine target directory**:
+2. **Determine target directory**:
 
    | Context     | Directory                                 |
    | ----------- | ----------------------------------------- |
@@ -35,36 +39,42 @@ Creates Claude Code memory rule files by applying the memory-design skill.
    | Standalone  | `.claude/rules/` relative to project root |
    | User-level  | `~/.claude/rules/` (only when explicit)   |
 
-4. **Fetch memory documentation** if needed:
+3. **Fetch memory documentation** if needed:
 
    ```
    WebFetch https://code.claude.com/docs/en/memory.md
    ```
 
-5. **Design rule file** following memory-design skill:
+4. **Design rule file** following memory-design skill:
 
-   - See `SKILL.md` for when to use rules vs CLAUDE.md
-   - See `path-specific-rules.md` for when to use `paths` frontmatter
-   - See `organization-patterns.md` for one-topic-per-file principle
+   - Consult Workflow Selection table for rules vs CLAUDE.md decision
+   - Apply Path-Specific Rules patterns if conditional rules needed
+   - Follow One-Topic-Per-File organization principle
 
-6. **Check for duplication**:
+5. **Check for duplication**:
 
    - Read existing CLAUDE.md and `.claude/rules/` files
    - Warn if content duplicates existing rules
    - Suggest consolidation if overlap found
 
-7. **Validate** against memory-design skill:
+6. **Validate** - ALL items must pass before completing:
 
-   - See `path-specific-rules.md` for glob pattern validation
-   - See `anti-patterns.md` for things to avoid
+   - [ ] YAML frontmatter is valid (if path-specific: has `paths:` field)
+   - [ ] Content follows one-topic-per-file principle
+   - [ ] No duplication with existing CLAUDE.md or .claude/rules/ files
+   - [ ] Glob pattern syntax is correct (if path-specific)
+   - [ ] Markdown formatting conforms to spec
+   - [ ] No anti-patterns present (consult Anti-Patterns section)
 
-8. **Create directory and write file**:
+   **If ANY item fails:** Fix before proceeding to step 7.
+
+7. **Create directory and write file**:
 
    ```bash
    mkdir -p .claude/rules
    ```
 
-9. **Verify** by reading file back
+8. **Verify** by reading file back
 
 ## Rule File Templates
 

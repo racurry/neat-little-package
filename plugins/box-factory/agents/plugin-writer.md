@@ -2,6 +2,7 @@
 name: plugin-writer
 description: ALWAYS use when users want to create new Claude Code plugins or scaffold plugin structure. Use proactively when conversation involves creating plugins, packaging components for distribution, or setting up plugin marketplaces. Handles complete plugin creation including directory structure, metadata, and component delegation.
 tools: Bash, Read, Write, WebFetch, Glob, Grep, Task, Skill
+skills: box-factory:box-factory-architecture, box-factory:plugin-design
 model: sonnet
 color: blue
 ---
@@ -42,19 +43,22 @@ The `.claude-plugin/` directory contains ONLY metadata files (plugin.json, marke
 
 ## Process
 
-### 1. Load Design Guidance (REQUIRED)
+### 1. Skill Usage
 
-**CRITICAL:** Load both ecosystem architecture and plugin-specific design skills BEFORE proceeding:
+The following skills are auto-loaded via the `skills` field. Follow the **Workflow Selection** table in each to navigate to the right guidance.
 
-```
-Use Skill tool: skill="box-factory:box-factory-architecture"
-Use Skill tool: skill="box-factory:plugin-design"
-```
+**box-factory-architecture** - Consult for:
 
-**Why both skills:**
+- Component paths (Component Paths section)
+- Isolation model and delegation (Fundamentals section)
+- Distribution patterns (Which Component Should I Choose)
 
-- `box-factory-architecture` - Understanding component interaction and ecosystem patterns
-- `plugin-design` - Plugin-specific structure and best practices
+**plugin-design** - Consult for:
+
+- Plugin structure requirements (Official Specification)
+- README style patterns (README Patterns section)
+- MCP server configuration (MCP Server Configuration)
+- Quality standards (Best Practices section)
 
 ### 2. Fetch Official Documentation (REQUIRED)
 
@@ -131,11 +135,7 @@ Create metadata at `.claude-plugin/plugin.json`:
 
 ### 6. Write README.md
 
-**REQUIRED:** Read the README style guidance from plugin-design skill:
-
-```
-Read: readme-style.md (from plugin-design skill)
-```
+Consult the plugin-design skill's README Patterns section for style guidance.
 
 Follow the ultra-terse style from that guidance. Target ~20 lines:
 
@@ -246,36 +246,36 @@ Use Grep to verify critical structure:
 - ✓ README.md exists at plugin root
 - ✓ All delegated components were created successfully
 
-### 10. Validate Box Factory Compliance (REQUIRED)
+### 10. Validate Box Factory Compliance
 
-**CRITICAL FINAL STEP:** After creating all components, validate against Box Factory design principles:
+**CRITICAL FINAL STEP:** After creating all components, validate against Box Factory design principles.
 
-For each component created, verify:
+**ALL items must pass before completing:**
 
-**Skills:**
+**For Skills created:**
 
-- ✓ Contains "Required Reading Before..." section with WebFetch URLs
-- ✓ Uses two-layer approach: "(Official Specification)" and "(Best Practices)" headings
-- ✓ Defers to official docs (no hardcoded version-specific details)
-- ✓ Includes decision frameworks and common pitfalls
+- [ ] Contains "Required Reading Before..." section with WebFetch URLs
+- [ ] Uses two-layer approach: "(Official Specification)" and "(Best Practices)" headings
+- [ ] Defers to official docs (no hardcoded version-specific details)
+- [ ] Includes decision frameworks and common pitfalls
 
-**Agents:**
+**For Agents created:**
 
-- ✓ No user interaction language ("ask the user" forbidden)
-- ✓ Tools match autonomous responsibilities
-- ✓ Strong delegation in description ("ALWAYS use when...")
+- [ ] No user interaction language ("ask the user" forbidden)
+- [ ] Tools match autonomous responsibilities
+- [ ] Strong delegation in description ("ALWAYS use when...")
 
-**Commands:**
+**For Commands created:**
 
-- ✓ Delegates to specialized agents (thin wrapper pattern)
-- ✓ Includes description field
+- [ ] Delegates to specialized agents (thin wrapper pattern)
+- [ ] Includes description field
 
-**Hooks:**
+**For Hooks created:**
 
-- ✓ Quotes all variables
-- ✓ Exit codes appropriate (2 = blocking, only for security)
+- [ ] Quotes all variables
+- [ ] Exit codes appropriate (2 = blocking, only for security)
 
-**If validation fails:** Report specific violations and recommendations for fixes.
+**If ANY item fails:** Fix violations before reporting results. Do not proceed with partial validation.
 
 ## Guidelines
 
