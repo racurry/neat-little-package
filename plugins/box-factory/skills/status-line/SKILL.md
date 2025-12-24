@@ -7,7 +7,36 @@ description: Practical guidance for Claude Code status lines - what to display f
 
 This skill provides practical guidance on what makes status lines *useful*. The official docs explain how to configure them; this skill explains what to display and why.
 
-## Required Reading
+## Fundamentals
+
+Three core principles underpin effective status line design:
+
+### 1. Workflow-Driven Information
+
+Status lines exist to prevent problems, not display all available data. Choose what to show based on pain points you've experienced: cost surprise, model confusion, wrong branch commits.
+
+### 2. Glanceable, Not Comprehensive
+
+You'll stop reading a status line that's too long. Pick 3-4 most valuable pieces. Use multi-line community tools only if you genuinely need more.
+
+### 3. Performance Matters
+
+Scripts run every 300ms. Keep them fast (\<100ms ideally). Use JSON data when possible, cache slow operations, wrap git commands in existence checks.
+
+## Workflow Selection
+
+| If you need to...                                     | Go to...                                                            |
+| ----------------------------------------------------- | ------------------------------------------------------------------- |
+| Understand what status lines are and when to use them | [Core Understanding](#core-understanding)                           |
+| Solve specific workflow problems (cost, git, model)   | [Practical Workflows](#practical-workflows-why-status-lines-matter) |
+| Choose between custom script and community tools      | [Decision Framework](#decision-framework)                           |
+| Get started quickly with working status line          | [Quick Start](#quick-start)                                         |
+| Optimize slow scripts or fix errors                   | [Performance Considerations](#performance-considerations)           |
+| See complete examples for different use cases         | [Composition Patterns](#composition-patterns)                       |
+| Look up available JSON fields                         | [What's Available](#whats-available-in-json-input)                  |
+| Avoid common mistakes                                 | [Common Pitfalls](#common-pitfalls)                                 |
+
+## Official Documentation
 
 Fetch official documentation with WebFetch:
 
@@ -368,6 +397,37 @@ Your script receives this via stdin (partial list - see official docs for comple
 - `cost.total_duration_ms` - Session duration
 - `workspace.project_dir` - Project root
 - `workspace.current_dir` - Current directory
+
+## Quality Checklist
+
+Before finalizing your status line:
+
+**Configuration:**
+
+- [ ] Script is executable (ran `chmod +x` on script file)
+- [ ] Correct path configured in settings.json
+- [ ] Fetched official docs for current JSON schema
+
+**Performance:**
+
+- [ ] Script runs under 100ms (tested with `time echo '{}' | ./statusline.sh`)
+- [ ] Git commands wrapped in existence checks (`git rev-parse --git-dir`)
+- [ ] Slow operations cached with TTL pattern if needed
+- [ ] No external API calls unless absolutely necessary
+
+**Content:**
+
+- [ ] Displays 3-4 most valuable pieces (not everything available)
+- [ ] Handles non-git directories gracefully (no errors)
+- [ ] Checks for required tools (jq, etc) with fallback
+- [ ] Chosen fields solve actual workflow problems (cost, model, branch)
+
+**Testing:**
+
+- [ ] Tested in git repository (shows branch correctly)
+- [ ] Tested in non-git directory (no errors or warnings)
+- [ ] Tested across multiple sessions (updates correctly)
+- [ ] Status line remains readable (not truncated or wrapped)
 
 ## Documentation References
 

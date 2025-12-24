@@ -1,11 +1,44 @@
 ---
 name: box-factory-hooks-design
-description: Interpretive guidance for designing Claude Code hooks. Helps you understand hook lifecycle, when to use hooks vs other patterns, and common pitfalls. Use when creating or reviewing hooks.
+description: Interpretive guidance for designing Claude Code hooks. Helps you understand hook lifecycle, when to use hooks vs other patterns, and common pitfalls. ALWAYS use when creating or reviewing hooks.
 ---
 
 # Hooks Design Skill
 
 This skill provides interpretive guidance and best practices for creating Claude Code hooks. It helps you understand what the docs mean and how to create excellent hooks.
+
+## Fundamentals
+
+**Prerequisites:** This skill builds on box-factory-architecture. Understanding the component isolation model and delegation patterns is essential.
+
+Three foundational principles for hooks:
+
+1. **Deterministic Enforcement**: Hooks provide guaranteed execution at specific lifecycle events
+2. **Fast and Focused**: Hooks should complete quickly (< 60s) with clear, single-purpose logic
+3. **No User Interaction**: Hooks are fully automated - no prompts, confirmations, or questions
+
+**Design test:** If it needs judgment or user input, it's not a hook - use an agent or command instead.
+
+## Instructions
+
+1. Select a workflow from [Workflow Selection](#workflow-selection) based on your needs
+2. Fetch [official documentation](#official-documentation) when uncertain about current syntax
+
+**Hook creation checklist:** Official specs → Implementation → Validation
+
+## Workflow Selection
+
+| If you need to...                              | Go to...                                                                                                          |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Understand what hooks are and when to use them | [Core Understanding](#core-understanding-best-practices)                                                          |
+| Create hooks for specific lifecycle events     | [Hook Events](#hook-events-official-specification)                                                                |
+| Choose between command and prompt-based hooks  | [Hook Types](#hook-types-official-specification)                                                                  |
+| Implement Python hooks with dependencies       | [Python Hook Scripts](#python-hook-scripts-best-practices)                                                        |
+| Configure hook JSON properly                   | [Configuration Structure](#configuration-structure-official-specification)                                        |
+| Handle hook input/output correctly             | [Hook Input](#hook-input-stdin-official-specification), [Hook Output](#hook-output-stdout-official-specification) |
+| Decide between hook vs agent vs command        | [Decision Framework](#decision-framework-best-practices)                                                          |
+| Debug hooks that aren't working                | [Debugging Hooks](#debugging-hooks-best-practices)                                                                |
+| Validate before deploying                      | [Hook Quality Checklist](#hook-quality-checklist)                                                                 |
 
 ## Official Documentation
 
@@ -13,7 +46,7 @@ This skill provides interpretive guidance and best practices for creating Claude
 
 - **<https://code.claude.com/docs/en/hooks>** - Complete hook reference
 
-## Core Understanding
+## Core Understanding (Best Practices)
 
 ### Hooks Are Deterministic Control
 
@@ -111,37 +144,11 @@ Complete list of available events:
 
 ## Hook Script Implementation Patterns (Best Practices)
 
-### Bash vs Python for Hook Scripts
+### Python Hook Scripts (Best Practices)
 
-**Bash is ideal for:**
+For Python-based hooks requiring dependencies or complex logic, use UV's single-file script format with inline metadata.
 
-- Simple file operations (formatting, linting with external tools)
-- Calling CLI tools directly
-- Quick text processing with standard utilities
-- Minimal logic, mostly orchestration
-
-**Python is better for:**
-
-- Complex validation logic
-- JSON parsing and manipulation
-- Advanced text processing
-- Using Python libraries for analysis
-- Multi-step processing with error handling
-
-### Python Hook Scripts with UV (Best Practice)
-
-For Python-based hooks requiring dependencies or complex logic, use UV's single-file script format with inline metadata. This provides self-contained, executable scripts without separate environment setup.
-
-**When to use Python hooks:**
-
-- Parsing complex JSON from stdin
-- Advanced validation requiring libraries (AST analysis, schema validation)
-- Multi-step processing beyond simple shell pipelines
-- Need for structured error handling and reporting
-
-**Pattern:** Use Skill tool: skill="box-factory:uv-scripts"
-
-The uv-scripts skill provides complete patterns for creating Python hook scripts with inline dependencies, proper shebangs, and Claude Code integration.
+**Deep dive:** [uv-scripts skill](../uv-scripts/SKILL.md) - Complete patterns for creating Python hook scripts with inline dependencies, proper shebangs, and Claude Code integration. **Traverse when:** implementing Python hooks with dependencies, need complete UV script examples. **Skip when:** using bash for simple hooks.
 
 **Quick example:**
 
@@ -175,34 +182,6 @@ if __name__ == "__main__":
 - Fast startup with UV's performance
 - Perfect for plugin hooks (ships with dependencies)
 
-## Matcher Syntax (Official Specification)
-
-Matchers specify which tools trigger hooks (applies to PreToolUse and PostToolUse only):
-
-**Exact matching:**
-
-```json
-"matcher": "Write"
-```
-
-**Regex patterns with pipe:**
-
-```json
-"matcher": "Edit|Write"
-"matcher": "Notebook.*"
-```
-
-**Wildcard (match all):**
-
-```json
-"matcher": "*"
-```
-
-**Empty matcher:**
-Omit for events like `UserPromptSubmit` that don't apply to specific tools.
-
-**Note:** Matchers are case-sensitive.
-
 ## Configuration Structure (Official Specification)
 
 Located in `~/.claude/settings.json`, `.claude/settings.json`, or `.claude/settings.local.json`:
@@ -227,6 +206,8 @@ Located in `~/.claude/settings.json`, `.claude/settings.json`, or `.claude/setti
 ```
 
 **Timeout field:** Optional, specified in seconds (default 60).
+
+**Matcher syntax:** Exact matching, regex with pipe separator, or `*` for all. See official docs for complete syntax.
 
 ## Hook Input (stdin) - Official Specification
 
@@ -277,7 +258,7 @@ Return structured JSON for sophisticated control:
 }
 ```
 
-### PostToolUse Communication Pattern (CRITICAL)
+### PostToolUse Communication Pattern (CRITICAL - Best Practices)
 
 **Key insight:** PostToolUse hooks have two output channels with different visibility:
 
@@ -342,7 +323,7 @@ sys.exit(0)
 - **Both:** Include both fields - user sees status, Claude gets details
 - **Blocking errors:** Use exit 2 with stderr (rare, security/safety only)
 
-### SessionStart Output Format (CRITICAL)
+### SessionStart Output Format (CRITICAL - Official Specification)
 
 SessionStart hooks use a different output pattern than PostToolUse. The `additionalContext` becomes Claude's context at session start.
 
@@ -397,7 +378,7 @@ exit 0
 }
 ```
 
-### PreToolUse Special Output
+### PreToolUse Special Output (Official Specification)
 
 For modifying or blocking tool execution:
 
@@ -425,7 +406,7 @@ Available in command hooks:
 
 **Best practice:** Always quote variables: `"$CLAUDE_PROJECT_DIR"` not `$CLAUDE_PROJECT_DIR`
 
-## Decision Framework
+## Decision Framework (Best Practices)
 
 ### Hook vs Agent vs Command
 
@@ -775,12 +756,12 @@ sys.exit(0)
 **Best practices:**
 
 1. Validate and sanitize all inputs from stdin
-1. Block path traversal (`..` in paths)
-1. Use absolute paths with `$CLAUDE_PROJECT_DIR`
-1. Skip sensitive files (`.env`, credentials, `.git/`)
-1. For prompt-based hooks, be specific about criteria
-1. Set appropriate timeouts
-1. Test in isolated environments first
+2. Block path traversal (`..` in paths)
+3. Use absolute paths with `$CLAUDE_PROJECT_DIR`
+4. Skip sensitive files (`.env`, credentials, `.git/`)
+5. For prompt-based hooks, be specific about criteria
+6. Set appropriate timeouts
+7. Test in isolated environments first
 
 ## Debugging Hooks (Best Practices)
 
@@ -871,7 +852,7 @@ Use Claude Haiku for context-aware decisions:
 }
 ```
 
-## Plugin Integration
+## Plugin Integration (Best Practices)
 
 When creating hooks for plugins:
 
@@ -890,7 +871,7 @@ my-plugin/
 "${CLAUDE_PLUGIN_ROOT}/scripts/hook-script.sh"
 ```
 
-See plugin-design skill for complete plugin context.
+**Deep dive:** [plugin-design skill](../plugin-design/SKILL.md) - Complete plugin packaging and distribution patterns. **Traverse when:** creating plugin-distributed hooks, need plugin structure guidance. **Skip when:** user-level hooks only.
 
 ## Testing Hook Scripts (Best Practices)
 
@@ -945,34 +926,6 @@ def test_hook_allows_valid_file():
 - Keep test files small (prefer inline data over fixtures)
 - Document tests are for development only in README
 
-## Hook Quality Checklist
-
-Before deploying hooks:
-
-**Functionality (from official docs):**
-
-- ✓ Correct event type for use case
-- ✓ Valid matcher pattern (if applicable)
-- ✓ Proper JSON structure in settings
-- ✓ Appropriate timeout configured
-
-**Quality (best practices):**
-
-- ✓ Fast execution (< 60s or custom timeout)
-- ✓ Clear error messages to stderr
-- ✓ Appropriate exit codes (0, 2, other)
-- ✓ No user interaction required
-- ✓ Variables quoted properly
-- ✓ Inputs validated/sanitized
-
-**Security (best practices):**
-
-- ✓ Path traversal blocked
-- ✓ Sensitive files skipped
-- ✓ Absolute paths used
-- ✓ No secret exposure
-- ✓ Tested in safe environment
-
 ## Example: High-Quality Hook
 
 **Basic (hypothetical docs example):**
@@ -1022,6 +975,34 @@ Before deploying hooks:
 - ✅ Custom timeout for faster failures
 - ✅ Redirects stderr to avoid noise
 
+## Hook Quality Checklist
+
+Before deploying hooks:
+
+**Functionality (from official docs):**
+
+- ✓ Correct event type for use case
+- ✓ Valid matcher pattern (if applicable)
+- ✓ Proper JSON structure in settings
+- ✓ Appropriate timeout configured
+
+**Quality (best practices):**
+
+- ✓ Fast execution (< 60s or custom timeout)
+- ✓ Clear error messages to stderr
+- ✓ Appropriate exit codes (0, 2, other)
+- ✓ No user interaction required
+- ✓ Variables quoted properly
+- ✓ Inputs validated/sanitized
+
+**Security (best practices):**
+
+- ✓ Path traversal blocked
+- ✓ Sensitive files skipped
+- ✓ Absolute paths used
+- ✓ No secret exposure
+- ✓ Tested in safe environment
+
 ## Documentation References
 
 Authoritative sources for hook specifications:
@@ -1029,12 +1010,5 @@ Authoritative sources for hook specifications:
 **Core specifications:**
 
 - <https://code.claude.com/docs/en/hooks> - Complete hook reference
-
-**Related topics:**
-
-- See sub-agent-design skill for when to use agents instead
-- See slash-command-design skill for user-triggered operations
-- See plugin-design skill for packaging hooks in plugins
-- See uv-scripts skill for Python-based hook implementation patterns
 
 **Remember:** Official docs provide structure and features. This skill provides best practices and patterns for creating excellent hooks.

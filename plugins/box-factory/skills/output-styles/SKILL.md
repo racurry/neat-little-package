@@ -7,11 +7,28 @@ description: Interpretive guidance for Claude Code output styles - when they add
 
 This skill helps you understand when output styles actually add value. **The key insight most people miss:** output styles affect the main Claude Code conversation, not your agents. If you're already using agents for specialized tasks, output styles might not add anything.
 
+## Fundamentals
+
+**Prerequisites:** Load the box-factory-architecture skill for component selection context.
+
+**Core insight:** Output styles modify the main Claude Code session prompt. They do NOT affect agents, which have their own isolated prompts. Most confusion about output styles stems from misunderstanding this separation.
+
 ## Required Reading
 
 Fetch official documentation with WebFetch:
 
 - **<https://code.claude.com/docs/en/output-styles>** - Official specification and built-in styles
+
+## Workflow Selection
+
+| If you need to...                  | Go to...                                                                    |
+| ---------------------------------- | --------------------------------------------------------------------------- |
+| Understand output styles vs agents | [Critical Architecture Understanding](#critical-architecture-understanding) |
+| Decide if you need an output style | [Decision Framework](#decision-framework)                                   |
+| See when output styles help        | [When Output Styles Actually Help](#when-output-styles-actually-help)       |
+| See when they don't help           | [When Output Styles Don't Help](#when-output-styles-dont-help)              |
+| Create a custom output style       | [Custom Style Design](#custom-style-design)                                 |
+| Identify common mistakes           | [Common Pitfalls](#common-pitfalls)                                         |
 
 ## Critical Architecture Understanding
 
@@ -171,7 +188,7 @@ Ask these questions:
 - Yes → Output styles probably don't add value
 - No → Consider if an agent would be better first
 
-## Built-in Styles
+## Built-in Styles (Official Specification)
 
 | Style           | Purpose              | Use When                          |
 | --------------- | -------------------- | --------------------------------- |
@@ -312,6 +329,26 @@ They're NOT valuable when:
 - You need enforcement (use hooks)
 
 **The honest assessment:** Most developers doing software engineering get the most value from the default style + CLAUDE.md + agents. Output styles shine for learning, onboarding, and non-engineering domains.
+
+## Quality Checklist
+
+Before creating or using output styles:
+
+**Need Assessment:**
+
+- [ ] Doing software engineering? (If yes, default style is optimal)
+- [ ] Need personality change vs context? (Context → CLAUDE.md)
+- [ ] Whole session vs specific tasks? (Specific → agents)
+- [ ] Need enforcement vs guidance? (Enforcement → hooks)
+- [ ] Already delegating to agents? (If yes, styles probably don't help)
+
+**Custom Style Design (if creating):**
+
+- [ ] Fetched official documentation
+- [ ] `keep-coding-instructions` set appropriately (true for coding variants, false for non-engineering)
+- [ ] Description field included (improves discoverability)
+- [ ] Focused on personality/interaction patterns, not project context
+- [ ] Saved in correct location (user vs project level)
 
 ## Documentation References
 

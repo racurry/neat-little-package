@@ -7,6 +7,21 @@ description: Interpretive guidance for designing Claude Code plugins. Helps you 
 
 This skill provides interpretive guidance and best practices for creating Claude Code plugins. It helps you understand what the docs mean and how to create excellent plugins.
 
+## Fundamentals
+
+**Plugins are distribution wrappers, not functionality.**
+
+Core principles:
+
+1. **Packaging First**: Plugins bundle existing components (commands, agents, skills, hooks, MCP servers) for distribution - they don't add new capabilities to Claude Code
+2. **Components at Root**: Directory structure is critical - components MUST be at plugin root, not inside `.claude-plugin/`
+3. **Low-Maintenance**: Defer to official docs for current specs, avoid hardcoding version-specific details
+4. **Progressive Rollout**: Build and test components standalone first, then package as plugin when distribution value is clear
+
+**Design test:** If asking "should this be a plugin?", wrong question. Ask "should I package these existing components for sharing?"
+
+**Deep dive:** [Core Understanding](#core-understanding) - Detailed explanation of packaging model and critical directory structure. **Traverse when:** Creating first plugin, debugging installation issues, understanding why components won't load. **Skip when:** Experienced with plugin structure, focusing on specific aspect like MCP bundling.
+
 ## Workflow Selection
 
 | If you need to...                 | Go to section                                                                |
@@ -119,16 +134,16 @@ Located at `.claude-plugin/plugin.json`:
 | ----------- | ------ | ----------------------------------- |
 | version     | string | Semantic versioning (e.g., "2.1.0") |
 | description | string | Brief plugin purpose explanation    |
-| repository  | string | Source code location                |
 
 ### Optional Metadata Fields We NEVER Use
 
-| Field    | Type   | Purpose                                    |
-| -------- | ------ | ------------------------------------------ |
-| author   | object | Author details: `{name, email, url}`       |
-| homepage | string | Documentation URL                          |
-| license  | string | License identifier (MIT, Apache-2.0, etc.) |
-| keywords | array  | Discovery tags for categorization          |
+| Field      | Type   | Purpose                                    |
+| ---------- | ------ | ------------------------------------------ |
+| author     | object | Author details: `{name, email, url}`       |
+| repository | string | Source code location                       |
+| homepage   | string | Documentation URL                          |
+| license    | string | License identifier (MIT, Apache-2.0, etc.) |
+| keywords   | array  | Discovery tags for categorization          |
 
 ### Component Path Fields (Optional)
 
@@ -141,7 +156,7 @@ Override default locations:
 
 **Note:** Custom paths *supplement* default directories, they don't replace them.
 
-**Best practice:** Always include `description` and `version` even though they're optional - improves discoverability and user trust. Do NOT include `author`, `repository`, `homepage`, `license`, or `keywords` unless explicitly specified.
+**Best practice:** Always include `description` and `version` even though they're optional - improves discoverability and user trust. Do NOT include `author`, `repository`, `homepage`, `license`, or `keywords` unless explicitly specified by the user.
 
 ## Advanced Features (Official Specification)
 
@@ -187,6 +202,8 @@ Define hooks or MCP servers directly in plugin.json instead of separate files:
 **CRITICAL:** When configuring MCP servers in plugins, follow these security, transport, and maintainability patterns.
 
 **Note:** This section covers bundling MCP servers WITH plugins. For adding MCP servers to any project (not plugins), load the `mcp-config` skill instead.
+
+**Deep dive on MCP bundling:** This section provides comprehensive guidance on transport selection, security patterns, OAuth flow, and validation. **Traverse when:** Bundling MCP servers with plugin, configuring external services, handling authentication, troubleshooting MCP issues. **Skip when:** Plugin has no MCP servers, basic plugin creation only.
 
 #### Official Documentation
 
@@ -268,7 +285,16 @@ For MCP servers requiring OAuth (not API keys):
 After enabling plugin, run `/mcp` in Claude Code to authenticate with Service Name.
 ```
 
-#### Always Use External Configuration Files
+#### Always Use External Configuration Files (User Preference)
+
+**Claude knows:** Both inline and external MCP configuration are valid per official docs.
+
+**User prefers external files for:**
+
+- Separation of concerns (metadata vs configuration)
+- Easier independent editing
+- Cleaner plugin.json focused on plugin metadata
+- Matches user expectations from standalone MCP setups
 
 **CRITICAL:** The `.mcp.json` file alone does nothing. You MUST reference it in `plugin.json`:
 
@@ -299,17 +325,27 @@ After enabling plugin, run `/mcp` in Claude Code to authenticate with Service Na
 
 **Common mistake:** Creating `.mcp.json` without adding `"mcpServers": "./.mcp.json"` to plugin.json. The file will be ignored.
 
-#### HTTP Transport Env Var Bug (Temporary Workaround)
+#### HTTP Transport Env Var Bug (Known Issue - Verify Current Status)
 
-**Bug:** [#9427](https://github.com/anthropics/claude-code/issues/9427) - `url` field doesn't interpolate `${VAR}` in plugin .mcp.json files.
+**Known issue as of December 2024:** Environment variable interpolation in the `url` field may not work in plugin .mcp.json files.
+
+**Before using this workaround, verify if still needed:**
+
+1. Create test plugin with `"url": "${MY_TEST_VAR}api/mcp"`
+2. Set environment variable: `export MY_TEST_VAR="https://example.com/"`
+3. Enable plugin and check if URL expands correctly
+4. **If variables expand correctly:** Bug is fixed, skip this section
+5. **If variables DON'T expand:** Use workaround below
+
+**Known interpolation behavior:**
 
 | Field  | Plugin Interpolation |
 | ------ | -------------------- |
-| `url`  | ❌ Broken            |
+| `url`  | ❌ May be broken     |
 | `args` | ✅ Works             |
 | `env`  | ✅ Works             |
 
-**Workaround:** Use `mcp-proxy` via stdio instead of native HTTP transport:
+**Workaround if bug still exists:** Use `mcp-proxy` via stdio instead of native HTTP transport:
 
 ```json
 // BROKEN
@@ -333,7 +369,7 @@ After enabling plugin, run `/mcp` in Claude Code to authenticate with Service Na
 }
 ```
 
-**Remove this workaround when #9427 is fixed.** Revert to native HTTP transport: `"type": "http", "url": "${VAR}..."`
+**When bug is fixed:** Remove this workaround and revert to native HTTP transport: `"type": "http", "url": "${VAR}..."`. Monitor Claude Code release notes for environment variable interpolation fixes.
 
 **❌ WRONG - Inline configuration:**
 
@@ -891,9 +927,8 @@ Before publishing:
 - ✓ Descriptive name (kebab-case)
 - ✓ Clear description (what problem it solves)
 - ✓ Semantic versioning
-- ✓ Author info (for support)
-- ✓ Repository link (for issues/PRs)
-- ✓ Keywords for discovery
+- ✓ Only include optional fields we use (version, description)
+- ✓ Do NOT include fields we never use (author, repository, homepage, license, keywords)
 
 **Documentation (best practices):**
 
@@ -910,6 +945,10 @@ Before publishing:
 - ✓ No duplication of core functionality
 - ✓ Components complement each other
 - ✓ Tested locally before publishing
+
+**MCP Servers (if bundled):**
+
+- ✓ See [MCP Configuration Checklist](#mcp-configuration-checklist) for complete validation
 
 ## Example: High-Quality Plugin Manifest
 
@@ -933,12 +972,12 @@ Before publishing:
 {
   "name": "python-testing-suite",
   "version": "1.0.0",
-  "description": "Comprehensive Python testing tools with pytest integration, coverage reporting, and failure analysis",
-  "repository": "https://github.com/username/python-testing-suite",
+  "description": "Comprehensive Python testing tools with pytest integration, coverage reporting, and failure analysis"
 }
 ```
 
 **Improvements:**
 
-- ✅ Specific description (what it does, how it helps)
-- ✅ (optional, but okay)Repository for issues and PRs
+- ✅ Specific name (describes what it does, not generic "my-plugin")
+- ✅ Semantic version for update tracking
+- ✅ Descriptive summary (what it does, how it helps)

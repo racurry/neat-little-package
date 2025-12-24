@@ -7,17 +7,35 @@ description: UV-specific patterns for single-file Python scripts using inline me
 
 This skill documents UV-specific patterns for single-file Python scripts with inline dependency metadata. For general Python knowledge, Claude relies on base training.
 
+## Fundamentals
+
+**Single-file Python scripts with embedded dependencies** - UV scripts use PEP 723 inline metadata to declare dependencies directly in the file, enabling self-contained execution without separate requirements.txt or environment setup.
+
+**Key principles:**
+
+- **Self-contained:** All dependencies declared inline
+- **Automatic isolation:** UV creates ephemeral environments on-demand
+- **Executable:** Shebang pattern enables direct execution
+- **Ideal for hooks:** Deterministic, fast, no external configuration
+
+## Workflow Selection
+
+| If you need to...                 | Go to...                                                                 |
+| --------------------------------- | ------------------------------------------------------------------------ |
+| Create a UV script from scratch   | [Inline Metadata Format](#inline-metadata-format-official-specification) |
+| Make a script executable          | [Shebang Pattern](#shebang-pattern-for-executables-best-practice)        |
+| Create a Claude Code hook script  | [Common Pattern](#common-pattern-claude-code-hook-script)                |
+| Understand when to use UV scripts | [When to Use](#when-to-use-uv-scripts-best-practices)                    |
+| Troubleshoot UV script failures   | [Critical Gotchas](#critical-gotchas-best-practices)                     |
+| Validate before completion        | [Quality Checklist](#quality-checklist)                                  |
+
 ## Official Documentation
 
 Fetch when you need current UV script syntax:
 
 - **<https://docs.astral.sh/uv/guides/scripts/>** - Official UV scripts guide with current syntax
 
-## Core Understanding
-
-**What UV scripts solve:** Traditional Python scripts require separate environment setup or requirements.txt files. UV's inline metadata format (PEP 723) embeds dependencies directly in the script, enabling automatic environment creation on-demand.
-
-**Key insight:** UV scripts are ideal for Claude Code hooks and standalone utilities because they're self-contained and executable without external configuration.
+**Deep dive:** [Official Documentation](#official-documentation) - Current UV syntax. **Traverse when:** creating first UV script, syntax errors, need current PEP 723 specification. **Skip when:** familiar with inline metadata format.
 
 ## Inline Metadata Format (Official Specification)
 
@@ -126,6 +144,8 @@ sys.exit(result.returncode)
 - Scripts with many files (multi-file projects need project structure)
 - Development requiring lockfile management (scripts don't auto-lock)
 
+**Deep dive:** [When to Use UV Scripts](#when-to-use-uv-scripts-best-practices) - Decision framework for UV scripts vs projects. **Traverse when:** choosing between script and project structure, unsure if UV script fits use case. **Skip when:** clear hook or utility script use case.
+
 ## Critical Gotchas (Best Practices)
 
 ### Gotcha #1: Empty Dependencies Must Be Explicit
@@ -175,6 +195,8 @@ This creates `script.lock` alongside `script.py`.
 #!/usr/bin/env -S uv run --script
 # SUCCESS: Splits arguments correctly
 ```
+
+**Deep dive:** [Critical Gotchas](#critical-gotchas-best-practices) - Common failures with solutions. **Traverse when:** UV script fails, dependency errors, shebang not working, lockfile issues. **Skip when:** script runs successfully, familiar with UV patterns.
 
 ## Quality Checklist
 
@@ -277,5 +299,5 @@ if __name__ == "__main__":
 
 **Related patterns:**
 
-- Fetch box-factory:hooks-design skill for hook lifecycle and execution patterns
+- Fetch box-factory:hook-design skill for hook lifecycle and execution patterns
 - UV project documentation for multi-file Python projects
