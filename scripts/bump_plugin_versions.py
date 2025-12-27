@@ -31,9 +31,17 @@ def get_staged_plugins() -> dict[str, bool]:
     )
     files = result.stdout.strip().split("\n") if result.stdout.strip() else []
 
+    # Files that don't affect plugin functionality (developer docs, not user-facing)
+    ignored_files = {"CLAUDE.md", "CLAUDE.local.md"}
+
     plugins = {}
     for f in files:
         if match := re.match(r"plugins/([^/]+)/", f):
+            # Skip developer documentation files
+            filename = Path(f).name
+            if filename in ignored_files:
+                continue
+
             name = match.group(1)
             plugins.setdefault(name, False)
             if ".claude-plugin/plugin.json" in f:
@@ -70,9 +78,7 @@ def prompt_user() -> bool:
     if not sys.stdin.isatty():
         return True  # Non-interactive (CI, etc.) - proceed
 
-    print(
-        "\nPlugin changes detected. Run version analysis? [Y/n] ", end="", flush=True
-    )
+    print("\nPlugin changes detected. Run version analysis? [Y/n] ", end="", flush=True)
     response = input().strip().lower()
     return response in ("", "y", "yes")
 
@@ -137,11 +143,7 @@ def bump_version(version: str, level: str) -> str:
 def main():
     # Find plugins with staged changes (excluding manual plugin.json edits)
     plugins = get_staged_plugins()
-    plugins_to_bump = {
-        name: get_diff(name)
-        for name, was_manual in plugins.items()
-        if not was_manual and get_diff(name).strip()
-    }
+    plugins_to_bump = {name: get_diff(name) for name, was_manual in plugins.items() if not was_manual and get_diff(name).strip()}
 
     if not plugins_to_bump:
         print("  No plugins changed; no version bump needed")
