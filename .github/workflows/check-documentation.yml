@@ -15,6 +15,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
 
 jobs:
   check-docs:
@@ -25,7 +26,7 @@ jobs:
 
       - uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             # Box Factory Documentation Maintenance
 
@@ -90,4 +91,4 @@ jobs:
             If updates needed, create the PR and output the PR URL.
 
             ${{ inputs.dry_run == true && 'NOTE: This is a dry run. Do NOT create branches or PRs - just report what you would change and why.' || '' }}
-          claude_args: "--max-turns 50"
+          claude_args: '--max-turns 50'
