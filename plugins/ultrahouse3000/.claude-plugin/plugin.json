@@ -1,6 +1,6 @@
 {
   "name": "ultrahouse3000",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Home Assistant integration for Claude Code with automation guidance, entity management, and MCP server connectivity",
   "mcpServers": "./.mcp.json"
 }

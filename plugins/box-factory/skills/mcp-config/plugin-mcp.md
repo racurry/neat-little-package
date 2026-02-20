@@ -44,27 +44,20 @@ When bundling custom MCP servers in plugins, use `${CLAUDE_PLUGIN_ROOT}` for rel
 }
 ```
 
-## Plugin HTTP Transport Bug (Temporary Workaround)
+## Plugin HTTP Transport
 
-**Bug:** [#9427](https://github.com/anthropics/claude-code/issues/9427) - `url` field env var interpolation broken for plugins.
-
-| Field  | Plugin Interpolation             |
-| ------ | -------------------------------- |
-| `url`  | Broken - literal `${VAR}` passed |
-| `args` | Works                            |
-| `env`  | Works (pass-through)             |
-
-**Workaround:** For HTTP MCP servers needing env vars in plugins, use `mcp-proxy` via stdio:
+Environment variable interpolation in `url`, `args`, and `env` fields all work correctly in plugin `.mcp.json` files. Use native HTTP transport directly:
 
 ```json
 {
   "mcpServers": {
     "my-http-server": {
-      "command": "npx",
-      "args": ["-y", "@anthropic-ai/mcp-proxy", "http", "${MY_SERVER_URL}api/endpoint"]
+      "type": "http",
+      "url": "${MY_SERVER_URL}api/endpoint",
+      "headers": {
+        "Authorization": "Bearer ${MY_TOKEN}"
+      }
     }
   }
 }
 ```
-
-**Remove this workaround when #9427 is fixed.** Revert to native HTTP transport: `"type": "http", "url": "${VAR}..."`

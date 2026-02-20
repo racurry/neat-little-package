@@ -325,51 +325,23 @@ After enabling plugin, run `/mcp` in Claude Code to authenticate with Service Na
 
 **Common mistake:** Creating `.mcp.json` without adding `"mcpServers": "./.mcp.json"` to plugin.json. The file will be ignored.
 
-#### HTTP Transport Env Var Bug (Known Issue - Verify Current Status)
+#### HTTP Transport with Environment Variables
 
-**Known issue as of December 2024:** Environment variable interpolation in the `url` field may not work in plugin .mcp.json files.
-
-**Before using this workaround, verify if still needed:**
-
-1. Create test plugin with `"url": "${MY_TEST_VAR}api/mcp"`
-2. Set environment variable: `export MY_TEST_VAR="https://example.com/"`
-3. Enable plugin and check if URL expands correctly
-4. **If variables expand correctly:** Bug is fixed, skip this section
-5. **If variables DON'T expand:** Use workaround below
-
-**Known interpolation behavior:**
-
-| Field  | Plugin Interpolation |
-| ------ | -------------------- |
-| `url`  | ❌ May be broken     |
-| `args` | ✅ Works             |
-| `env`  | ✅ Works             |
-
-**Workaround if bug still exists:** Use `mcp-proxy` via stdio instead of native HTTP transport:
+Environment variable interpolation works in all fields (`url`, `args`, `env`) in plugin `.mcp.json` files. Use native HTTP transport directly:
 
 ```json
-// BROKEN
 {
   "mcpServers": {
     "my-server": {
       "type": "http",
-      "url": "${SERVER_URL}api/mcp"
-    }
-  }
-}
-
-// WORKAROUND
-{
-  "mcpServers": {
-    "my-server": {
-      "command": "npx",
-      "args": ["-y", "@anthropic-ai/mcp-proxy", "http", "${SERVER_URL}api/mcp"]
+      "url": "${SERVER_URL}api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${SERVER_TOKEN}"
+      }
     }
   }
 }
 ```
-
-**When bug is fixed:** Remove this workaround and revert to native HTTP transport: `"type": "http", "url": "${VAR}..."`. Monitor Claude Code release notes for environment variable interpolation fixes.
 
 **❌ WRONG - Inline configuration:**
 

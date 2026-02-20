@@ -32,8 +32,11 @@ Configured in `.mcp.json`:
 {
   "mcpServers": {
     "homeassistant": {
-      "command": "uvx",
-      "args": ["mcp-proxy", "--transport", "streamablehttp", "-H", "Authorization", "Bearer ${HOMEASSISTANT_TOKEN}", "${HOMEASSISTANT_URL}/api/mcp"]
+      "type": "http",
+      "url": "${HOMEASSISTANT_URL}/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${HOMEASSISTANT_TOKEN}"
+      }
     }
   }
 }
