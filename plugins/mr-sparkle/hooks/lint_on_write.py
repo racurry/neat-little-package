@@ -6,11 +6,16 @@
 PostToolUse linting hook for Claude Code.
 
 Thin wrapper that delegates to skills/linting/scripts/lint.py --stdin-hook.
+Respects per-project config from ~/.config/neat-little-package/mr-sparkle.toml.
 """
 
+import json
 import subprocess
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "_lib"))
+from plugin_config import get_plugin_config
 
 
 def main():
@@ -22,8 +27,20 @@ def main():
     if not lint_script.is_file():
         sys.exit(0)
 
-    # Read stdin and pass through to lint.py
+    # Read stdin (needed for both config check and delegation)
     stdin_data = sys.stdin.read()
+
+    # Check per-project config
+    try:
+        hook_input = json.loads(stdin_data)
+        cwd = hook_input.get("cwd", "")
+    except (json.JSONDecodeError, AttributeError):
+        cwd = ""
+
+    if cwd:
+        config = get_plugin_config("mr-sparkle", cwd)
+        if not config.get("lint_on_write", True):
+            sys.exit(0)
 
     result = subprocess.run(
         [sys.executable, str(lint_script), "--stdin-hook"],

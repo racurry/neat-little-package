@@ -15,6 +15,10 @@ Exit codes:
 
 import json
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "_lib"))
+from plugin_config import get_plugin_config
 
 
 def main():
@@ -23,6 +27,13 @@ def main():
         hook_input = json.load(sys.stdin)
     except json.JSONDecodeError:
         sys.exit(0)
+
+    # Check per-project config
+    cwd = hook_input.get("cwd", "")
+    if cwd:
+        config = get_plugin_config("mr-sparkle", cwd)
+        if not config.get("block_direct_markdownlint", True):
+            sys.exit(0)
 
     tool_name = hook_input.get("tool_name", "")
     tool_input = hook_input.get("tool_input", {})

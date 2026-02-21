@@ -13,6 +13,10 @@ standard git commands from the working directory instead.
 import json
 import re
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "_lib"))
+from plugin_config import get_plugin_config
 
 
 def block(reason: str) -> None:
@@ -28,6 +32,13 @@ def main():
         hook_input = json.load(sys.stdin)
     except json.JSONDecodeError:
         sys.exit(0)
+
+    # Check per-project config
+    cwd = hook_input.get("cwd", "")
+    if cwd:
+        config = get_plugin_config("dmv", cwd)
+        if not config.get("block_git_dash_c", True):
+            sys.exit(0)
 
     # Only process Bash tool calls
     if hook_input.get("tool_name") != "Bash":

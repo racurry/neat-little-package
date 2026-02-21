@@ -1,11 +1,14 @@
 """Tests for lint_on_write.py hook (thin wrapper over lint.py)."""
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 import pytest
+
+HOOK_PATH = Path(__file__).parent.parent / "hooks" / "lint_on_write.py"
 
 
 # =============================================================================
@@ -16,7 +19,7 @@ import pytest
 @pytest.fixture
 def hook_script():
     """Path to the lint_on_write.py hook."""
-    return Path(__file__).parent.parent / "hooks" / "lint_on_write.py"
+    return HOOK_PATH
 
 
 @pytest.fixture
@@ -119,3 +122,69 @@ class TestThinWrapper:
         )
 
         assert result.returncode == 0
+
+
+# =============================================================================
+# Tests: Per-project config
+# =============================================================================
+
+
+class TestConfigDisabling:
+    """Test that lint_on_write respects per-project config."""
+
+    def test_skips_linting_when_disabled(self, tmp_path):
+        """When lint_on_write is disabled for the cwd, hook exits with no output."""
+        config_dir = tmp_path / "config"
+        config_dir.mkdir()
+        (config_dir / "mr-sparkle.toml").write_text(f'[[overrides]]\nmatch = "{tmp_path}/project"\nlint_on_write = false\n')
+
+        project_dir = tmp_path / "project"
+        project_dir.mkdir()
+        test_file = project_dir / "main.py"
+        test_file.write_text("x=1\n")
+
+        hook_input = json.dumps(
+            {
+                "tool_input": {"file_path": str(test_file)},
+                "cwd": str(project_dir),
+            }
+        )
+
+        result = subprocess.run(
+            [sys.executable, str(HOOK_PATH)],
+            input=hook_input,
+            capture_output=True,
+            text=True,
+            env={**os.environ, "NLP_CONFIG_DIR": str(config_dir)},
+        )
+
+        assert result.returncode == 0
+        assert result.stdout == ""
+
+    def test_runs_normally_when_no_config(self, hook_script, python_project_with_ruff):
+        """Without config file, hook runs lint.py normally (fail-open)."""
+        import shutil
+
+        if not shutil.which("ruff"):
+            pytest.skip("ruff not installed")
+
+        file_path = python_project_with_ruff / "main.py"
+        hook_input = json.dumps(
+            {
+                "tool_input": {"file_path": str(file_path)},
+                "cwd": str(python_project_with_ruff),
+            }
+        )
+
+        result = subprocess.run(
+            [sys.executable, str(hook_script)],
+            input=hook_input,
+            capture_output=True,
+            text=True,
+            env={**os.environ, "NLP_CONFIG_DIR": "/nonexistent/path"},
+        )
+
+        assert result.returncode == 0
+        if result.stdout:
+            data = json.loads(result.stdout)
+            assert "systemMessage" in data

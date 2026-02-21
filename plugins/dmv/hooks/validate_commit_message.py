@@ -10,10 +10,13 @@ and validates the message format. Warns (non-blocking) if violations found.
 """
 
 import json
-import sys
 import re
 import subprocess
-from typing import Optional, List
+import sys
+from pathlib import Path
+from typing import List, Optional
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "_lib"))
 
 
 def output_warning(message: str) -> None:
@@ -115,12 +118,21 @@ def validate_commit_message(message: str) -> List[str]:
 
 def main():
     """Main hook entry point."""
+    from plugin_config import get_plugin_config
+
     try:
         # Read hook input from stdin
         hook_input = json.load(sys.stdin)
     except json.JSONDecodeError:
         # Invalid input, silently exit
         sys.exit(0)
+
+    # Check per-project config
+    cwd = hook_input.get("cwd", "")
+    if cwd:
+        config = get_plugin_config("dmv", cwd)
+        if not config.get("validate_commit_message", True):
+            sys.exit(0)
 
     # Only process Bash tool calls
     tool_name = hook_input.get("tool_name", "")

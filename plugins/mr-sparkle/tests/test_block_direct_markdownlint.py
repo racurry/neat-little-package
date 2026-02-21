@@ -1,22 +1,26 @@
 """Tests for block_direct_markdownlint.py hook."""
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 
-import pytest
 
 HOOK_PATH = Path(__file__).parent.parent / "hooks" / "block_direct_markdownlint.py"
 
 
-def run_hook(hook_input: dict) -> subprocess.CompletedProcess:
+def run_hook(hook_input: dict, env_override: dict = None) -> subprocess.CompletedProcess:
     """Run the hook with given input and return the result."""
+    env = {**os.environ}
+    if env_override:
+        env.update(env_override)
     return subprocess.run(
         [sys.executable, str(HOOK_PATH)],
         input=json.dumps(hook_input),
         capture_output=True,
         text=True,
+        env=env,
     )
 
 
@@ -53,10 +57,7 @@ class TestAllowOtherBashCommands:
 
     def test_allows_grep_with_markdownlint_in_output(self):
         # Should allow grep even if searching for markdownlint
-        result = run_hook({
-            "tool_name": "Bash",
-            "tool_input": {"command": "grep markdownlint-cli2 package.json"}
-        })
+        result = run_hook({"tool_name": "Bash", "tool_input": {"command": "grep markdownlint-cli2 package.json"}})
         assert result.returncode == 0
 
 
@@ -64,32 +65,20 @@ class TestBlockDirectMarkdownlint:
     """Hook should block direct markdownlint-cli2 without --config."""
 
     def test_blocks_simple_invocation(self):
-        result = run_hook({
-            "tool_name": "Bash",
-            "tool_input": {"command": "markdownlint-cli2 README.md"}
-        })
+        result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2 README.md"}})
         assert result.returncode == 2
         assert "markdownlint-cli2 requires a --config" in result.stderr
 
     def test_blocks_with_fix_flag(self):
-        result = run_hook({
-            "tool_name": "Bash",
-            "tool_input": {"command": "markdownlint-cli2 --fix docs/"}
-        })
+        result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2 --fix docs/"}})
         assert result.returncode == 2
 
     def test_blocks_glob_pattern(self):
-        result = run_hook({
-            "tool_name": "Bash",
-            "tool_input": {"command": "markdownlint-cli2 **/*.md"}
-        })
+        result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2 **/*.md"}})
         assert result.returncode == 2
 
     def test_error_message_suggests_slash_command(self):
-        result = run_hook({
-            "tool_name": "Bash",
-            "tool_input": {"command": "markdownlint-cli2 README.md"}
-        })
+        result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2 README.md"}})
         assert "/mr-sparkle:lint-md" in result.stderr
 
 
@@ -97,24 +86,15 @@ class TestAllowMarkdownlintWithConfig:
     """Hook should allow markdownlint-cli2 when --config is specified."""
 
     def test_allows_with_config_flag(self):
-        result = run_hook({
-            "tool_name": "Bash",
-            "tool_input": {"command": "markdownlint-cli2 --config .markdownlint.json README.md"}
-        })
+        result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2 --config .markdownlint.json README.md"}})
         assert result.returncode == 0
 
     def test_allows_config_at_end(self):
-        result = run_hook({
-            "tool_name": "Bash",
-            "tool_input": {"command": "markdownlint-cli2 README.md --config ~/.markdownlint.jsonc"}
-        })
+        result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2 README.md --config ~/.markdownlint.jsonc"}})
         assert result.returncode == 0
 
     def test_allows_with_fix_and_config(self):
-        result = run_hook({
-            "tool_name": "Bash",
-            "tool_input": {"command": "markdownlint-cli2 --fix --config config.json docs/"}
-        })
+        result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2 --fix --config config.json docs/"}})
         assert result.returncode == 0
 
 
@@ -145,16 +125,42 @@ class TestEdgeCases:
 
     def test_markdownlint_not_at_start(self):
         # Should allow if markdownlint-cli2 isn't at the start
-        result = run_hook({
-            "tool_name": "Bash",
-            "tool_input": {"command": "echo markdownlint-cli2 test"}
-        })
+        result = run_hook({"tool_name": "Bash", "tool_input": {"command": "echo markdownlint-cli2 test"}})
         assert result.returncode == 0
 
     def test_just_markdownlint_no_space(self):
         # "markdownlint-cli2" without trailing space shouldn't match
-        result = run_hook({
-            "tool_name": "Bash",
-            "tool_input": {"command": "markdownlint-cli2"}
-        })
+        result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2"}})
         assert result.returncode == 0  # No space after, doesn't match pattern
+
+
+class TestConfigDisabling:
+    """Test that block_direct_markdownlint respects per-project config."""
+
+    def test_allows_markdownlint_when_disabled(self, tmp_path):
+        """When disabled for the cwd, direct markdownlint is allowed."""
+        config_dir = tmp_path / "config"
+        config_dir.mkdir()
+        (config_dir / "mr-sparkle.toml").write_text(f'[[overrides]]\nmatch = "{tmp_path}/project"\nblock_direct_markdownlint = false\n')
+
+        result = run_hook(
+            {
+                "tool_name": "Bash",
+                "tool_input": {"command": "markdownlint-cli2 README.md"},
+                "cwd": str(tmp_path / "project"),
+            },
+            env_override={"NLP_CONFIG_DIR": str(config_dir)},
+        )
+        assert result.returncode == 0
+
+    def test_blocks_when_no_config(self):
+        """Without config, blocking behavior is the default."""
+        result = run_hook(
+            {
+                "tool_name": "Bash",
+                "tool_input": {"command": "markdownlint-cli2 README.md"},
+                "cwd": "/some/project",
+            },
+            env_override={"NLP_CONFIG_DIR": "/nonexistent/path"},
+        )
+        assert result.returncode == 2
