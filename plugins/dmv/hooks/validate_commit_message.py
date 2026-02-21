@@ -10,13 +10,47 @@ and validates the message format. Warns (non-blocking) if violations found.
 """
 
 import json
+import os
 import re
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 from typing import List, Optional
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "_lib"))
+
+def _get_config(cwd: str) -> dict:
+    """Read dmv config with directory-specific overrides."""
+    config_dir = Path(
+        os.environ.get("NLP_CONFIG_DIR", "~/.config/neat-little-package")
+    ).expanduser()
+    config_file = config_dir / "dmv.toml"
+
+    if not config_file.is_file():
+        return {}
+
+    try:
+        with open(config_file, "rb") as f:
+            data = tomllib.load(f)
+    except Exception:
+        return {}
+
+    resolved = {k: v for k, v in data.items() if k != "overrides"}
+    for override in data.get("overrides", []):
+        pattern = override.get("match", "")
+        if not pattern:
+            continue
+        prefix = str(Path(pattern).expanduser()).rstrip("/")
+        for suffix in ("/**", "/*"):
+            if prefix.endswith(suffix):
+                prefix = prefix[: -len(suffix)]
+                break
+        if cwd == prefix or cwd.startswith(prefix + "/"):
+            for k, v in override.items():
+                if k != "match":
+                    resolved[k] = v
+
+    return resolved
 
 
 def output_warning(message: str) -> None:
@@ -118,8 +152,6 @@ def validate_commit_message(message: str) -> List[str]:
 
 def main():
     """Main hook entry point."""
-    from plugin_config import get_plugin_config
-
     try:
         # Read hook input from stdin
         hook_input = json.load(sys.stdin)
@@ -130,7 +162,7 @@ def main():
     # Check per-project config
     cwd = hook_input.get("cwd", "")
     if cwd:
-        config = get_plugin_config("dmv", cwd)
+        config = _get_config(cwd)
         if not config.get("validate_commit_message", True):
             sys.exit(0)
 

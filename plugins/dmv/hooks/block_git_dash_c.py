@@ -11,12 +11,45 @@ standard git commands from the working directory instead.
 """
 
 import json
+import os
 import re
 import sys
+import tomllib
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "_lib"))
-from plugin_config import get_plugin_config
+
+def _get_config(cwd: str) -> dict:
+    """Read dmv config with directory-specific overrides."""
+    config_dir = Path(
+        os.environ.get("NLP_CONFIG_DIR", "~/.config/neat-little-package")
+    ).expanduser()
+    config_file = config_dir / "dmv.toml"
+
+    if not config_file.is_file():
+        return {}
+
+    try:
+        with open(config_file, "rb") as f:
+            data = tomllib.load(f)
+    except Exception:
+        return {}
+
+    resolved = {k: v for k, v in data.items() if k != "overrides"}
+    for override in data.get("overrides", []):
+        pattern = override.get("match", "")
+        if not pattern:
+            continue
+        prefix = str(Path(pattern).expanduser()).rstrip("/")
+        for suffix in ("/**", "/*"):
+            if prefix.endswith(suffix):
+                prefix = prefix[: -len(suffix)]
+                break
+        if cwd == prefix or cwd.startswith(prefix + "/"):
+            for k, v in override.items():
+                if k != "match":
+                    resolved[k] = v
+
+    return resolved
 
 
 def block(reason: str) -> None:
@@ -36,7 +69,7 @@ def main():
     # Check per-project config
     cwd = hook_input.get("cwd", "")
     if cwd:
-        config = get_plugin_config("dmv", cwd)
+        config = _get_config(cwd)
         if not config.get("block_git_dash_c", True):
             sys.exit(0)
 

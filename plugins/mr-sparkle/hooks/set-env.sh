@@ -11,7 +11,7 @@
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PLUGIN_ROOT="$(dirname "$SCRIPT_DIR")"
 
-# Try to set env var if available (currently broken for plugin hooks)
+# Try to set env var if available
 # Note: CLAUDE_ENV_FILE not available for plugin hooks, see https://github.com/anthropics/claude-code/issues/9567
 if [ -n "$CLAUDE_ENV_FILE" ]; then
   echo "export MR_SPARKLE_ROOT=$PLUGIN_ROOT" >> "$CLAUDE_ENV_FILE"
