@@ -139,17 +139,18 @@ class TestConfigDisabling:
 
     def test_allows_markdownlint_when_disabled(self, tmp_path):
         """When disabled for the cwd, direct markdownlint is allowed."""
-        config_dir = tmp_path / "config"
-        config_dir.mkdir()
-        (config_dir / "mr-sparkle.toml").write_text(f'[[overrides]]\nmatch = "{tmp_path}/project"\nblock_direct_markdownlint = false\n')
+        project_dir = tmp_path / "project"
+        project_dir.mkdir()
+        claude_dir = project_dir / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "mr-sparkle.local.md").write_text("---\nblock_direct_markdownlint: false\n---\n")
 
         result = run_hook(
             {
                 "tool_name": "Bash",
                 "tool_input": {"command": "markdownlint-cli2 README.md"},
-                "cwd": str(tmp_path / "project"),
+                "cwd": str(project_dir),
             },
-            env_override={"NLP_CONFIG_DIR": str(config_dir)},
         )
         assert result.returncode == 0
 

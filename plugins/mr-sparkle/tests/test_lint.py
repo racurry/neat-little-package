@@ -1,4 +1,4 @@
-"""Tests for skills/linting/scripts/lint.py universal linting CLI."""
+"""Tests for skills/lint/scripts/lint.py universal linting CLI."""
 
 import json
 import subprocess
@@ -9,7 +9,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 # Import the module under test
-sys.path.insert(0, str(Path(__file__).parent.parent / "skills" / "linting" / "scripts"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "skills" / "lint" / "scripts"))
 import lint
 
 
@@ -404,18 +404,16 @@ class TestGetSkillDefaultConfig:
         assert lint.get_skill_default_config("eslint") is None
 
     def test_returns_path_for_markdownlint_if_exists(self):
-        # This tests the actual file structure - may need adjustment
         result = lint.get_skill_default_config("markdownlint")
         if result is not None:
-            assert "markdown-quality" in str(result)
-            assert result.name == "default-config.jsonc"
+            assert "skills/lint/defaults" in str(result)
+            assert result.name == "default-markdownlint.jsonc"
 
     def test_returns_path_for_prettier_if_exists(self):
-        # This tests the actual file structure
         result = lint.get_skill_default_config("prettier")
         if result is not None:
-            assert "prettier-quality" in str(result)
-            assert result.name == "default-config.json5"
+            assert "skills/lint/defaults" in str(result)
+            assert result.name == "default-prettier.json5"
 
 
 # =============================================================================
@@ -553,7 +551,7 @@ class TestHasGemfileGem:
 class TestCliParsing:
     def test_help_does_not_crash(self):
         """Verify --help works without errors."""
-        script_path = Path(__file__).parent.parent / "skills" / "linting" / "scripts" / "lint.py"
+        script_path = Path(__file__).parent.parent / "skills" / "lint" / "scripts" / "lint.py"
         result = subprocess.run(
             [sys.executable, str(script_path), "--help"],
             capture_output=True,
@@ -564,7 +562,7 @@ class TestCliParsing:
 
     def test_requires_file_without_stdin_hook(self):
         """Verify error when no file provided (and not --stdin-hook)."""
-        script_path = Path(__file__).parent.parent / "skills" / "linting" / "scripts" / "lint.py"
+        script_path = Path(__file__).parent.parent / "skills" / "lint" / "scripts" / "lint.py"
         result = subprocess.run(
             [sys.executable, str(script_path)],
             capture_output=True,
@@ -590,7 +588,7 @@ class TestIntegration:
             pytest.skip("ruff not installed")
 
         file_path = python_project_with_ruff / "main.py"
-        script_path = Path(__file__).parent.parent / "skills" / "linting" / "scripts" / "lint.py"
+        script_path = Path(__file__).parent.parent / "skills" / "lint" / "scripts" / "lint.py"
 
         result = subprocess.run(
             [sys.executable, str(script_path), str(file_path), "--format", "json"],
@@ -612,7 +610,7 @@ class TestIntegration:
             pytest.skip("markdownlint-cli2 not installed")
 
         file_path = markdown_project / "README.md"
-        script_path = Path(__file__).parent.parent / "skills" / "linting" / "scripts" / "lint.py"
+        script_path = Path(__file__).parent.parent / "skills" / "lint" / "scripts" / "lint.py"
 
         result = subprocess.run(
             [sys.executable, str(script_path), str(file_path), "--format", "json"],
@@ -632,7 +630,7 @@ class TestIntegration:
             pytest.skip("ruff not installed")
 
         file_path = python_project_with_ruff / "main.py"
-        script_path = Path(__file__).parent.parent / "skills" / "linting" / "scripts" / "lint.py"
+        script_path = Path(__file__).parent.parent / "skills" / "lint" / "scripts" / "lint.py"
 
         hook_input = json.dumps({"tool_input": {"file_path": str(file_path)}})
 
@@ -656,7 +654,7 @@ class TestIntegration:
             pytest.skip("prettier not installed")
 
         file_path = yaml_project_with_prettier / "config.yaml"
-        script_path = Path(__file__).parent.parent / "skills" / "linting" / "scripts" / "lint.py"
+        script_path = Path(__file__).parent.parent / "skills" / "lint" / "scripts" / "lint.py"
 
         result = subprocess.run(
             [sys.executable, str(script_path), str(file_path), "--format", "json"],
@@ -677,7 +675,7 @@ class TestIntegration:
             pytest.skip("prettier not installed")
 
         file_path = json_project_with_prettier / "data.json"
-        script_path = Path(__file__).parent.parent / "skills" / "linting" / "scripts" / "lint.py"
+        script_path = Path(__file__).parent.parent / "skills" / "lint" / "scripts" / "lint.py"
 
         result = subprocess.run(
             [sys.executable, str(script_path), str(file_path), "--format", "json"],
@@ -703,7 +701,7 @@ class TestIntegration:
         # Badly formatted YAML
         file_path.write_text("name:    unformatted  \nitems: [ x, y,  z ]\n")
 
-        script_path = Path(__file__).parent.parent / "skills" / "linting" / "scripts" / "lint.py"
+        script_path = Path(__file__).parent.parent / "skills" / "lint" / "scripts" / "lint.py"
 
         result = subprocess.run(
             [sys.executable, str(script_path), str(file_path)],

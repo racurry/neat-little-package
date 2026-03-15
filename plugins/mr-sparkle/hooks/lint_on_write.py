@@ -5,7 +5,7 @@
 """
 PostToolUse linting hook for Claude Code.
 
-Thin wrapper that delegates to skills/linting/scripts/lint.py --stdin-hook.
+Thin wrapper that delegates to skills/lint/scripts/lint.py --stdin-hook.
 Respects per-project config from .claude/mr-sparkle.local.md.
 """
 
@@ -40,7 +40,7 @@ def main():
     """Delegate to lint.py --stdin-hook."""
     # Locate lint.py relative to this hook
     hook_dir = Path(__file__).resolve().parent
-    lint_script = hook_dir.parent / "skills" / "linting" / "scripts" / "lint.py"
+    lint_script = hook_dir.parent / "skills" / "lint" / "scripts" / "lint.py"
 
     if not lint_script.is_file():
         sys.exit(0)

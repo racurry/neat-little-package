@@ -43,7 +43,7 @@ class TestThinWrapper:
 
     def test_lint_script_exists(self, hook_script):
         """The lint.py script that the hook delegates to must exist."""
-        lint_script = hook_script.parent.parent / "skills" / "linting" / "scripts" / "lint.py"
+        lint_script = hook_script.parent.parent / "skills" / "lint" / "scripts" / "lint.py"
         assert lint_script.is_file()
 
     def test_passes_stdin_to_lint_script(self, hook_script, python_project_with_ruff):
@@ -134,12 +134,12 @@ class TestConfigDisabling:
 
     def test_skips_linting_when_disabled(self, tmp_path):
         """When lint_on_write is disabled for the cwd, hook exits with no output."""
-        config_dir = tmp_path / "config"
-        config_dir.mkdir()
-        (config_dir / "mr-sparkle.toml").write_text(f'[[overrides]]\nmatch = "{tmp_path}/project"\nlint_on_write = false\n')
-
         project_dir = tmp_path / "project"
         project_dir.mkdir()
+        claude_dir = project_dir / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "mr-sparkle.local.md").write_text("---\nlint_on_write: false\n---\n")
+
         test_file = project_dir / "main.py"
         test_file.write_text("x=1\n")
 
@@ -155,7 +155,6 @@ class TestConfigDisabling:
             input=hook_input,
             capture_output=True,
             text=True,
-            env={**os.environ, "NLP_CONFIG_DIR": str(config_dir)},
         )
 
         assert result.returncode == 0

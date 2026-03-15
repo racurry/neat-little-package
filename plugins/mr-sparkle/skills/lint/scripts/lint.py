@@ -402,12 +402,12 @@ def select_tools(toolset: str, project_root: Optional[Path]) -> list[str]:
 
 def get_skill_default_config(tool_name: str) -> Optional[Path]:
     """Get default config from skill directory if available."""
-    # Self-locate: this script is at <plugin>/skills/linting/scripts/lint.py
+    # Self-locate: this script is at <plugin>/skills/lint/scripts/lint.py
     plugin_dir = Path(__file__).resolve().parent.parent.parent.parent
 
     config_map = {
-        "markdownlint": plugin_dir / "skills" / "linting" / "defaults" / "default-markdownlint.jsonc",
-        "prettier": plugin_dir / "skills" / "linting" / "defaults" / "default-prettier.json5",
+        "markdownlint": plugin_dir / "skills" / "lint" / "defaults" / "default-markdownlint.jsonc",
+        "prettier": plugin_dir / "skills" / "lint" / "defaults" / "default-prettier.json5",
     }
 
     skill_config = config_map.get(tool_name)

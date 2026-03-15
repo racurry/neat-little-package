@@ -41,9 +41,8 @@ class TestBlockGitDashC:
                 "cwd": "/some/project",
             },
         )
-        assert result.returncode == 0
-        output = json.loads(result.stdout)
-        assert output["decision"] == "block"
+        assert result.returncode == 2
+        assert "BLOCKED" in result.stderr
 
     def test_allows_normal_git(self):
         result = run_hook(
@@ -70,18 +69,19 @@ class TestBlockGitDashCConfig:
     """Test config-based disabling of block_git_dash_c."""
 
     def test_allows_git_dash_c_when_disabled(self, tmp_path):
-        config_dir = tmp_path / "config"
-        config_dir.mkdir()
-        (config_dir / "dmv.toml").write_text(f'[[overrides]]\nmatch = "{tmp_path}/project"\nblock_git_dash_c = false\n')
+        project_dir = tmp_path / "project"
+        project_dir.mkdir()
+        claude_dir = project_dir / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "dmv.local.md").write_text("---\nblock_git_dash_c: false\n---\n")
 
         result = run_hook(
             BLOCK_GIT_DASH_C,
             {
                 "tool_name": "Bash",
                 "tool_input": {"command": "git -C /some/path status"},
-                "cwd": str(tmp_path / "project"),
+                "cwd": str(project_dir),
             },
-            env_override={"NLP_CONFIG_DIR": str(config_dir)},
         )
         assert result.returncode == 0
         assert result.stdout == ""
@@ -94,11 +94,9 @@ class TestBlockGitDashCConfig:
                 "tool_input": {"command": "git -C /some/path status"},
                 "cwd": "/some/project",
             },
-            env_override={"NLP_CONFIG_DIR": "/nonexistent/path"},
         )
-        assert result.returncode == 0
-        output = json.loads(result.stdout)
-        assert output["decision"] == "block"
+        assert result.returncode == 2
+        assert "BLOCKED" in result.stderr
 
 
 # =============================================================================
@@ -152,18 +150,19 @@ class TestValidateCommitMessageConfig:
     """Test config-based disabling of validate_commit_message."""
 
     def test_skips_validation_when_disabled(self, tmp_path):
-        config_dir = tmp_path / "config"
-        config_dir.mkdir()
-        (config_dir / "dmv.toml").write_text(f'[[overrides]]\nmatch = "{tmp_path}/project"\nvalidate_commit_message = false\n')
+        project_dir = tmp_path / "project"
+        project_dir.mkdir()
+        claude_dir = project_dir / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "dmv.local.md").write_text("---\nvalidate_commit_message: false\n---\n")
 
         result = run_hook(
             VALIDATE_COMMIT,
             {
                 "tool_name": "Bash",
                 "tool_input": {"command": 'git commit -m "Fix: bad message \U0001f680."'},
-                "cwd": str(tmp_path / "project"),
+                "cwd": str(project_dir),
             },
-            env_override={"NLP_CONFIG_DIR": str(config_dir)},
         )
         assert result.returncode == 0
         assert result.stdout == ""

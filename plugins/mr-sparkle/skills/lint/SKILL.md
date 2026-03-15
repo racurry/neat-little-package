@@ -1,5 +1,5 @@
 ---
-name: linting
+name: lint
 description: Universal polyglot linting capabilities for Python, JavaScript/TypeScript, Markdown, Shell, Ruby, YAML, and JSON files. Use when you need to lint files programmatically, understand tool selection logic, or invoke linting from commands/agents.
 argument-hint: <file_path>
 ---
@@ -163,14 +163,14 @@ If no config found, uses `defaults/default-prettier.json5`.
 
 ```markdown
 Run the linting script:
-`${MR_SPARKLE_ROOT}/skills/linting/scripts/lint.py <file_path>`
+`${MR_SPARKLE_ROOT}/skills/lint/scripts/lint.py <file_path>`
 ```
 
 ### From Agents
 
 ```markdown
 For linting results, run:
-`<plugin_root>/skills/linting/scripts/lint.py <file> --format json`
+`<plugin_root>/skills/lint/scripts/lint.py <file> --format json`
 
 Parse the JSON output to understand lint status.
 ```
@@ -192,4 +192,3 @@ The script silently exits (code 0, no output) when:
 - File extension not recognized
 - No tools installed for the detected toolset
 - Tool requires config but none found (e.g., markdownlint without config)
-

@@ -1,6 +1,6 @@
 ---
 name: readme-style
-description: User's README style preferences — ultra-terse, action-focused, ~20 lines. Use when writing or reviewing any README file, not just Claude Code components.
+description: User's README style preferences — ultra-terse, action-focused, <50 lines. Use when writing or reviewing any README file.
 ---
 
 # README Style
@@ -9,7 +9,7 @@ User preferences and corrections for writing READMEs. Claude knows how to write 
 
 ## Core Philosophy
 
-**Ultra-terse:** ~20-50 lines total, not 50-100
+**Ultra-terse:** ~20-50 lines is ideal.  Never more than 100
 **Action-focused:** Show commands with inline comments, minimal prose
 **No fluff:** Skip troubleshooting, file structure, version history
 
@@ -25,7 +25,7 @@ One-liner description.
 - What it does (bullet 1)
 - What it does (bullet 2)
 
-## Commands
+## Skills
 
 Setup
 
