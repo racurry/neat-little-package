@@ -2,7 +2,6 @@
 name: config
 description: Manage dmv per-project hook settings
 argument-hint: show | enable <key> | disable <key>
-allowed-tools: Read, Write, Edit
 ---
 
 Read and manage the dmv per-project configuration file at `~/.config/neat-little-package/dmv.toml`.
