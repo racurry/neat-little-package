@@ -19,12 +19,12 @@ For skill creation specifically, load the official `skill-creator` skill from th
 
 ## Component Model
 
-| Component  | Role                               | When to use                                                          |
-| ---------- | ---------------------------------- | -------------------------------------------------------------------- |
-| **Skill**  | Knowledge or user-triggered action  | Guidance that loads when relevant; user-invocable via `/name`        |
-| **Agent**  | Controlled process + tool restrictions | Autonomous work in isolation with limited tool access             |
-| **Hook**   | Deterministic enforcement          | Must happen every time, no judgment calls                            |
-| **Memory** | Always-loaded context              | Brief project/user knowledge (<20 lines/topic)                       |
+| Component  | Role                                   | When to use                                                   |
+| ---------- | -------------------------------------- | ------------------------------------------------------------- |
+| **Skill**  | Knowledge or user-triggered action     | Guidance that loads when relevant; user-invocable via `/name` |
+| **Agent**  | Controlled process + tool restrictions | Autonomous work in isolation with limited tool access         |
+| **Hook**   | Deterministic enforcement              | Must happen every time, no judgment calls                     |
+| **Memory** | Always-loaded context                  | Brief project/user knowledge (\<20 lines/topic)               |
 
 ### When to use an agent vs a skill alone
 
@@ -33,10 +33,12 @@ Custom agents earn their keep through **tool restrictions** and **model override
 If you don't need tool restrictions, a skill that instructs the main agent (or tells it to spawn a generic sub-agent) gets you ~95% of what a custom agent does. Don't create a custom agent just for process steps — put those in a skill.
 
 **Create a custom agent when:**
+
 - Tool restrictions matter (read-only reviewers, no-Bash analyzers)
 - Model override needed (use haiku for cheap tasks)
 
 **Use a skill instead when:**
+
 - The main agent can do the work directly with the right knowledge
 - Tool restrictions don't matter
 - A skill saying "spawn a sub-agent to do X" is sufficient
@@ -67,6 +69,7 @@ All orchestration must happen at the main agent level. If you need work split ac
 Claude consistently writes agent prompts that assume interaction is possible. Sub-agents run in isolation and return results — they cannot interact with users.
 
 **Forbidden phrases in sub-agent prompts:**
+
 - "ask the user", "confirm with user", "check with user"
 - "gather from user", "prompt the user", "wait for input"
 - "request from user", "verify with user", "gather requirements"
@@ -87,15 +90,15 @@ The `color` field sets visual distinction in the status line. Claude often guess
 
 **Semantic mapping:**
 
-| Color    | Use For                                        |
-| -------- | ---------------------------------------------- |
-| `blue`   | Creators — agents that write files or code     |
-| `green`  | Quality — validators, reviewers, analyzers     |
-| `yellow` | Operations — git, deployment, system tasks     |
-| `purple` | Meta — agents that create other agents         |
-| `cyan`   | Research — exploration, documentation          |
-| `red`    | Safety — security checks, destructive ops      |
-| `orange` | Other — doesn't fit established categories     |
+| Color    | Use For                                    |
+| -------- | ------------------------------------------ |
+| `blue`   | Creators — agents that write files or code |
+| `green`  | Quality — validators, reviewers, analyzers |
+| `yellow` | Operations — git, deployment, system tasks |
+| `purple` | Meta — agents that create other agents     |
+| `cyan`   | Research — exploration, documentation      |
+| `red`    | Safety — security checks, destructive ops  |
+| `orange` | Other — doesn't fit established categories |
 
 ## Plugin Settings Pattern
 
@@ -118,15 +121,11 @@ Optional notes about why settings were changed.
 
 The official docs show fields like `author`, `repository`, `homepage`, `license`, and `keywords` in their examples. **Do not include these** unless the user explicitly asks. Keep plugin.json minimal: just `name`, `version`, `description`.
 
-### README Style
-
-Claude's default README style is far too verbose for this user. Load [readme-style.md](readme-style.md) for the specific format — ultra-terse (~20 lines), action-focused, commands with inline `#` comments, no fluff.
-
 ## MCP Preferences
 
 ### Prefer Native CLI Over MCP
 
-Before adding any MCP server, check if a dedicated CLI tool exists.  For example:
+Before adding any MCP server, check if a dedicated CLI tool exists. For example:
 
 | Service | Prefer       | Over              |
 | ------- | ------------ | ----------------- |
@@ -139,26 +138,3 @@ CLI tools are battle-tested, have better error messages, don't consume context w
 ### Plugin MCP Duplication Trap
 
 If two plugins both define a `"github"` server, you get two separate namespaced servers. Both run, both consume context, both provide duplicate tools. Don't bundle common MCP servers in plugins — document them as prerequisites and let users configure once.
-
-## UV Script Gotchas
-
-### Shebang Requires -S Flag
-
-```python
-#!/usr/bin/env -S uv run --script
-```
-
-**Not** `#!/usr/bin/env uv run --script` — without `-S`, env treats `uv run --script` as a single argument and fails.
-
-### Empty Dependencies Must Be Explicit
-
-The `dependencies` field is required even when empty:
-
-```python
-# /// script
-# requires-python = ">=3.11"
-# dependencies = []
-# ///
-```
-
-Omitting `dependencies` causes UV to fail, even if you only need `requires-python`.

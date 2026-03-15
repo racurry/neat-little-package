@@ -1,24 +1,29 @@
+---
+name: readme-style
+description: User's README style preferences — ultra-terse, action-focused, ~20 lines. Use when writing or reviewing any README file, not just Claude Code components.
+---
+
 # README Style
 
-This skill documents the user's specific README style preferences - a knowledge delta from standard README writing. Claude knows how to write READMEs; this documents what makes THIS user's style different.
+User preferences and corrections for writing READMEs. Claude knows how to write READMEs; this documents what makes THIS user's style different.
 
-## Core Philosophy (User Preference)
+## Core Philosophy
 
-**Ultra-terse:** ~20 lines total, not 50-100
+**Ultra-terse:** ~20-50 lines total, not 50-100
 **Action-focused:** Show commands with inline comments, minimal prose
 **No fluff:** Skip troubleshooting, file structure, version history
 
-## Structure Pattern (User Preference)
+## Structure Pattern
 
 ````markdown
-# Plugin Name
+# Project Name
 
 One-liner description.
 
 ## Overview
 
-- What it tells Claude to do (bullet 1)
-- What it tells Claude to do (bullet 2)
+- What it does (bullet 1)
+- What it does (bullet 2)
 
 ## Commands
 
@@ -26,7 +31,6 @@ Setup
 
 ```
 /plugin:setup # walks through configuration
-
 ```
 
 Main Actions
@@ -40,25 +44,23 @@ Main Actions
 
 **Key characteristics:**
 
-- Opening: Plugin name + single-line description
+- Opening: Project name + single-line description
 - Overview: 2-3 terse bullets describing what it does
 - Commands: Grouped code blocks with inline `#` comments
 - That's it. Nothing more.
 
-## What to Include (User Preference)
+## What to Include
 
 **Include ONLY:**
 
-- ✓ Plugin name (H1)
+- ✓ Project name (H1)
 - ✓ One-liner description
 - ✓ Terse bullet points (2-3) describing what it does
 - ✓ Commands grouped by purpose (Setup, Main Actions, etc.)
 - ✓ Inline `#` comments explaining each command
 - ✓ Minimal section headers (just enough to group commands)
 
-**Total length:** ~20 lines
-
-## What to EXCLUDE (User Preference)
+## What to EXCLUDE
 
 **Exclude ALL of these common README elements:**
 
@@ -145,42 +147,28 @@ Git and GitHub workflow preferences for Claude.
 
 Setup
 ```
-
 /dmv:setup # walks through git and GitHub configuration
-
 ```
 
 Main Actions
 ```
-
 /pr # create pull request from current branch
 /pr --draft # create draft pull request
 /commit "message" # commit with user's preferred format
 /github:issue <number> # fetch and analyze issue
-
 ```
-```
+````
 
-**Improvements:**
-
-- ✓ 20 lines total (vs 100+)
-- ✓ Terse bullets in Overview
-- ✓ Commands shown directly with inline comments
-- ✓ No "Components", "Features", "How It Works" sections
-- ✓ Action-focused, not explanation-focused
-
-## Command Block Formatting (User Preference)
+## Command Block Formatting
 
 **Pattern:**
 
-```markdown
+````markdown
 Group Label
 ```
-
 /command # what it does
 /command with args # what it does with args
 /command:subcommand # what the subcommand does
-
 ```
 ````
 
@@ -191,40 +179,6 @@ Group Label
 - Inline `#` comments right-aligned (use spaces to align)
 - One blank line between groups
 - No prose explanations outside code blocks
-
-**Example:**
-
-````markdown
-Setup
-```
-
-/plugin:init # initialize plugin configuration
-
-```
-
-Analysis
-```
-
-/plugin:check current # analyze current state
-/plugin:check all # comprehensive analysis
-
-```
-````
-
-## Quality Checklist
-
-Before finalizing a plugin README:
-
-- ✓ Total length ~20 lines (not 50-100)
-- ✓ One-liner description at top
-- ✓ Overview has 2-3 terse bullets (not prose paragraphs)
-- ✓ Commands shown in code blocks with inline comments
-- ✓ No "Components" section
-- ✓ No "Features" section with prose descriptions
-- ✓ No "How It Works" or philosophy sections
-- ✓ No troubleshooting, installation, or file structure docs
-- ✓ No resource links or references
-- ✓ Minimal section headers (just grouping labels)
 
 ## Anti-Pattern Detection
 
@@ -242,8 +196,6 @@ Before finalizing a plugin README:
 - Version history or changelog
 - Contribution guidelines
 
-**Remember:** Use code examples with comments, not prose explanations.
-
 ## The Transformation Rule
 
 **Standard README approach:**
@@ -257,5 +209,3 @@ Explain what it does → List features → Document components → Show examples
 ```
 One-liner → 2-3 bullets → Commands with comments → Done
 ```
-
-**Length target:** Standard README = 50-100 lines. We do ~20-50 lines.
