@@ -16,7 +16,7 @@ Doing git stuff in the way I prefer.
 Setup
 
 ```
-/dmv:setup                                           # walks through gh and github mcp config
+/dmv:github                                          # set up gh cli and github mcp
 /dmv:config                                          # show per-project hook settings
 /dmv:config disable validate_commit_message          # disable a hook for this directory
 ```
@@ -26,8 +26,7 @@ Committing
 ```
 /dmv:commit                                          # commits everything with terse message
 /dmv:commit refactor authentication flow             # commits with provided message
-/dmv:commit partial just the auth stuff              # commits only files matching description
-/dmv:commit push                                     # commits and runs git pub
+/dmv:commit just the auth stuff                      # commits only files matching description
 ```
 
 Pull Requests
