@@ -143,26 +143,34 @@ def main():
     if hook_input.get("tool_name") != "Bash":
         sys.exit(0)
 
+    # Get the bash command
     command = hook_input.get("tool_input", {}).get("command", "")
 
+    # Check if this was a git commit command
     if "git commit" not in command.lower():
         sys.exit(0)
 
+    # Extract commit message from command or get from git log
     commit_message = get_commit_message_from_command(command)
 
+    # If message not in command (e.g., git commit --amend), try git log
     if not commit_message:
         commit_message = get_latest_commit_message()
 
+    # If still no message, nothing to validate
     if not commit_message:
         sys.exit(0)
 
+    # Validate the commit message
     violations = validate_commit_message(commit_message)
 
+    # If violations found, warn user (non-blocking)
     if violations:
         issues = ", ".join(violations)
         warning = f"\033[33m⚠ commit message:\033[0m {issues}"
         output_warning(warning)
 
+    # Always exit 0 (non-blocking, preference enforcement only)
     sys.exit(0)
 
 
