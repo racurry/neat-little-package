@@ -53,10 +53,9 @@ def _get_config(cwd: str) -> dict:
 
 
 def block(reason: str) -> None:
-    """Output blocking decision and exit."""
-    output = {"decision": "block", "reason": reason}
-    print(json.dumps(output), flush=True)
-    sys.exit(0)
+    """Output PreToolUse denial and exit."""
+    print(reason, file=sys.stderr, flush=True)
+    sys.exit(2)
 
 
 def main():

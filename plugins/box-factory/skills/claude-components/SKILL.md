@@ -43,11 +43,12 @@ If you don't need tool restrictions, a skill that instructs the main agent (or t
 
 ## The Knowledge Delta Principle
 
-The single most important test for any component's content: **would Claude get this wrong without it?**
+Two tests for any component's content:
 
-If no, don't include it. Claude's training covers common tools, standard workflows, and general best practices. Components that duplicate this waste tokens and create maintenance burden.
+1. **Would Claude get this wrong without it?** If Claude would produce the wrong outcome, include it.
+2. **Would Claude do this differently each time?** If there are multiple valid approaches and you want a specific one followed consistently, include it. Claude knowing how to resolve conflicts doesn't mean it will follow YOUR process every time.
 
-**Include:** user-specific preferences, edge cases Claude would miss, decision frameworks for ambiguous situations, post-training technology, integration patterns specific to this project.
+**Include:** user-specific preferences and workflows (the user's preferred approach when multiple valid ones exist), edge cases Claude would miss, decision frameworks for ambiguous situations, post-training technology, integration patterns specific to this project.
 
 **Exclude:** basic commands for well-known tools, standard workflows, general best practices, anything expressible as a single sentence (put in CLAUDE.md instead), directory structures or file listings Claude can discover by reading the filesystem.
 
@@ -74,9 +75,9 @@ Claude consistently writes agent prompts that assume interaction is possible. Su
 
 Scan every sub-agent prompt for these phrases before finalizing.
 
-### No Hardcoded Paths to Skill Internals
+### No File Paths to Skill Internals
 
-When an agent loads a skill, Claude tends to write the agent's prompt with direct file paths into the skill's internal structure (e.g., `../skills/my-skill/subfile.md`). Keep loose coupling: reference skills by name and topic, not by file path. Skills may reorganize their files at any time.
+When an agent loads a skill, Claude tends to write the agent's prompt with direct file paths into the skill's internal structure (e.g., `../skills/my-skill/subfile.md`). Don't do this — a skill's internal file organization is an implementation detail. Reference skills by name and topic instead (e.g., "consult my-skill for guidance on X"). Plugin-scoped skill names like `my-plugin:my-skill` are fine — those are identifiers, not file paths.
 
 ### Supported Colors
 

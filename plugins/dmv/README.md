@@ -2,29 +2,37 @@
 
 ![Some Days, We Don't Let The Line Move At All](assets/dmv.png)
 
+Doing git stuff in the way I prefer.
+
 ## Overview
 
-Doing git stuff in the way I prefer. Git commits, talking to Github.
+- Terse commits with no type prefixes, no emojis, no attribution
+- PRs in Problem/Solution format, ignoring repo templates
+- Prefers gh CLI over GitHub MCP server
+- Auto-retries pre-commit hook formatting failures once
 
-## Commands
+## Skills
 
 Setup
 
 ```
-/dmv:setup     # Walks through `gh` and github mcp config
+/dmv:setup                                           # walks through gh and github mcp config
+/dmv:config                                          # show per-project hook settings
+/dmv:config disable validate_commit_message          # disable a hook for this directory
 ```
 
 Committing
 
 ```
-/dmv:commit                                          # commits everything with terse language
-/dmv:commit refactor authentication flow             # commits everything with message 'refactor authentication flow'
-/dmv:commit-partial just the stuff related to auth   # commits just the stuff related to auth with a terse message
+/dmv:commit                                          # commits everything with terse message
+/dmv:commit refactor authentication flow             # commits with provided message
+/dmv:commit partial just the auth stuff              # commits only files matching description
+/dmv:commit push                                     # commits and runs git pub
 ```
 
 Pull Requests
 
 ```
 /dmv:pr                                              # creates PR with Problem/Solution format
-/dmv:pr users seeing 500 errors on login             # creates PR using provided context for Problem statement
+/dmv:pr users seeing 500 errors on login             # creates PR using provided context
 ```
