@@ -1,5 +1,5 @@
 {
   "name": "box-factory",
-  "description": "Create and manage Claude Code components: agents, commands, plugins, and skills",
-  "version": "2.1.0"
+  "description": "Guidance and guardrails for building Claude Code components",
+  "version": "3.0.0"
 }
