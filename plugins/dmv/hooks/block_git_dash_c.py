@@ -11,45 +11,31 @@ standard git commands from the working directory instead.
 """
 
 import json
-import os
 import re
 import sys
-import tomllib
 from pathlib import Path
 
 
-def _get_config(cwd: str) -> dict:
-    """Read dmv config with directory-specific overrides."""
-    config_dir = Path(
-        os.environ.get("NLP_CONFIG_DIR", "~/.config/neat-little-package")
-    ).expanduser()
-    config_file = config_dir / "dmv.toml"
-
-    if not config_file.is_file():
-        return {}
+def _is_enabled(cwd: str) -> bool:
+    """Check if block_git_dash_c is enabled via .claude/dmv.local.md."""
+    settings_file = Path(cwd) / ".claude" / "dmv.local.md"
+    if not settings_file.is_file():
+        return True  # enabled by default
 
     try:
-        with open(config_file, "rb") as f:
-            data = tomllib.load(f)
+        text = settings_file.read_text()
+        # Extract frontmatter
+        parts = text.split("---", 2)
+        if len(parts) < 3:
+            return True
+        frontmatter = parts[1]
+        for line in frontmatter.strip().splitlines():
+            if line.strip().startswith("block_git_dash_c:"):
+                value = line.split(":", 1)[1].strip().lower()
+                return value not in ("false", "no", "0")
     except Exception:
-        return {}
-
-    resolved = {k: v for k, v in data.items() if k != "overrides"}
-    for override in data.get("overrides", []):
-        pattern = override.get("match", "")
-        if not pattern:
-            continue
-        prefix = str(Path(pattern).expanduser()).rstrip("/")
-        for suffix in ("/**", "/*"):
-            if prefix.endswith(suffix):
-                prefix = prefix[: -len(suffix)]
-                break
-        if cwd == prefix or cwd.startswith(prefix + "/"):
-            for k, v in override.items():
-                if k != "match":
-                    resolved[k] = v
-
-    return resolved
+        pass
+    return True
 
 
 def block(reason: str) -> None:
@@ -67,10 +53,8 @@ def main():
 
     # Check per-project config
     cwd = hook_input.get("cwd", "")
-    if cwd:
-        config = _get_config(cwd)
-        if not config.get("block_git_dash_c", True):
-            sys.exit(0)
+    if cwd and not _is_enabled(cwd):
+        sys.exit(0)
 
     # Only process Bash tool calls
     if hook_input.get("tool_name") != "Bash":
@@ -79,7 +63,6 @@ def main():
     command = hook_input.get("tool_input", {}).get("command", "")
 
     # Check for git -C pattern (case insensitive, various spacing)
-    # Matches: git -C, git  -C, git -C/path, etc.
     if re.search(r"\bgit\s+-C\b", command, re.IGNORECASE):
         block(
             "BLOCKED: git -C is not allowed. "

@@ -4,7 +4,7 @@ description: Manage dmv per-project hook settings
 argument-hint: show | enable <key> | disable <key>
 ---
 
-Read and manage the dmv per-project configuration file at `~/.config/neat-little-package/dmv.toml`.
+Read and manage dmv's per-project settings at `.claude/dmv.local.md` in the current project root.
 
 **Available config keys:**
 
@@ -13,22 +13,23 @@ Read and manage the dmv per-project configuration file at `~/.config/neat-little
 | `block_git_dash_c`        | `true`  | Block `git -C` commands        |
 | `validate_commit_message` | `true`  | Validate commit message format |
 
-**If no arguments or "show":** Read the config file (it may not exist — all defaults apply), resolve overrides against the current working directory, and display the resolved values.
+**If no arguments or "show":** Read `.claude/dmv.local.md` (it may not exist — all defaults apply) and display the resolved values from YAML frontmatter.
 
-**If "enable" or "disable":** Parse the key name, read or create the config file, add/update an `[[overrides]]` block for the current working directory, write the TOML back, and show the resolved config after.
+**If "enable" or "disable":** Parse the key name, read or create `.claude/dmv.local.md`, update the YAML frontmatter, and show the resolved config after.
 
-**TOML format:**
+**File format:**
 
-```toml
-block_git_dash_c = true
+```markdown
+---
+block_git_dash_c: true
+validate_commit_message: false
+---
 
-[[overrides]]
-match = "~/workspace/some-project"
-validate_commit_message = false
+Optional notes about why settings were changed.
 ```
 
-The `match` field uses `~` for home directory, matches the directory and all subdirectories.
-
-Create `~/.config/neat-little-package/` directory if it doesn't exist. Always show resolved state after any change.
+- Create `.claude/` directory if it doesn't exist
+- Add `.claude/*.local.md` to `.gitignore` if not already there
+- Always show resolved state after any change
 
 Now execute this based on what the user requested.
