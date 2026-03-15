@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is **neat-little-package**, a Claude Code plugin marketplace containing 5 specialized plugins:
 
-- **box-factory**: Meta-plugin for creating Claude Code components (plugins, agents, commands, skills, hooks)
+- **box-factory**: Meta-plugin for creating Claude Code components (plugins, agents, skills, hooks)
 - **dmv**: Git and GitHub workflow automation with user-specific preferences
 - **mr-sparkle**: Code quality enforcement (linting, formatting)
 - **spirograph**: 3D-printed home organization (Gridfinity, OpenGrid, etc.)
@@ -24,7 +24,6 @@ Each plugin follows this structure:
 plugins/<name>/
 ├── .claude-plugin/plugin.json  # Plugin metadata
 ├── agents/                     # Autonomous workers (.md files)
-├── commands/                   # Slash commands (.md files)
 ├── skills/
 │   └── <skill-name>/
 │       ├── SKILL.md            # Main skill guidance
@@ -32,7 +31,6 @@ plugins/<name>/
 ├── hooks/
 │   ├── hooks.json              # Hook configuration
 │   └── *.py, *.sh              # Hook implementations
-├── CLAUDE.md                   # Developer guidelines
 └── README.md                   # User documentation
 ```
 
@@ -55,6 +53,14 @@ Run tests with uv and pytest:
 uv run --with pytest pytest ./path/to/tests/
 ```
 
+Group tests by function using classes:
+
+```python
+class TestFunctionName:
+    def test_case_one(self): ...
+    def test_case_two(self): ...
+```
+
 ## Documentation Philosophy
 
 **Low-Maintenance First**: Defer to official docs via WebFetch rather than hardcoding version-specific details. Documentation changes; principles don't.
@@ -67,4 +73,4 @@ uv run --with pytest pytest ./path/to/tests/
 
 ## Plugin-Specific Guidelines
 
-Each plugin has its own CLAUDE.md with detailed conventions. Refer to the plugin-specific file when working within that plugin.
+Each plugin has its own rules file in `.claude/rules/` with detailed conventions, scoped by path globs.

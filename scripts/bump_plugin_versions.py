@@ -100,7 +100,7 @@ def analyze_with_claude(plugins_and_diffs: dict[str, str]) -> dict[str, str]:
 
 Guidelines:
 - major: Breaking changes, removed features, incompatible API changes
-- minor: New features, new agents, new commands, new skills, new capabilities
+- minor: New features, new agents, new skills, new capabilities
 - patch: Bug fixes, documentation, refactoring, small improvements
 
 Respond with ONLY a JSON object mapping plugin names to bump levels:

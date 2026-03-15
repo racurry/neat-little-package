@@ -40,9 +40,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          label_trigger: "claude"
-          base_branch: "main"
-          branch_prefix: "claude/"
+          label_trigger: 'claude'
+          base_branch: 'main'
+          branch_prefix: 'claude/'
 
           additional_permissions: |
             actions: read
@@ -81,13 +81,13 @@ jobs:
             ## Repository Context
 
             This is neat-little-package, a collection of Claude Code plugins including:
-            - **box-factory**: Toolkit for creating Claude Code components (plugins, commands, skills, hooks)
+            - **box-factory**: Toolkit for creating Claude Code components (plugins, agents, skills, hooks)
             - **dmv**: Git and GitHub workflow preferences
             - **mr-sparkle**: Linting and autoformatting
 
             Before starting any task:
-            1. Read @CLAUDE.md for repository-wide guidelines
-            2. For Box Factory work, read @plugins/box-factory/CLAUDE.md for component patterns and philosophy
+            1. Read @.claude/CLAUDE.md for repository-wide guidelines
+            2. For Box Factory work, read the box-factory plugin's claude-components skill for component patterns and philosophy
 
             ## Box Factory Philosophy (if working on box-factory plugin)
 

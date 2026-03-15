@@ -1,5 +1,6 @@
 ---
 description: Test all agent colors by invoking each color test agent
+user_invocable: true
 ---
 
 Test all agent colors by invoking each one sequentially. For each agent, note whether it loaded successfully and what color appeared in the status line.

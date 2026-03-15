@@ -1,3 +1,8 @@
+---
+paths:
+  - plugins/ultrahouse3000/**
+---
+
 # Ultrahouse3000 Development Guidelines
 
 **MCP-First:** This plugin integrates Home Assistant via MCP server. The skill provides guidance for writing HA configs; the MCP server provides live control.

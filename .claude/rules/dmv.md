@@ -1,6 +1,9 @@
-# DMV Development Guidelines
+---
+paths:
+  - plugins/dmv/**
+---
 
-**Knowledge Delta Only:** Skills and agents document only what Claude would get wrong. Standard git/GitHub knowledge comes from training. Fetch official docs before assuming something needs documenting.
+# DMV Development Guidelines
 
 **No Type Prefixes:** This user never uses conventional commit prefixes (`fix:`, `feat:`, etc.). Just describe the change directly.
 

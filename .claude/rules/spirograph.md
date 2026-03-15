@@ -1,6 +1,11 @@
+---
+paths:
+  - plugins/spirograph/**
+---
+
 # Spirograph Development Guidelines
 
-**Skills-Only Plugin:** No agents, commands, or hooks. All functionality is interpretive guidance.
+**Skills-Only Plugin:** No agents or hooks. All functionality is interpretive guidance.
 
 **External References:** Skills point to QuackWorks and official specs rather than duplicating. Fetch current specifications before generating code.
 

@@ -1,3 +1,8 @@
+---
+paths:
+  - plugins/box-factory/**
+---
+
 # Box Factory Development Guidelines
 
 **Knowledge Delta Only:** Components should only contain what Claude would get wrong without them. Fetch official docs and verify against real behavior before deciding something is "obvious." Claude has a strong tendency to assume it knows things rather than checking.
