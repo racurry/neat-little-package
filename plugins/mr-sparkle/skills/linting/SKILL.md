@@ -1,6 +1,7 @@
 ---
 name: linting
 description: Universal polyglot linting capabilities for Python, JavaScript/TypeScript, Markdown, Shell, Ruby, YAML, and JSON files. Use when you need to lint files programmatically, understand tool selection logic, or invoke linting from commands/agents.
+argument-hint: <file_path>
 ---
 
 # Linting Skill
@@ -122,7 +123,7 @@ Config detection happens relative to project root.
 | ----------------- | ---------------------- | ---------------------------- |
 | markdownlint-cli2 | `.markdownlint-cli2.*` | `~/.markdownlint-cli2.jsonc` |
 
-If no config found, uses skill's `../markdown-quality/default-config.jsonc`.
+If no config found, uses `defaults/default-markdownlint.jsonc`.
 
 ### Shell Tools
 
@@ -149,7 +150,7 @@ If no config found, uses skill's `../markdown-quality/default-config.jsonc`.
 | -------- | ----------------------------------- | --------------------- |
 | prettier | `.prettierrc*`, `prettier.config.*` | `~/.prettierrc.json5` |
 
-If no config found, uses skill's `../prettier-quality/default-config.json5`.
+If no config found, uses `defaults/default-prettier.json5`.
 
 **Supported extensions:**
 
@@ -192,9 +193,3 @@ The script silently exits (code 0, no output) when:
 - No tools installed for the detected toolset
 - Tool requires config but none found (e.g., markdownlint without config)
 
-## Related Skills
-
-- `markdown-quality` - Interpretive guidance for markdownlint rules
-- `prettier-quality` - Interpretive guidance for Prettier (YAML, JSON, JS/TS)
-- `python-quality` - Default ruff configuration
-- `js-quality` - Default biome configuration

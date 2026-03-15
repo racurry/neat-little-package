@@ -406,8 +406,8 @@ def get_skill_default_config(tool_name: str) -> Optional[Path]:
     plugin_dir = Path(__file__).resolve().parent.parent.parent.parent
 
     config_map = {
-        "markdownlint": plugin_dir / "skills" / "markdown-quality" / "default-config.jsonc",
-        "prettier": plugin_dir / "skills" / "prettier-quality" / "default-config.json5",
+        "markdownlint": plugin_dir / "skills" / "linting" / "defaults" / "default-markdownlint.jsonc",
+        "prettier": plugin_dir / "skills" / "linting" / "defaults" / "default-prettier.json5",
     }
 
     skill_config = config_map.get(tool_name)
