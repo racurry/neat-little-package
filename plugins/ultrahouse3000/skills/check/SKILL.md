@@ -1,4 +1,5 @@
 ---
+name: check
 description: Check that required tools and env vars are configured for Home Assistant MCP
 ---
 
