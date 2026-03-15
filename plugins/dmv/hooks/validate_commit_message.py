@@ -195,11 +195,8 @@ def main():
 
     # If violations found, warn user (non-blocking)
     if violations:
-        warning = "Commit message issues:\n"
-        for violation in violations:
-            warning += f"  - {violation}\n"
-        warning += f'\nMessage: "{commit_message}"'
-
+        issues = ", ".join(violations)
+        warning = f"\033[33m⚠ commit message:\033[0m {issues}"
         output_warning(warning)
 
     # Always exit 0 (non-blocking, preference enforcement only)
