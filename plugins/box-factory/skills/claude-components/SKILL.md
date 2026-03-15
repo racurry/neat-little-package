@@ -97,6 +97,21 @@ The `color` field sets visual distinction in the status line. Claude often guess
 | `red`    | Safety — security checks, destructive ops      |
 | `orange` | Other — doesn't fit established categories     |
 
+## Plugin Settings Pattern
+
+Plugins that need per-project user configuration should store settings in `.claude/plugin-name.local.md` using YAML frontmatter. This is the official Anthropic pattern — see the `plugin-settings` skill in `github.com/anthropics/claude-code/plugins/plugin-dev/` for full details.
+
+```markdown
+---
+enabled: true
+some_setting: false
+---
+
+Optional notes about why settings were changed.
+```
+
+**Why this pattern:** `.claude/` is already accessible to Claude (no extra permissions), `.local.md` files are gitignored, and hooks can parse frontmatter with simple `sed`/`grep`. Do NOT store plugin config in `~/.config/` or other external directories — that requires permission grants.
+
 ## Plugin Preferences
 
 ### plugin.json: Fields We Don't Use
