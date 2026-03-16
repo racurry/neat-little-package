@@ -1,13 +1,12 @@
 ---
 name: claude-components
-description: How to build Claude Code components — skills, agents, hooks, plugins, marketplaces, MCP servers. User preferences, gotchas Claude gets wrong, and architecture decisions. Use when creating, reviewing, or choosing between component types.
+description: How to build Claude Code-specific components — agents, hooks, plugins, marketplaces, MCP servers. User preferences, gotchas Claude gets wrong, and architecture decisions. Use when creating Claude-only components that need tool restrictions, hooks, or plugin infrastructure. For skills, use the agent-skills skill instead — skills default to the universal AgentSkills format.
 ---
 
-# Box Factory
+# Claude Components
 
 User preferences and corrections for building Claude Code components. For official specs, fetch the relevant docs:
 
-- **<https://code.claude.com/docs/en/skills>** - Skills
 - **<https://code.claude.com/docs/en/sub-agents>** - Sub-agents
 - **<https://code.claude.com/docs/en/hooks>** - Hooks
 - **<https://code.claude.com/docs/en/memory>** - CLAUDE.md and rules
@@ -15,16 +14,16 @@ User preferences and corrections for building Claude Code components. For offici
 - **<https://code.claude.com/docs/en/plugin-marketplaces>** - Marketplaces
 - **<https://code.claude.com/docs/en/mcp>** - MCP servers
 
-For skill creation specifically, load the official `skill-creator` skill from the Anthropic skills repository (github.com/anthropics/skills).
+For skill creation, use the agent-skills skill — it covers both the universal AgentSkills spec and Claude-specific skill features.
 
 ## Component Model
 
-| Component  | Role                                   | When to use                                                   |
-| ---------- | -------------------------------------- | ------------------------------------------------------------- |
-| **Skill**  | Knowledge or user-triggered action     | Guidance that loads when relevant; user-invocable via `/name` |
-| **Agent**  | Controlled process + tool restrictions | Autonomous work in isolation with limited tool access         |
-| **Hook**   | Deterministic enforcement              | Must happen every time, no judgment calls                     |
-| **Memory** | Always-loaded context                  | Brief project/user knowledge (\<20 lines/topic)               |
+| Component  | Role                                   | When to use                                           |
+| ---------- | -------------------------------------- | ----------------------------------------------------- |
+| **Skill**  | Knowledge or user-triggered action     | To build skills, load the agent-skills skill          |
+| **Agent**  | Controlled process + tool restrictions | Autonomous work in isolation with limited tool access |
+| **Hook**   | Deterministic enforcement              | Must happen every time, no judgment calls             |
+| **Memory** | Always-loaded context                  | Brief project/user knowledge (\<20 lines/topic)       |
 
 ### When to use an agent vs a skill alone
 

@@ -1,5 +1,5 @@
 {
   "name": "box-factory",
-  "description": "Guidance and guardrails for building Claude Code components",
-  "version": "3.1.0"
+  "description": "Guidance and guardrails for building coding agent components",
+  "version": "4.0.0"
 }
