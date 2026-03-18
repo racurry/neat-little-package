@@ -43,13 +43,13 @@ The universal linting script is at `scripts/lint.py`.
 
 ```bash
 # Lint a file (auto-detects type, applies fixes)
-./scripts/lint.py /path/to/file.py
+${CLAUDE_SKILL_DIR}/scripts/lint.py /path/to/file.py
 
 # JSON output for programmatic use
-./scripts/lint.py /path/to/file.py --format json
+${CLAUDE_SKILL_DIR}/scripts/lint.py /path/to/file.py --format json
 
 # Text output (default, human-readable)
-./scripts/lint.py /path/to/file.py --format text
+${CLAUDE_SKILL_DIR}/scripts/lint.py /path/to/file.py --format text
 ```
 
 ### Output Formats
@@ -163,14 +163,14 @@ If no config found, uses `defaults/default-prettier.json5`.
 
 ```markdown
 Run the linting script:
-`${MR_SPARKLE_ROOT}/skills/lint/scripts/lint.py <file_path>`
+`${CLAUDE_SKILL_DIR}/scripts/lint.py <file_path>`
 ```
 
 ### From Agents
 
 ```markdown
 For linting results, run:
-`<plugin_root>/skills/lint/scripts/lint.py <file> --format json`
+`${CLAUDE_SKILL_DIR}/scripts/lint.py <file> --format json`
 
 Parse the JSON output to understand lint status.
 ```
@@ -181,7 +181,7 @@ The script supports `--stdin-hook` mode for hook integration:
 
 ```bash
 # Reads hook JSON from stdin, outputs hook-compatible JSON
-echo '{"tool_input":{"file_path":"/path/to/file.py"}}' | ./lint.py --stdin-hook
+echo '{"tool_input":{"file_path":"/path/to/file.py"}}' | ${CLAUDE_SKILL_DIR}/scripts/lint.py --stdin-hook
 ```
 
 ## Silent Skip Conditions
