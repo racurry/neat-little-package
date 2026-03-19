@@ -1,6 +1,6 @@
 ---
+name: test-agent-colors
 description: Test all agent colors by invoking each color test agent
-user_invocable: true
 ---
 
 Test all supported agent colors. This is a two-phase skill because agents are discovered at session startup.
