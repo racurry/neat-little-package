@@ -3,35 +3,38 @@ description: Test all agent colors by invoking each color test agent
 user_invocable: true
 ---
 
-Test all agent colors by invoking each one sequentially. For each agent, note whether it loaded successfully and what color appeared in the status line.
+Test all supported agent colors. This is a two-phase skill because agents are discovered at session startup.
 
-Invoke these agents IN ORDER, four at a time:
+## Colors to test
 
-01. color-red
-02. color-green
-03. color-blue
-04. color-yellow
-05. color-magenta
-06. color-cyan
-07. color-white
-08. color-black
-09. color-gray
-10. color-grey
-11. color-purple
-12. color-orange
-13. color-redBright
-14. color-greenBright
-15. color-blueBright
-16. color-yellowBright
-17. color-magentaBright
-18. color-cyanBright
-19. color-whiteBright
-20. color-blackBright
+red, green, blue, yellow, magenta, cyan, white, black, gray, grey, purple, orange, redBright, greenBright, blueBright, yellowBright, magentaBright, cyanBright, whiteBright, blackBright
 
-After invoking all agents, provide a summary table showing:
+## Phase 1: Generate agents (if they don't exist)
 
-- Color name
-- Whether it loaded (success/fail)
-- Any notes about visibility or appearance
+Check if `.claude/agents/color-red.md` exists. If it does NOT:
 
-This tests which color values are actually supported by Claude Code's agent color field.
+1. Run `./scripts/generate-color-agents.sh` from this skill's directory
+2. Tell the user: "Color test agents generated. Restart the session and run `/test-agent-colors` again to execute the test."
+3. Stop here — do not proceed to Phase 2.
+
+## Phase 2: Run tests and clean up (if agents exist)
+
+If `.claude/agents/color-red.md` exists, the agents are loaded and ready.
+
+1. Invoke agents IN ORDER, four at a time:
+
+   - color-red, color-green, color-blue, color-yellow
+   - color-magenta, color-cyan, color-white, color-black
+   - color-gray, color-grey, color-purple, color-orange
+   - color-redBright, color-greenBright, color-blueBright, color-yellowBright
+   - color-magentaBright, color-cyanBright, color-whiteBright, color-blackBright
+
+2. After all agents complete, provide a summary table:
+
+   - Color name
+   - Whether it loaded (success/fail)
+   - Any notes about visibility or appearance
+
+3. Run `./scripts/cleanup-color-agents.sh` from this skill's directory to remove the generated agents.
+
+4. Tell the user the color agents have been cleaned up.
