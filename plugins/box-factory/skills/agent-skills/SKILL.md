@@ -81,6 +81,17 @@ Two tests for a skill's content:
 
 When a skill is loaded, it may be the only guidance the agent has. If the skill needs a piece of knowledge to do its job, that knowledge must be in the skill — not in a sibling skill the agent may not have loaded. Duplicate shared guidance across skills rather than cross-referencing it. Referencing another skill to *route* to it ("for skills, use agent-skills") is fine — that's a handoff, not a dependency.
 
+## Cross-Client Skill Discovery
+
+The AgentSkills spec establishes `.agents/skills/` as the cross-client skill discovery path. Skills placed there are discoverable by all supporting agents without client-specific directories:
+
+| Scope   | Path                            | Purpose                       |
+| ------- | ------------------------------- | ----------------------------- |
+| Project | `.agents/skills/<skill-name>`   | Cross-client interoperability |
+| Project | `.<client>/skills/<skill-name>` | Client-specific only          |
+
+When creating or updating a plugin that bundles skills, consider whether any skills are purely knowledge-based and could live in `.agents/skills/` for broader reach. Claude-specific skills (those using hooks, sub-agents, or plugin infrastructure) should stay in `.claude/skills/` or the plugin directory.
+
 ## User Preference: `name` and `description` Are Required
 
 The AgentSkills spec requires `name` and `description`; Claude Code treats them as optional. Always include both. Treat them as required regardless of what any individual agent's docs say.

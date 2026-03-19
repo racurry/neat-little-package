@@ -114,6 +114,10 @@ Optional notes about why settings were changed.
 
 **Why this pattern:** `.claude/` is already accessible to Claude (no extra permissions), `.local.md` files are gitignored, and hooks can parse frontmatter with simple `sed`/`grep`. Do NOT store plugin config in `~/.config/` or other external directories — that requires permission grants.
 
+## Plugin Validation
+
+Use `claude plugin validate` (or `/plugin validate`) to check plugin structure before shipping. Run it when creating a new plugin or after structural changes (adding/removing agents, skills, hooks, or MCP servers). It catches missing fields, malformed manifests, and structural issues that are easy to miss manually.
+
 ## Plugin Preferences
 
 ### plugin.json: Fields We Don't Use

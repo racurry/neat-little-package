@@ -1,5 +1,6 @@
 - [ ] Add a skill or agent for a bunch of boilerplate github actions for claude
 - [ ] Not sure which plugin. Make a hook that just outputs the location of any relevant tests to claude after a file changed. Eg, claude updates admin.py - automatically dump into session message "tests for admin.py are in test_admin.py". Do tools exist that support this? Could we generate a map on the fly on session start with another hook?
-- [ ] Get my github actions working.  Cuz they aren't
+- [ ] Get my github actions working. Cuz they aren't
 - [ ] Mr sparkle - update the config/settings to enable/disable/override linting per file type & linter
-
+- [ ] box-factory - add a skill to audit out of date shit/look for problems. commands, ./CLAUDE.md instead of ./.claude/CLAUDE.md. Make it prefer agents + cross-ecosystem compatibility
+- [ ] THERE IS A `${CLAUDE_PLUGIN_DATA} — Persistent plugin data directory that survives updates.`!!!
