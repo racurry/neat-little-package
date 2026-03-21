@@ -36,8 +36,20 @@ fi
 
 # git -C <path> (uses -C flag instead of running from working directory)
 # e.g. git -C /some/path status
-if [[ "$command" =~ \bgit[[:space:]]+-C\b ]]; then
+# Strip quoted strings first so "git -C" inside commit messages isn't caught
+unquoted="${command//\"[^\"]*\"/}"
+unquoted="${unquoted//\'[^\']*\'/}"
+if [[ "$unquoted" =~ \bgit[[:space:]]+-C\b ]]; then
     block 'git -C is not allowed. Run git commands from the working directory instead. Use relative paths or absolute paths without -C flag.'
+fi
+
+# Fully qualified cwd paths (use relative paths instead)
+# e.g. uv run /Users/aaron/workspace/project/script.py
+# Skip docker/podman commands which legitimately need absolute paths
+if ! [[ "$command" =~ ^(docker|docker-compose|podman)\b ]]; then
+    if [[ "$command" == *"$PWD/"* || "$command" == *"$PWD" ]]; then
+        block "Do not use fully qualified paths for files in the current directory. Use relative paths instead (e.g., ./script.py not $PWD/script.py)."
+    fi
 fi
 
 # Brace with quote character (expansion obfuscation)
