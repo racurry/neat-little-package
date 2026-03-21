@@ -17,13 +17,12 @@ Generates OpenSCAD code for 3D-printed connectors that join store-bought divider
 **Official NeoGrid 2.0 implementation:**
 
 - **QuackWorks GitHub**: https://github.com/AndyLevesque/QuackWorks/tree/main/NeoGrid
-- **Local clone**: `/Users/aaron/workspace/infra/neat-little-package/.tmp/QuackWorks/NeoGrid/`
 - **Main files**: `Neogrid.scad` (connectors), `DrawerLabelsAndHandles.scad` (labels)
 - **License**: CC BY-NC-SA 4.0
 
 **System references:**
 
-- home-organization/neogrid-reference.md - System overview and material selection
+- For system overview and material selection, see the home-organization skill
 - Fetch QuackWorks repo for current parameter syntax
 
 ## Core Understanding (Critical Architecture)
@@ -505,8 +504,7 @@ if (grid_x > 1 || grid_y > 1) {
 
 **Related skills**:
 
-- home-organization/neogrid-reference.md - System overview, material selection, use cases
-- For system selection guidance, defer to that skill
+- For system overview and material selection, see the home-organization skill
 - This skill is only for "generate OpenSCAD code for NeoGrid connectors"
 
 **Official resources**:

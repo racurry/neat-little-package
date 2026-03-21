@@ -520,7 +520,6 @@ If you prefer vertical storage (more compact), I can use vertical_holder instead
 ├── shelf_bracket.md              - Triangular shelf support
 ├── open_basket.md                - Bin without front wall
 ├── multi_access_holder.md        - BOSL2 box with customizable cutouts
-├── angled_storage.md             - Forward-tilting bin (deprecated, use angled_storage_row)
 └── hook_array.md                 - Simple hook row
 
 ./enhancements.md                 - Optional features (labels, drainage, etc.)
@@ -562,6 +561,5 @@ If you prefer vertical storage (more compact), I can use vertical_holder instead
 
 **Related skills**:
 
-- home-organization/SKILL.md - When to use OpenGrid vs other systems (NOT code generation)
-- For system selection guidance, defer to that skill
+- For system selection guidance, see the home-organization skill
 - This skill is only for "generate OpenSCAD code for OpenGrid items"

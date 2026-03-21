@@ -7,7 +7,7 @@ description: Decision framework for choosing between 3D-printed home organizatio
 
 ## Required Reading Before Recommending Systems
 
-Fetch these reference docs every time to verify current specifications:
+Read these references as needed to verify current specifications:
 
 - **./gridfinity-reference.md** - Small item desktop/drawer organization (42mm grid)
 - **./opengrid-reference.md** - Wall-mounted framework (28mm grid)
@@ -15,7 +15,7 @@ Fetch these reference docs every time to verify current specifications:
 - **./french-cleat-reference.md** - Heavy-duty wall mounting (45° angled cleats)
 - **./underware-reference.md** - Cable management channels (OpenGrid-compatible)
 - **./deskware-reference.md** - Modular desk risers with Gridfinity/OpenGrid integration
-- **./cross-system-compatability.md** - Interoperability matrix between systems
+- **./cross-system-compatibility.md** - Interoperability matrix between systems
 - **./frenchfinity-reference.md** - Modular French Cleat tool holders with Gridfinity integration
 
 ## Core Understanding: System Architecture
@@ -202,7 +202,7 @@ Question: "What are you organizing and where will it be mounted?"
 - ⚙️ = Possible but requires custom integration or indirect connection
 - — = Same system
 
-Read ./cross-system-compatability.md for detailed compatibility notes.
+Read ./cross-system-compatibility.md for detailed compatibility notes.
 
 ## Quality Checklist for Recommendations
 

@@ -17,7 +17,6 @@ Generates OpenSCAD code for desktop and drawer storage items compatible with Gri
 **Pattern references** (read as needed):
 
 - ./common_items/\*.md - Full OpenSCAD modules for each pattern
-- home-organization/gridfinity-reference.md - Gridfinity system overview (sibling skill)
 
 ## Core Understanding (Critical Architecture)
 
@@ -473,9 +472,8 @@ gridfinity_baseplate(grid_x=2, grid_y=2);
 
 **Related skills**:
 
-- home-organization/SKILL.md - When to use Gridfinity vs other systems (NOT code generation)
-- opengrid-openscad/SKILL.md - OpenGrid code generation (wall-mounted items)
-- For system selection guidance, defer to home-organization skill
+- For system selection guidance, see the home-organization skill
+- For OpenGrid code generation, see the opengrid-openscad skill
 - This skill is only for "generate OpenSCAD code for Gridfinity items"
 
 **Official resources**:

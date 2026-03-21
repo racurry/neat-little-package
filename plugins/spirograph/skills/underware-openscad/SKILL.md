@@ -16,14 +16,10 @@ Generates OpenSCAD code for parametric cable management channels compatible with
   - Licensed CC BY-NC-SA 4.0
   - Active development with bug fixes and enhancements
 
-**Local reference clone** (if GitHub unavailable):
-
-- `/Users/aaron/workspace/infra/neat-little-package/.tmp/QuackWorks/Underware/*.scad`
-
 **Related documentation:**
 
 - Hands on Katie guide: https://handsonkatie.com/underware-2-0-the-made-to-measure-collection/
-- OpenGrid integration: See home-organization/SKILL.md for system compatibility
+- For system compatibility, see the home-organization skill
 
 ## Core Understanding (Critical Architecture)
 
@@ -400,8 +396,8 @@ Additional_Holding_Strength = 0.6;  // Stable, works with Original
 
 **Related spirograph skills:**
 
-- home-organization/SKILL.md: System selection (when to use Underware vs other systems)
-- opengrid-openscad/SKILL.md: OpenGrid accessory code generation (complementary system)
+- For system selection guidance, see the home-organization skill
+- For OpenGrid accessory code generation, see the opengrid-openscad skill
 
 **Ecosystem integration:**
 
