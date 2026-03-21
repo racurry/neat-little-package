@@ -8,7 +8,6 @@
 # This is disruptive as a user; I have already granted approval.  Don't do things in dumb ways that make
 # me need to re-grant it.
 
-
 command=$(jq -r '.tool_input.command // empty')
 [[ -z "$command" ]] && exit 0
 
@@ -33,6 +32,19 @@ fi
 # e.g. git diff --staged --stat && echo "---UNSTAGED---" && git diff --stat
 if [[ "$command" =~ (echo|printf)[[:space:]]+[\"\']--- ]]; then
     block "Command contains quoted strings starting with '---' which triggers 'quoted characters in flag names' permission prompt. Use a separator that doesn't start with dashes, or use printf with %s."
+fi
+
+# git -C <path> (uses -C flag instead of running from working directory)
+# e.g. git -C /some/path status
+if [[ "$command" =~ \bgit[[:space:]]+-C\b ]]; then
+    block 'git -C is not allowed. Run git commands from the working directory instead. Use relative paths or absolute paths without -C flag.'
+fi
+
+# Brace with quote character (expansion obfuscation)
+# e.g. curl -d '{"service": "update.install", "target": {"entity_id": "all"}}'
+# Claude Code flags {" or {' as potential brace expansion obfuscation
+if [[ "$command" == *'{"'* || "$command" == *"{'"* || "$command" == *"\"}"* || "$command" == *"'}"* ]]; then
+    block "Command contains braces with quote characters (e.g. JSON), which triggers 'expansion obfuscation' permission prompt. Write the JSON to a temp file and reference it, or use a tool/API that accepts structured input instead."
 fi
 
 # Output redirection (>, 2>&1, 2>/dev/null, etc.)

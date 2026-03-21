@@ -10,7 +10,6 @@ Read and manage dmv's per-project settings at `.claude/dmv.local.md` in the curr
 
 | Key                       | Default | Description                    |
 | ------------------------- | ------- | ------------------------------ |
-| `block_git_dash_c`        | `true`  | Block `git -C` commands        |
 | `validate_commit_message` | `true`  | Validate commit message format |
 
 **If no arguments or "show":** Read `.claude/dmv.local.md` (it may not exist — all defaults apply) and display the resolved values from YAML frontmatter.
@@ -21,7 +20,6 @@ Read and manage dmv's per-project settings at `.claude/dmv.local.md` in the curr
 
 ```markdown
 ---
-block_git_dash_c: true
 validate_commit_message: false
 ---
 

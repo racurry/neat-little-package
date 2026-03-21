@@ -6,7 +6,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-BLOCK_GIT_DASH_C = Path(__file__).parent.parent / "hooks" / "block_git_dash_c.py"
 VALIDATE_COMMIT = Path(__file__).parent.parent / "hooks" / "validate_commit_message.py"
 
 
@@ -22,81 +21,6 @@ def run_hook(hook_path, hook_input: dict, env_override: dict = None) -> subproce
         text=True,
         env=env,
     )
-
-
-# =============================================================================
-# block_git_dash_c.py
-# =============================================================================
-
-
-class TestBlockGitDashC:
-    """Test core blocking behavior."""
-
-    def test_blocks_git_dash_c(self):
-        result = run_hook(
-            BLOCK_GIT_DASH_C,
-            {
-                "tool_name": "Bash",
-                "tool_input": {"command": "git -C /some/path status"},
-                "cwd": "/some/project",
-            },
-        )
-        assert result.returncode == 2
-        assert "BLOCKED" in result.stderr
-
-    def test_allows_normal_git(self):
-        result = run_hook(
-            BLOCK_GIT_DASH_C,
-            {
-                "tool_name": "Bash",
-                "tool_input": {"command": "git status"},
-                "cwd": "/some/project",
-            },
-        )
-        assert result.returncode == 0
-        assert result.stdout == ""
-
-    def test_allows_non_bash(self):
-        result = run_hook(
-            BLOCK_GIT_DASH_C,
-            {"tool_name": "Write", "tool_input": {"file_path": "test.py"}, "cwd": "/some/project"},
-        )
-        assert result.returncode == 0
-        assert result.stdout == ""
-
-
-class TestBlockGitDashCConfig:
-    """Test config-based disabling of block_git_dash_c."""
-
-    def test_allows_git_dash_c_when_disabled(self, tmp_path):
-        project_dir = tmp_path / "project"
-        project_dir.mkdir()
-        claude_dir = project_dir / ".claude"
-        claude_dir.mkdir()
-        (claude_dir / "dmv.local.md").write_text("---\nblock_git_dash_c: false\n---\n")
-
-        result = run_hook(
-            BLOCK_GIT_DASH_C,
-            {
-                "tool_name": "Bash",
-                "tool_input": {"command": "git -C /some/path status"},
-                "cwd": str(project_dir),
-            },
-        )
-        assert result.returncode == 0
-        assert result.stdout == ""
-
-    def test_blocks_when_no_config(self):
-        result = run_hook(
-            BLOCK_GIT_DASH_C,
-            {
-                "tool_name": "Bash",
-                "tool_input": {"command": "git -C /some/path status"},
-                "cwd": "/some/project",
-            },
-        )
-        assert result.returncode == 2
-        assert "BLOCKED" in result.stderr
 
 
 # =============================================================================
