@@ -4,3 +4,4 @@
 - [ ] Mr sparkle - update the config/settings to enable/disable/override linting per file type & linter
 - [ ] box-factory - add a skill to audit out of date shit/look for problems. commands, ./CLAUDE.md instead of ./.claude/CLAUDE.md. Make it prefer agents + cross-ecosystem compatibility
 - [ ] THERE IS A `${CLAUDE_PLUGIN_DATA} — Persistent plugin data directory that survives updates.`!!!
+- [ ] Mr sparkle - add a skill that will let it discover the current ecosystem in a project, and recommend mr sparkle setting
