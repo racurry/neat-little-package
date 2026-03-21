@@ -33,7 +33,7 @@ jobs:
           for plugin_dir in plugins/*/; do
             plugin_name=$(basename "$plugin_dir")
             echo "::group::Validating $plugin_name"
-            if claude plugin validate --dir "$plugin_dir"; then
+            if claude plugin validate "$plugin_dir"; then
               echo "✓ $plugin_name valid"
             else
               echo "::error::$plugin_name failed validation"
