@@ -10,7 +10,7 @@ on:
   issues:
     types: [opened, assigned, labeled]
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, ready_for_review, reopened]
 
 jobs:
   claude:
@@ -21,6 +21,7 @@ jobs:
       (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude') || contains(github.event.label.name, 'claude'))) ||
       (github.event_name == 'pull_request' && (contains(github.event.pull_request.body, '@claude') || contains(github.event.pull_request.title, '@claude')))
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
       pull-requests: write
@@ -36,58 +37,29 @@ jobs:
       - name: Run Claude Code
         id: claude
         uses: anthropics/claude-code-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           label_trigger: 'claude'
           base_branch: 'main'
           branch_prefix: 'claude/'
-
-          additional_permissions: |
-            actions: read
+          track_progress: true
 
           settings: |
             {
               "env": {
                 "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
-              },
-              "allowedCommands": [
-                "Bash(git checkout:*)",
-                "Bash(git add:*)",
-                "Bash(git commit:*)",
-                "Bash(git push:*)",
-                "Bash(git branch:*)",
-                "Bash(gh pr create:*)",
-                "Bash(gh pr view:*)",
-                "Bash(gh issue comment:*)",
-                "Bash(gh issue view:*)",
-                "Bash(gh issue edit:*)"
-              ]
+              }
             }
 
           prompt: |
-            REPO: ${{ github.repository }}
-            ISSUE/PR: ${{ github.event.issue.number || github.event.pull_request.number }}
-
-            Context:
-            ${{ github.event.issue.title && format('Issue Title: {0}', github.event.issue.title) || '' }}
-            ${{ github.event.issue.body && format('Issue Description: {0}', github.event.issue.body) || '' }}
-            ${{ github.event.pull_request.title && format('PR Title: {0}', github.event.pull_request.title) || '' }}
-            ${{ github.event.pull_request.body && format('PR Description: {0}', github.event.pull_request.body) || '' }}
-            ${{ github.event.comment.body && format('Comment: {0}', github.event.comment.body) || '' }}
-            ${{ github.event.review.body && format('Review: {0}', github.event.review.body) || '' }}
-
             ## Repository Context
 
-            This is neat-little-package, a collection of Claude Code plugins including:
+            This is neat-little-package, a collection of Claude Code plugins:
             - **box-factory**: Toolkit for creating Claude Code components (plugins, agents, skills, hooks)
             - **dmv**: Git and GitHub workflow preferences
             - **mr-sparkle**: Linting and autoformatting
 
-            Before starting any task:
-            1. Read @.claude/CLAUDE.md for repository-wide guidelines
-            2. For Box Factory work, read the box-factory plugin's claude-components skill for component patterns and philosophy
+            For Box Factory work, read the box-factory plugin's claude-components skill for component patterns and philosophy.
 
             ## Box Factory Philosophy (if working on box-factory plugin)
 
@@ -96,55 +68,25 @@ jobs:
             - **Knowledge Delta Filter**: Only document what Claude doesn't already know
             - **Evidence-Based**: Claims grounded in official docs OR clearly marked as opinions
 
-            ## General Guidelines
+            ## Guidelines
 
-            - Use TodoWrite to track complex multi-step tasks
             - If the request is just a question, answer it without creating a PR
-            - Be concise and efficient
-
-            ## For Code Changes
-
-            1. Run appropriate tests/linting after making changes
-            2. If tests fail, debug and fix before completing
-            3. Check for type errors or compilation issues
-
-            ## When Working on Issues
-
-            1. Create a new branch for your changes
-            2. Make the necessary code changes
-            3. Commit with a descriptive message (terse, single-line, no emojis)
-            4. Create a pull request with:
-               - Clear title summarizing changes
-               - Description explaining what and why
-               - Include "Fixes #${{ github.event.issue.number || github.event.pull_request.number }}" to link to issue
-            5. After creating PR:
-               - Comment on issue with PR link and brief summary
-            6. DO NOT merge - leave open for review
-            7. If you cannot create a PR:
-               - Comment explaining what you accomplished
-               - Include commit SHA if changes were committed
-
-            ## When Working on PRs
-
-            - PR review comments are PRIMARY source of truth
-            - NEVER revert previously approved changes
-            - Read ALL previous review comments before making changes
-            - If reviewing: Provide specific feedback, suggest improvements, ensure test coverage
-            - If responding to reviews: Address feedback or explain your approach
+            - Commit with terse, single-line messages (no emojis)
+            - Run appropriate tests/linting after making changes
+            - DO NOT merge PRs - leave open for review
+            - PR review comments are PRIMARY source of truth - read ALL previous review comments before making changes
 
           claude_args: >-
-            --allowed-tools "
+            --allowedTools "
             Bash(git:*),
             Bash(gh:*),
             Bash(command -v:*),
             Bash(./*),
             Read(**),
             Edit(**),
-            MultiEdit(**),
             Glob(**),
             Grep(**),
             Write(**),
-            TodoWrite,
             Task,
             WebFetch,
             WebSearch

@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Run tests
+        run: uv run --with pytest pytest ./plugins/ -v
+
+  validate-plugins:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Validate plugins
+        run: |
+          failed=0
+          for plugin_dir in plugins/*/; do
+            plugin_name=$(basename "$plugin_dir")
+            echo "::group::Validating $plugin_name"
+            if claude plugin validate --dir "$plugin_dir"; then
+              echo "✓ $plugin_name valid"
+            else
+              echo "::error::$plugin_name failed validation"
+              failed=1
+            fi
+            echo "::endgroup::"
+          done
+          exit $failed
