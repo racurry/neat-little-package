@@ -9,6 +9,7 @@ Lints your code on write.
 - Auto-lints files after every Write/Edit (hook)
 - Detects file type and runs appropriate tools automatically
 - Prefers modern unified tools (ruff, biome) over traditional chains
+- Blocks dangerous Bash patterns as a safety net for broad permissions
 
 ## Skills
 
