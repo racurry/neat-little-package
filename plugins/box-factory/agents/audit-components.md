@@ -33,8 +33,9 @@ Scan the repo for anything component-shaped. Check ALL of these locations:
 - `.claude/commands/` — **LEGACY** (should be skills now)
 - `plugins/` or `.claude/plugins/` — plugin structures
 - `.claude-plugin/` — plugin manifest
-- `CLAUDE.md`, `.claude/CLAUDE.md` — memory/rules files
+- `.claude/CLAUDE.md` — project instructions
 - `.claude/rules/` — rules files
+- `CLAUDE.md` (root-level) — **LEGACY** (should be `.claude/CLAUDE.md`)
 
 Also glob for:
 
@@ -42,6 +43,7 @@ Also glob for:
 - `**/.claude-plugin/plugin.json` — plugin manifests
 - `**/hooks.json` — hook configs
 - `**/agents/*.md` — agent definitions in non-standard locations
+- `**/CLAUDE.md` — flag any not inside `.claude/` directories
 
 ### Step 3: Fetch Current Specs
 
@@ -74,12 +76,14 @@ Check every component for known legacy patterns. These apply in both single-comp
 
 #### Structure & Organization
 
-| Legacy Pattern                                | Current Standard                                       | Severity |
-| --------------------------------------------- | ------------------------------------------------------ | -------- |
-| `commands/` directory                         | `skills/` with SKILL.md                                | ERROR    |
-| `commands/*.md` files                         | Skill with SKILL.md + optional scripts/                | ERROR    |
-| Plugin-level `CLAUDE.md` for rules            | `.claude/rules/<plugin>.md` with `paths:` frontmatter  | WARNING  |
-| Many fine-grained skills (one per tool/topic) | Consolidated skills applying knowledge delta principle | WARNING  |
+| Legacy Pattern                                                 | Current Standard                                                              | Severity |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------- | -------- |
+| `commands/` directory                                          | `skills/` with SKILL.md                                                       | ERROR    |
+| `commands/*.md` files                                          | Skill with SKILL.md + optional scripts/                                       | ERROR    |
+| Root-level `CLAUDE.md` (outside `.claude/`)                    | Move to `.claude/CLAUDE.md`; keeps project root clean (user preference)       | ERROR    |
+| Plugin-level `CLAUDE.md` for rules                             | `.claude/rules/<plugin>.md` with `paths:` frontmatter                         | WARNING  |
+| `CLAUDE.md` containing content that belongs in rules or skills | Split into `.claude/rules/` (path-scoped rules) or skills (reusable guidance) | WARNING  |
+| Many fine-grained skills (one per tool/topic)                  | Consolidated skills applying knowledge delta principle                        | WARNING  |
 
 #### Agent Issues
 
@@ -152,6 +156,6 @@ For a repo audit, wrap each component review in a full report:
 
 - NEVER modify files — review only
 - Provide specific file:line references
-- Distinguish spec violations (ERRORS) from style/preference issues (WARNINGS)
+- Distinguish spec violations (ERRORS) from style/preference issues (WARNINGS). Legacy patterns marked as user preferences are still ERRORS in this agent's output — they represent deliberate standards, not suggestions
 - Only fetch docs for component types actually present
-- Do not flag things that are merely different from box-factory conventions — only flag spec violations and genuinely outdated patterns
+- Do not flag things that are merely cosmetic or arbitrary — only flag spec violations, genuinely outdated patterns, and user preferences documented in the legacy patterns tables
