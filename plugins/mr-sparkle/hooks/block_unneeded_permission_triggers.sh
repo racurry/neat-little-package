@@ -7,6 +7,9 @@
 #
 # This is disruptive as a user; I have already granted approval.  Don't do things in dumb ways that make
 # me need to re-grant it.
+#
+# KEEP IN SYNC: bash_guidance.sh (SessionStart) proactively tells Claude about these
+# rules. If you add/remove a pattern here, update the guidance there too.
 
 command=$(jq -r '.tool_input.command // empty')
 [[ -z "$command" ]] && exit 0
