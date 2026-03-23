@@ -29,7 +29,7 @@ def main():
     stdin_data = sys.stdin.read()
 
     result = subprocess.run(
-        [sys.executable, str(lint_script), "--stdin-hook"],
+        ["uv", "run", "--quiet", "--script", str(lint_script), "--stdin-hook"],
         input=stdin_data,
         capture_output=True,
         text=True,
