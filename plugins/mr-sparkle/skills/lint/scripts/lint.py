@@ -847,13 +847,19 @@ def format_hook_output(
     if output_config.user:
         response["systemMessage"] = summary
 
-    # additionalContext is fed to Claude
+    # additionalContext is fed to Claude — same summary as user sees,
+    # plus detailed output when there are errors/warnings
     if output_config.claude:
-        context_parts = [r.output for r in results if r.output]
-        if context_parts:
-            additional_context = "\n".join(context_parts)
+        # Strip ANSI codes for Claude's context
+        clean_summary = summary
+        for code in [GREEN, YELLOW, RED, RESET]:
+            clean_summary = clean_summary.replace(code, "")
+
+        error_details = [r.output for r in results if r.output and r.status in (Status.ERROR, Status.WARNING)]
+        if error_details:
+            additional_context = clean_summary + "\n" + "\n".join(error_details)
         else:
-            additional_context = f"{tools_str} {filename}: OK"
+            additional_context = clean_summary
 
         response["hookSpecificOutput"] = {
             "hookEventName": "PostToolUse",
