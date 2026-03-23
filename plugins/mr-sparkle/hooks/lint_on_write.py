@@ -6,34 +6,12 @@
 PostToolUse linting hook for Claude Code.
 
 Thin wrapper that delegates to skills/lint/scripts/lint.py --stdin-hook.
-Respects per-project config from .claude/mr-sparkle.local.md.
+Respects per-project config from .claude/mr-sparkle.config.yml.
 """
 
-import json
 import subprocess
 import sys
 from pathlib import Path
-
-
-def _is_enabled(cwd: str) -> bool:
-    """Check if lint_on_write is enabled via .claude/mr-sparkle.local.md."""
-    settings_file = Path(cwd) / ".claude" / "mr-sparkle.local.md"
-    if not settings_file.is_file():
-        return True  # enabled by default
-
-    try:
-        text = settings_file.read_text()
-        parts = text.split("---", 2)
-        if len(parts) < 3:
-            return True
-        frontmatter = parts[1]
-        for line in frontmatter.strip().splitlines():
-            if line.strip().startswith("lint_on_write:"):
-                value = line.split(":", 1)[1].strip().lower()
-                return value not in ("false", "no", "0")
-    except Exception:
-        pass
-    return True
 
 
 def main():
@@ -45,18 +23,10 @@ def main():
     if not lint_script.is_file():
         sys.exit(0)
 
-    # Read stdin (needed for both config check and delegation)
+    # Read stdin and pass through to lint.py
+    # Config checking (disabled, output visibility) is now handled by lint.py
+    # via .claude/mr-sparkle.config.yml
     stdin_data = sys.stdin.read()
-
-    # Check per-project config
-    try:
-        hook_input = json.loads(stdin_data)
-        cwd = hook_input.get("cwd", "")
-    except (json.JSONDecodeError, AttributeError):
-        cwd = ""
-
-    if cwd and not _is_enabled(cwd):
-        sys.exit(0)
 
     result = subprocess.run(
         [sys.executable, str(lint_script), "--stdin-hook"],

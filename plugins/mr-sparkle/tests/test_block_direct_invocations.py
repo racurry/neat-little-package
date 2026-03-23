@@ -1,13 +1,12 @@
-"""Tests for block_direct_markdownlint.py hook."""
+"""Tests for block_direct_invocations.sh hook."""
 
 import json
 import os
 import subprocess
-import sys
 from pathlib import Path
 
 
-HOOK_PATH = Path(__file__).parent.parent / "hooks" / "block_direct_markdownlint.py"
+HOOK_PATH = Path(__file__).parent.parent / "hooks" / "block_direct_invocations.sh"
 
 
 def run_hook(hook_input: dict, env_override: dict = None) -> subprocess.CompletedProcess:
@@ -16,7 +15,7 @@ def run_hook(hook_input: dict, env_override: dict = None) -> subprocess.Complete
     if env_override:
         env.update(env_override)
     return subprocess.run(
-        [sys.executable, str(HOOK_PATH)],
+        ["bash", str(HOOK_PATH)],
         input=json.dumps(hook_input),
         capture_output=True,
         text=True,
@@ -25,8 +24,6 @@ def run_hook(hook_input: dict, env_override: dict = None) -> subprocess.Complete
 
 
 class TestAllowNonBashTools:
-    """Hook should allow non-Bash tool invocations."""
-
     def test_allows_write_tool(self):
         result = run_hook({"tool_name": "Write", "tool_input": {"file_path": "test.md"}})
         assert result.returncode == 0
@@ -41,8 +38,6 @@ class TestAllowNonBashTools:
 
 
 class TestAllowOtherBashCommands:
-    """Hook should allow Bash commands that aren't markdownlint."""
-
     def test_allows_ls(self):
         result = run_hook({"tool_name": "Bash", "tool_input": {"command": "ls -la"}})
         assert result.returncode == 0
@@ -56,18 +51,15 @@ class TestAllowOtherBashCommands:
         assert result.returncode == 0
 
     def test_allows_grep_with_markdownlint_in_output(self):
-        # Should allow grep even if searching for markdownlint
         result = run_hook({"tool_name": "Bash", "tool_input": {"command": "grep markdownlint-cli2 package.json"}})
         assert result.returncode == 0
 
 
 class TestBlockDirectMarkdownlint:
-    """Hook should block direct markdownlint-cli2 without --config."""
-
     def test_blocks_simple_invocation(self):
         result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2 README.md"}})
         assert result.returncode == 2
-        assert "markdownlint-cli2 requires a --config" in result.stderr
+        assert "markdownlint-cli2" in result.stderr
 
     def test_blocks_with_fix_flag(self):
         result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2 --fix docs/"}})
@@ -77,14 +69,12 @@ class TestBlockDirectMarkdownlint:
         result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2 **/*.md"}})
         assert result.returncode == 2
 
-    def test_error_message_suggests_slash_command(self):
+    def test_error_message_suggests_lint(self):
         result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2 README.md"}})
-        assert "/mr-sparkle:lint-md" in result.stderr
+        assert "/mr-sparkle:lint" in result.stderr
 
 
 class TestAllowMarkdownlintWithConfig:
-    """Hook should allow markdownlint-cli2 when --config is specified."""
-
     def test_allows_with_config_flag(self):
         result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2 --config .markdownlint.json README.md"}})
         assert result.returncode == 0
@@ -99,8 +89,6 @@ class TestAllowMarkdownlintWithConfig:
 
 
 class TestEdgeCases:
-    """Edge cases and malformed input handling."""
-
     def test_empty_command(self):
         result = run_hook({"tool_name": "Bash", "tool_input": {"command": ""}})
         assert result.returncode == 0
@@ -114,36 +102,31 @@ class TestEdgeCases:
         assert result.returncode == 0
 
     def test_invalid_json_input(self):
-        # Run with invalid JSON
         result = subprocess.run(
-            [sys.executable, str(HOOK_PATH)],
+            ["bash", str(HOOK_PATH)],
             input="not valid json",
             capture_output=True,
             text=True,
         )
-        assert result.returncode == 0  # Graceful handling
+        assert result.returncode == 0
 
     def test_markdownlint_not_at_start(self):
-        # Should allow if markdownlint-cli2 isn't at the start
         result = run_hook({"tool_name": "Bash", "tool_input": {"command": "echo markdownlint-cli2 test"}})
         assert result.returncode == 0
 
     def test_just_markdownlint_no_space(self):
-        # "markdownlint-cli2" without trailing space shouldn't match
         result = run_hook({"tool_name": "Bash", "tool_input": {"command": "markdownlint-cli2"}})
-        assert result.returncode == 0  # No space after, doesn't match pattern
+        assert result.returncode == 0
 
 
 class TestConfigDisabling:
-    """Test that block_direct_markdownlint respects per-project config."""
-
-    def test_allows_markdownlint_when_disabled(self, tmp_path):
-        """When disabled for the cwd, direct markdownlint is allowed."""
+    def test_allows_when_block_direct_disabled(self, tmp_path):
+        """When block_direct: [] in config, direct invocations are allowed."""
         project_dir = tmp_path / "project"
         project_dir.mkdir()
         claude_dir = project_dir / ".claude"
         claude_dir.mkdir()
-        (claude_dir / "mr-sparkle.local.md").write_text("---\nblock_direct_markdownlint: false\n---\n")
+        (claude_dir / "mr-sparkle.config.yml").write_text("block_direct: []\n")
 
         result = run_hook(
             {
@@ -155,13 +138,11 @@ class TestConfigDisabling:
         assert result.returncode == 0
 
     def test_blocks_when_no_config(self):
-        """Without config, blocking behavior is the default."""
         result = run_hook(
             {
                 "tool_name": "Bash",
                 "tool_input": {"command": "markdownlint-cli2 README.md"},
-                "cwd": "/some/project",
+                "cwd": "/nonexistent/project",
             },
-            env_override={"NLP_CONFIG_DIR": "/nonexistent/path"},
         )
         assert result.returncode == 2

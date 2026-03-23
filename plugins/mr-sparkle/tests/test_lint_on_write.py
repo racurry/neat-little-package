@@ -133,12 +133,14 @@ class TestConfigDisabling:
     """Test that lint_on_write respects per-project config."""
 
     def test_skips_linting_when_disabled(self, tmp_path):
-        """When lint_on_write is disabled for the cwd, hook exits with no output."""
+        """When tools: [] in config, hook exits with no output."""
         project_dir = tmp_path / "project"
         project_dir.mkdir()
         claude_dir = project_dir / ".claude"
         claude_dir.mkdir()
-        (claude_dir / "mr-sparkle.local.md").write_text("---\nlint_on_write: false\n---\n")
+        (claude_dir / "mr-sparkle.config.yml").write_text("lint_on_write:\n  tools: []\n")
+        # Need a project root marker so find_project_root works
+        (project_dir / ".git").mkdir()
 
         test_file = project_dir / "main.py"
         test_file.write_text("x=1\n")

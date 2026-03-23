@@ -15,8 +15,9 @@ Lints your code on write.
 
 ```
 /mr-sparkle:lint <file>                              # lint a specific file
-/mr-sparkle:config                                   # show per-project hook settings
-/mr-sparkle:config disable lint_on_write             # disable auto-linting for this project
+/mr-sparkle:lint config                              # show per-project settings
+/mr-sparkle:lint config init                         # generate config from autodetection
+/mr-sparkle:lint config set tools none               # disable auto-linting
 ```
 
 ## Supported Languages

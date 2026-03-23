@@ -1,7 +1,6 @@
 ---
 name: lint
-description: Universal polyglot linting capabilities for Python, JavaScript/TypeScript, Markdown, Shell, Ruby, YAML, and JSON files. Use when you need to lint files programmatically, understand tool selection logic, or invoke linting from commands/agents.
-argument-hint: <file_path>
+description: Universal polyglot linting and per-project config management. Use when you need to lint files, understand tool selection logic, invoke linting from commands/agents, or manage mr-sparkle config.
 ---
 
 # Linting Skill
@@ -175,7 +174,7 @@ For linting results, run:
 Parse the JSON output to understand lint status.
 ```
 
-### From Hooks (Future)
+### From Hooks
 
 The script supports `--stdin-hook` mode for hook integration:
 
@@ -183,6 +182,85 @@ The script supports `--stdin-hook` mode for hook integration:
 # Reads hook JSON from stdin, outputs hook-compatible JSON
 echo '{"tool_input":{"file_path":"/path/to/file.py"}}' | ${CLAUDE_SKILL_DIR}/scripts/lint.py --stdin-hook
 ```
+
+Output visibility (systemMessage vs additionalContext) is controlled by the `output` section in `.claude/mr-sparkle.config.yml`.
+
+## Per-Project Config
+
+All mr-sparkle settings live in `.claude/mr-sparkle.config.yml` in the project root.
+
+```yaml
+# Use autodetection (default behavior when no config file exists)
+lint_on_write:
+  tools:
+    - default
+  output:
+    user: true
+    claude: false
+```
+
+```yaml
+# Explicit tools per extension — bypasses autodetection entirely
+lint_on_write:
+  tools:
+    - file_ext: [.py]
+      commands:
+        - ruff check --fix
+        - ruff format
+    - file_ext: [.js, .ts, .tsx]
+      commands:
+        - eslint --fix
+  output:
+    user: false
+    claude: true
+```
+
+```yaml
+# Disable linting entirely
+lint_on_write:
+  tools: []
+```
+
+```yaml
+# Disable direct invocation blocking (markdownlint without --config, etc.)
+block_direct: []
+```
+
+**Key behaviors:**
+
+- No config file = autodetection (same as `tools: [default]`)
+- `tools: [default]` is all-or-nothing — cannot mix with explicit entries
+- Explicit tools: file path appended as last arg, run from project root
+- Extensions not covered by any entry are silently skipped
+- `output.user` controls the systemMessage (shown to user)
+- `output.claude` controls additionalContext (fed to Claude)
+
+### Config Management
+
+**If invoked as `config` or `config show`:** Read `.claude/mr-sparkle.config.yml` and display resolved settings.
+
+**If `config init`:** Run `--detect` on representative files to generate `.claude/mr-sparkle.config.yml` with explicit tool commands based on what autodetection found.
+
+**If `config set`:** Update a config value. Examples:
+
+- `config set output.user false`
+- `config set output.claude true`
+- `config set tools default`
+- `config set tools none`
+
+When creating or modifying the config file:
+
+- Create `.claude/` directory if it doesn't exist
+- Add `.claude/*.config.yml` to `.gitignore` if not already there
+- Always show resolved state after any change
+
+### Detection Mode
+
+```bash
+${CLAUDE_SKILL_DIR}/scripts/lint.py --detect /path/to/file.py
+```
+
+Shows what autodetection finds: project root, toolset, selected tools, installed binaries, and config status. Useful for debugging why the wrong tools are running.
 
 ## Silent Skip Conditions
 
@@ -192,3 +270,5 @@ The script silently exits (code 0, no output) when:
 - File extension not recognized
 - No tools installed for the detected toolset
 - Tool requires config but none found (e.g., markdownlint without config)
+- Config has `tools: []` (linting disabled)
+- Custom config doesn't cover the file's extension

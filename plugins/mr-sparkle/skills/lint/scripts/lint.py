@@ -1,6 +1,6 @@
 #!/usr/bin/env -S uv run --quiet --script
 # /// script
-# dependencies = []
+# dependencies = ["pyyaml"]
 # ///
 """
 Universal polyglot linting CLI for Claude Code.
@@ -8,11 +8,31 @@ Universal polyglot linting CLI for Claude Code.
 Detects file type by extension, finds project configuration,
 and runs appropriate linters with smart tool selection.
 
+Supports per-project config via .claude/mr-sparkle.config.yml:
+
+    tools:
+      - default                          # Use autodetection (default)
+    output:
+      user: true
+      claude: false
+
+    tools:
+      - file_ext: [.py]
+        commands:
+          - ruff check --fix
+          - ruff format
+    output:
+      user: false
+      claude: true
+
+    tools: []                            # Disable linting entirely
+
 Usage:
     lint.py <file_path>                    # Lint file (text output)
     lint.py <file_path> --format json      # JSON output
     lint.py <file_path> --format text      # Text output (default)
     lint.py --stdin-hook                   # Read hook JSON from stdin
+    lint.py --detect <file_path>           # Show what autodetection finds
 
 Exit codes:
     0: Success (clean or fixed)
@@ -36,6 +56,193 @@ try:
     import tomllib
 except ImportError:
     tomllib = None  # type: ignore[assignment]
+
+import yaml
+
+
+# =============================================================================
+# Config Loading
+# =============================================================================
+
+CONFIG_FILENAME = "mr-sparkle.config.yml"
+
+
+@dataclass
+class ToolEntry:
+    """A configured tool: file extensions it applies to and commands to run."""
+
+    file_ext: list[str]
+    commands: list[str]
+
+
+@dataclass
+class OutputConfig:
+    """Controls what gets shown to user vs Claude."""
+
+    user: bool = True
+    claude: bool = False
+
+
+@dataclass
+class LintConfig:
+    """Parsed mr-sparkle config."""
+
+    use_default: bool = True
+    tools: list[ToolEntry] = None  # type: ignore[assignment]
+    output: OutputConfig = None  # type: ignore[assignment]
+    disabled: bool = False
+
+    def __post_init__(self):
+        if self.tools is None:
+            self.tools = []
+        if self.output is None:
+            self.output = OutputConfig()
+
+
+# Singleton default config
+_DEFAULT_CONFIG = LintConfig(use_default=True)
+
+
+def _parse_yaml(text: str) -> dict:
+    """Parse YAML config text. Returns empty dict on failure."""
+    result = yaml.safe_load(text)
+    return result if isinstance(result, dict) else {}
+
+
+def load_raw_config(project_root: Optional[Path]) -> dict:
+    """Load raw mr-sparkle config dict from .claude/mr-sparkle.config.yml."""
+    if not project_root:
+        return {}
+
+    config_path = project_root / ".claude" / CONFIG_FILENAME
+    if not config_path.is_file():
+        return {}
+
+    try:
+        text = config_path.read_text()
+        return _parse_yaml(text)
+    except Exception:
+        return {}
+
+
+def load_config(project_root: Optional[Path]) -> LintConfig:
+    """Load lint config from .claude/mr-sparkle.config.yml (lint_on_write section)."""
+    raw = load_raw_config(project_root)
+    if not raw:
+        return _DEFAULT_CONFIG
+
+    # Everything lives under lint_on_write key
+    lint_raw = raw.get("lint_on_write")
+    if not isinstance(lint_raw, dict):
+        return _DEFAULT_CONFIG
+
+    # Parse output section
+    output_raw = lint_raw.get("output", {})
+    if isinstance(output_raw, dict):
+        output = OutputConfig(
+            user=output_raw.get("user", True),
+            claude=output_raw.get("claude", False),
+        )
+    else:
+        output = OutputConfig()
+
+    # Parse tools section
+    tools_raw = lint_raw.get("tools")
+
+    # tools: [] means disabled
+    if isinstance(tools_raw, list) and len(tools_raw) == 0:
+        return LintConfig(use_default=False, tools=[], output=output, disabled=True)
+
+    # tools: [default] or tools:\n  - default
+    if isinstance(tools_raw, list):
+        if len(tools_raw) == 1 and tools_raw[0] == "default":
+            return LintConfig(use_default=True, output=output)
+
+        # Parse explicit tool entries
+        entries = []
+        for item in tools_raw:
+            if isinstance(item, dict):
+                file_ext = item.get("file_ext", [])
+                commands = item.get("commands", [])
+                if file_ext and commands:
+                    entries.append(ToolEntry(file_ext=file_ext, commands=commands))
+        if entries:
+            return LintConfig(use_default=False, tools=entries, output=output)
+
+    # Unrecognized or missing tools key → default
+    return LintConfig(use_default=True, output=output)
+
+
+def find_custom_commands(config: LintConfig, file_path: str) -> Optional[list[str]]:
+    """Find custom commands for a file based on config tool entries.
+
+    Returns list of command strings, or None if no match (use default).
+    """
+    if config.use_default or config.disabled:
+        return None
+
+    ext = Path(file_path).suffix.lower()
+    for entry in config.tools:
+        if ext in entry.file_ext:
+            return entry.commands
+    return None
+
+
+def run_custom_commands(
+    file_path: str,
+    commands: list[str],
+    project_root: Optional[Path],
+) -> list["ToolResult"]:
+    """Run explicit commands from config. File path appended as last arg."""
+    import shlex
+
+    results = []
+    cwd = str(project_root) if project_root else None
+
+    for cmd_str in commands:
+        parts = shlex.split(cmd_str)
+        tool_name = parts[0]
+        binary = shutil.which(tool_name)
+        if not binary:
+            results.append(
+                ToolResult(
+                    name=tool_name,
+                    status=Status.ERROR,
+                    output=f"{tool_name} not found in PATH",
+                )
+            )
+            continue
+
+        cmd = [binary] + parts[1:] + [file_path]
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                cwd=cwd,
+                timeout=60,
+            )
+            output = (result.stdout + result.stderr).strip()
+            status = Status.WARNING if result.returncode != 0 else Status.OK
+            results.append(ToolResult(name=tool_name, status=status, output=output))
+        except subprocess.TimeoutExpired:
+            results.append(
+                ToolResult(
+                    name=tool_name,
+                    status=Status.ERROR,
+                    output=f"{tool_name} timed out after 60s",
+                )
+            )
+        except Exception as e:
+            results.append(
+                ToolResult(
+                    name=tool_name,
+                    status=Status.ERROR,
+                    output=f"{tool_name} error: {e}",
+                )
+            )
+
+    return results
 
 
 # =============================================================================
@@ -588,8 +795,19 @@ def format_json_output(file_path: str, toolset: str, results: list[ToolResult]) 
     return json.dumps(output, indent=2), exit_code
 
 
-def format_hook_output(file_path: str, results: list[ToolResult], verbose: bool = False) -> tuple[str, int]:
-    """Format results as hook-compatible JSON. Returns (output, exit_code)."""
+def format_hook_output(
+    file_path: str,
+    results: list[ToolResult],
+    output_config: Optional[OutputConfig] = None,
+) -> tuple[str, int]:
+    """Format results as hook-compatible JSON. Returns (output, exit_code).
+
+    Uses output_config to determine what goes in systemMessage (user-visible)
+    vs additionalContext (Claude-visible). Defaults to showing user, not Claude.
+    """
+    if output_config is None:
+        output_config = OutputConfig()
+
     filename = Path(file_path).name
     ran = [r for r in results if r.status != Status.SKIPPED]
 
@@ -623,10 +841,14 @@ def format_hook_output(file_path: str, results: list[ToolResult], verbose: bool 
         summary = f"{GREEN}✓ {tools_str} {filename}: OK{RESET}"
         exit_code = 0
 
-    response: dict = {"systemMessage": summary}
+    response: dict = {}
 
-    # Only include additionalContext when verbose
-    if verbose:
+    # systemMessage is shown to the user
+    if output_config.user:
+        response["systemMessage"] = summary
+
+    # additionalContext is fed to Claude
+    if output_config.claude:
         context_parts = [r.output for r in results if r.output]
         if context_parts:
             additional_context = "\n".join(context_parts)
@@ -637,6 +859,10 @@ def format_hook_output(file_path: str, results: list[ToolResult], verbose: bool 
             "hookEventName": "PostToolUse",
             "additionalContext": additional_context,
         }
+
+    # If neither user nor claude output, still return empty response
+    if not response:
+        return "", exit_code
 
     return json.dumps(response), exit_code
 
@@ -649,7 +875,7 @@ def format_hook_output(file_path: str, results: list[ToolResult], verbose: bool 
 def lint_file(
     file_path: str,
     output_format: str = "text",
-    verbose: bool = False,
+    config: Optional[LintConfig] = None,
 ) -> tuple[str, int]:
     """
     Lint a file and return formatted output.
@@ -657,7 +883,7 @@ def lint_file(
     Args:
         file_path: Path to file to lint
         output_format: One of "text", "json", "hook"
-        verbose: Include detailed output in hook mode
+        config: Optional LintConfig (loaded from mr-sparkle.config.yml)
 
     Returns:
         Tuple of (formatted_output, exit_code)
@@ -669,22 +895,42 @@ def lint_file(
     if has_conflict_markers(file_path):
         return "", 0
 
-    ext = Path(file_path).suffix.lower()
-    toolset = EXTENSION_TO_TOOLSET.get(ext)
-    if not toolset:
-        return "", 0
-
     project_root = find_project_root(file_path)
-    tools_to_run = select_tools(toolset, project_root)
 
-    if not tools_to_run:
+    # Load config if not provided
+    if config is None:
+        config = load_config(project_root)
+
+    # Config says linting is disabled (tools: [])
+    if config.disabled:
         return "", 0
 
-    results: list[ToolResult] = []
-    for tool_name in tools_to_run:
-        result = run_tool(file_path, tool_name, project_root)
-        if result:
-            results.append(result)
+    # Check for custom commands from config
+    custom_commands = find_custom_commands(config, file_path)
+
+    if custom_commands is not None:
+        # Custom commands mode - bypass autodetection entirely
+        results = run_custom_commands(file_path, custom_commands, project_root)
+        toolset = "custom"
+    elif not config.use_default:
+        # Custom config but no matching extension - skip this file
+        return "", 0
+    else:
+        # Default autodetection mode
+        ext = Path(file_path).suffix.lower()
+        toolset = EXTENSION_TO_TOOLSET.get(ext)
+        if not toolset:
+            return "", 0
+
+        tools_to_run = select_tools(toolset, project_root)
+        if not tools_to_run:
+            return "", 0
+
+        results = []
+        for tool_name in tools_to_run:
+            result = run_tool(file_path, tool_name, project_root)
+            if result:
+                results.append(result)
 
     if not results:
         return "", 0
@@ -692,9 +938,58 @@ def lint_file(
     if output_format == "json":
         return format_json_output(file_path, toolset, results)
     elif output_format == "hook":
-        return format_hook_output(file_path, results, verbose=verbose)
+        return format_hook_output(file_path, results, output_config=config.output)
     else:
         return format_text_output(file_path, results)
+
+
+def detect_file(file_path: str) -> str:
+    """Run detection for a file and return YAML-formatted results."""
+    project_root = find_project_root(file_path)
+    ext = Path(file_path).suffix.lower()
+    toolset = EXTENSION_TO_TOOLSET.get(ext)
+
+    # Check config
+    config = load_config(project_root)
+
+    info = {
+        "file": file_path,
+        "extension": ext,
+        "project_root": str(project_root) if project_root else None,
+        "toolset": toolset,
+        "config_file": None,
+        "config_mode": "default" if config.use_default else ("disabled" if config.disabled else "custom"),
+    }
+
+    if project_root:
+        config_path = project_root / ".claude" / CONFIG_FILENAME
+        if config_path.is_file():
+            info["config_file"] = str(config_path)
+
+    # Check custom commands
+    custom = find_custom_commands(config, file_path)
+    if custom:
+        info["custom_commands"] = custom
+    elif toolset:
+        selected = select_tools(toolset, project_root)
+        info["selected_tools"] = selected
+
+        # Check which tools are installed
+        installed = {}
+        for tool_name in selected:
+            tool_def = TOOLS[tool_name]
+            binary = shutil.which(tool_def["binary"])
+            installed[tool_name] = str(binary) if binary else None
+        info["tools_installed"] = installed
+
+        # Check config detection per tool
+        if project_root:
+            config_found = {}
+            for tool_name in selected:
+                config_found[tool_name] = has_project_config(tool_name, project_root)
+            info["config_detected"] = config_found
+
+    return json.dumps(info, indent=2)
 
 
 def main():
@@ -707,6 +1002,7 @@ Examples:
   %(prog)s file.py                    Lint Python file
   %(prog)s file.md --format json      Lint markdown, JSON output
   %(prog)s --stdin-hook               Read hook JSON from stdin
+  %(prog)s --detect file.py           Show detection results
         """,
     )
 
@@ -727,9 +1023,9 @@ Examples:
         help="Read hook JSON from stdin (for hooks.json integration)",
     )
     parser.add_argument(
-        "--verbose",
+        "--detect",
         action="store_true",
-        help="Include detailed output in hook mode (default: summary only)",
+        help="Show what autodetection finds for a file (does not run linting)",
     )
 
     args = parser.parse_args()
@@ -746,14 +1042,21 @@ Examples:
         if not file_path or not isinstance(file_path, str):
             sys.exit(0)
 
-        output, exit_code = lint_file(file_path, output_format="hook", verbose=args.verbose)
+        output, exit_code = lint_file(file_path, output_format="hook")
         if output:
             print(output, flush=True)
         sys.exit(0)  # Hooks should not block
 
+    # Detect mode
+    if args.detect:
+        if not args.file:
+            parser.error("file is required with --detect")
+        print(detect_file(args.file))
+        sys.exit(0)
+
     # Normal CLI mode
     if not args.file:
-        parser.error("file is required unless using --stdin-hook")
+        parser.error("file is required unless using --stdin-hook or --detect")
 
     output, exit_code = lint_file(args.file, output_format=args.format)
 

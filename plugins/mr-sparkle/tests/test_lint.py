@@ -317,13 +317,28 @@ class TestFormatHookOutput:
         assert "hookSpecificOutput" not in data
         assert code == 1
 
-    def test_verbose_includes_hook_specific_output(self):
+    def test_claude_output_includes_hook_specific_output(self):
         results = [lint.ToolResult("ruff", lint.Status.WARNING, "error details")]
-        output, code = lint.format_hook_output("/path/to/file.py", results, verbose=True)
+        output_config = lint.OutputConfig(user=True, claude=True)
+        output, code = lint.format_hook_output("/path/to/file.py", results, output_config=output_config)
         data = json.loads(output)
         assert "hookSpecificOutput" in data
         assert data["hookSpecificOutput"]["hookEventName"] == "PostToolUse"
         assert "error details" in data["hookSpecificOutput"]["additionalContext"]
+
+    def test_user_false_excludes_system_message(self):
+        results = [lint.ToolResult("ruff", lint.Status.OK)]
+        output_config = lint.OutputConfig(user=False, claude=True)
+        output, code = lint.format_hook_output("/path/to/file.py", results, output_config=output_config)
+        data = json.loads(output)
+        assert "systemMessage" not in data
+        assert "hookSpecificOutput" in data
+
+    def test_both_false_returns_empty(self):
+        results = [lint.ToolResult("ruff", lint.Status.OK)]
+        output_config = lint.OutputConfig(user=False, claude=False)
+        output, code = lint.format_hook_output("/path/to/file.py", results, output_config=output_config)
+        assert output == ""
 
 
 # =============================================================================
@@ -714,3 +729,243 @@ class TestIntegration:
         content = file_path.read_text()
         assert "name: unformatted" in content  # Trailing spaces removed
         assert "[x, y, z]" in content  # Array spacing normalized
+
+
+# =============================================================================
+# Tests: Config Loading
+# =============================================================================
+
+
+class TestLoadConfig:
+    def test_no_config_returns_default(self, tmp_path):
+        config = lint.load_config(tmp_path)
+        assert config.use_default is True
+        assert config.disabled is False
+
+    def test_no_project_root_returns_default(self):
+        config = lint.load_config(None)
+        assert config.use_default is True
+
+    def test_default_tools(self, tmp_path):
+        claude_dir = tmp_path / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "mr-sparkle.config.yml").write_text("lint_on_write:\n  tools:\n    - default\n")
+        config = lint.load_config(tmp_path)
+        assert config.use_default is True
+        assert config.disabled is False
+
+    def test_empty_tools_means_disabled(self, tmp_path):
+        claude_dir = tmp_path / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "mr-sparkle.config.yml").write_text("lint_on_write:\n  tools: []\n")
+        config = lint.load_config(tmp_path)
+        assert config.disabled is True
+        assert config.use_default is False
+
+    def test_custom_tools_parsed(self, tmp_path):
+        claude_dir = tmp_path / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "mr-sparkle.config.yml").write_text(
+            "lint_on_write:\n  tools:\n    - file_ext: [.py]\n      commands:\n        - ruff check --fix\n        - ruff format\n"
+        )
+        config = lint.load_config(tmp_path)
+        assert config.use_default is False
+        assert config.disabled is False
+        assert len(config.tools) == 1
+        assert config.tools[0].file_ext == [".py"]
+        assert config.tools[0].commands == ["ruff check --fix", "ruff format"]
+
+    def test_output_config_parsed(self, tmp_path):
+        claude_dir = tmp_path / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "mr-sparkle.config.yml").write_text("lint_on_write:\n  tools:\n    - default\n  output:\n    user: false\n    claude: true\n")
+        config = lint.load_config(tmp_path)
+        assert config.output.user is False
+        assert config.output.claude is True
+
+    def test_output_defaults(self, tmp_path):
+        claude_dir = tmp_path / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "mr-sparkle.config.yml").write_text("lint_on_write:\n  tools:\n    - default\n")
+        config = lint.load_config(tmp_path)
+        assert config.output.user is True
+        assert config.output.claude is False
+
+    def test_malformed_config_returns_default(self, tmp_path):
+        claude_dir = tmp_path / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "mr-sparkle.config.yml").write_text("{{invalid yaml")
+        config = lint.load_config(tmp_path)
+        assert config.use_default is True
+
+    def test_missing_lint_on_write_key_returns_default(self, tmp_path):
+        claude_dir = tmp_path / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "mr-sparkle.config.yml").write_text("some_other_key: true\n")
+        config = lint.load_config(tmp_path)
+        assert config.use_default is True
+
+
+class TestFindCustomCommands:
+    def test_returns_none_for_default_config(self):
+        config = lint.LintConfig(use_default=True)
+        result = lint.find_custom_commands(config, "/path/to/file.py")
+        assert result is None
+
+    def test_returns_none_for_disabled_config(self):
+        config = lint.LintConfig(use_default=False, disabled=True)
+        result = lint.find_custom_commands(config, "/path/to/file.py")
+        assert result is None
+
+    def test_returns_commands_for_matching_ext(self):
+        config = lint.LintConfig(
+            use_default=False,
+            tools=[lint.ToolEntry(file_ext=[".py"], commands=["ruff check --fix"])],
+        )
+        result = lint.find_custom_commands(config, "/path/to/file.py")
+        assert result == ["ruff check --fix"]
+
+    def test_returns_none_for_non_matching_ext(self):
+        config = lint.LintConfig(
+            use_default=False,
+            tools=[lint.ToolEntry(file_ext=[".py"], commands=["ruff check --fix"])],
+        )
+        result = lint.find_custom_commands(config, "/path/to/file.js")
+        assert result is None
+
+    def test_multiple_tool_entries(self):
+        config = lint.LintConfig(
+            use_default=False,
+            tools=[
+                lint.ToolEntry(file_ext=[".py"], commands=["ruff check --fix"]),
+                lint.ToolEntry(file_ext=[".js", ".ts"], commands=["eslint --fix"]),
+            ],
+        )
+        assert lint.find_custom_commands(config, "/path/file.py") == ["ruff check --fix"]
+        assert lint.find_custom_commands(config, "/path/file.js") == ["eslint --fix"]
+        assert lint.find_custom_commands(config, "/path/file.ts") == ["eslint --fix"]
+        assert lint.find_custom_commands(config, "/path/file.rb") is None
+
+
+class TestRunCustomCommands:
+    def test_runs_command_with_file_appended(self, tmp_path):
+        file_path = tmp_path / "test.py"
+        file_path.write_text("x = 1\n")
+
+        mock_result = MagicMock()
+        mock_result.returncode = 0
+        mock_result.stdout = ""
+        mock_result.stderr = ""
+
+        with patch("shutil.which", return_value="/usr/bin/ruff"):
+            with patch("subprocess.run", return_value=mock_result) as mock_run:
+                results = lint.run_custom_commands(str(file_path), ["ruff check --fix"], tmp_path)
+
+        assert len(results) == 1
+        assert results[0].status == lint.Status.OK
+        cmd = mock_run.call_args[0][0]
+        assert cmd[-1] == str(file_path)
+        assert "--fix" in cmd
+
+    def test_returns_error_when_binary_not_found(self, tmp_path):
+        with patch("shutil.which", return_value=None):
+            results = lint.run_custom_commands("/path/to/file.py", ["nonexistent --fix"], tmp_path)
+
+        assert len(results) == 1
+        assert results[0].status == lint.Status.ERROR
+        assert "not found" in results[0].output
+
+    def test_nonzero_exit_is_warning(self, tmp_path):
+        file_path = tmp_path / "test.py"
+        file_path.write_text("x = 1\n")
+
+        mock_result = MagicMock()
+        mock_result.returncode = 1
+        mock_result.stdout = "lint error on line 1"
+        mock_result.stderr = ""
+
+        with patch("shutil.which", return_value="/usr/bin/ruff"):
+            with patch("subprocess.run", return_value=mock_result):
+                results = lint.run_custom_commands(str(file_path), ["ruff check"], tmp_path)
+
+        assert results[0].status == lint.Status.WARNING
+
+
+class TestLintFileWithConfig:
+    def test_disabled_config_returns_empty(self, tmp_path):
+        (tmp_path / ".git").mkdir()
+        claude_dir = tmp_path / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "mr-sparkle.config.yml").write_text("lint_on_write:\n  tools: []\n")
+
+        file_path = tmp_path / "test.py"
+        file_path.write_text("x = 1\n")
+
+        output, code = lint.lint_file(str(file_path))
+        assert output == ""
+        assert code == 0
+
+    def test_custom_commands_used_when_configured(self, tmp_path):
+        (tmp_path / ".git").mkdir()
+        claude_dir = tmp_path / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "mr-sparkle.config.yml").write_text(
+            "lint_on_write:\n  tools:\n    - file_ext: [.py]\n      commands:\n        - ruff check --fix\n"
+        )
+
+        file_path = tmp_path / "test.py"
+        file_path.write_text("x = 1\n")
+
+        mock_result = MagicMock()
+        mock_result.returncode = 0
+        mock_result.stdout = ""
+        mock_result.stderr = ""
+
+        with patch("shutil.which", return_value="/usr/bin/ruff"):
+            with patch("subprocess.run", return_value=mock_result):
+                output, code = lint.lint_file(str(file_path), output_format="json")
+
+        data = json.loads(output)
+        assert data["toolset"] == "custom"
+
+    def test_unmatched_ext_falls_through_with_custom_config(self, tmp_path):
+        """If custom config doesn't cover an extension, file is skipped."""
+        (tmp_path / ".git").mkdir()
+        claude_dir = tmp_path / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "mr-sparkle.config.yml").write_text(
+            "lint_on_write:\n  tools:\n    - file_ext: [.py]\n      commands:\n        - ruff check --fix\n"
+        )
+
+        file_path = tmp_path / "test.js"
+        file_path.write_text("const x = 1;\n")
+
+        output, code = lint.lint_file(str(file_path))
+        assert output == ""
+        assert code == 0
+
+
+class TestDetectFile:
+    def test_detect_returns_json(self, python_project_with_ruff):
+        file_path = python_project_with_ruff / "main.py"
+        result = lint.detect_file(str(file_path))
+        data = json.loads(result)
+        assert data["extension"] == ".py"
+        assert data["toolset"] == "python"
+        assert data["config_mode"] == "default"
+        assert "selected_tools" in data
+
+    def test_detect_with_custom_config(self, tmp_path):
+        (tmp_path / ".git").mkdir()
+        claude_dir = tmp_path / ".claude"
+        claude_dir.mkdir()
+        (claude_dir / "mr-sparkle.config.yml").write_text(
+            "lint_on_write:\n  tools:\n    - file_ext: [.py]\n      commands:\n        - ruff check --fix\n"
+        )
+        file_path = tmp_path / "test.py"
+        file_path.write_text("x = 1\n")
+
+        result = lint.detect_file(str(file_path))
+        data = json.loads(result)
+        assert data["config_mode"] == "custom"
+        assert data["custom_commands"] == ["ruff check --fix"]
