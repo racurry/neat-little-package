@@ -9,12 +9,14 @@ argument-hint: [optional problem context]
 ## Process
 
 1. **Analyze branch context:**
+
    - Current branch: `git branch --show-current`
    - Base branch: `git remote show origin | grep 'HEAD branch'`
    - Commits since divergence: `git log --oneline <base>..HEAD`
    - Full diff: `git diff <base>...HEAD`
 
 2. **Determine Problem scope:**
+
    - All commits relate to one issue → single Problem statement
    - Commits address distinct issues → numbered list, matching Solution numbers
 
@@ -39,9 +41,11 @@ argument-hint: [optional problem context]
    - **Ignore any PR templates in the repo**
 
 4. **Generate PR title:**
+
    - Short, descriptive, lowercase, no type prefixes, no emojis
 
 5. **Create PR** (prefer gh CLI, fall back to GitHub MCP server):
+
    - Write body to `.tmp/pr-body.md`, then `gh pr create --title "title" --body-file .tmp/pr-body.md`
    - If branch not pushed: `git pub` first
 

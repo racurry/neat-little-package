@@ -5,4 +5,4 @@
 - [ ] Mr sparkle - add a skill that will let it discover the current ecosystem in a project, and recommend mr sparkle setting
 - [ ] frinkiac
 - [ ] Use a script for the config reading & setting - it's very slow right now
-
+- [ ] Should mr-sparkle use .local.yml files? Either only those or in addition, merged?
