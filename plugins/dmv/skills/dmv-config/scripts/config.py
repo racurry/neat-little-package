@@ -42,34 +42,32 @@ def show():
     print("\n".join(lines))
 
 
-def enable(key):
-    if key not in DEFAULTS:
-        print(f"unknown key: {key}")
-        sys.exit(1)
-    config = load()
-    config[key] = True
-    save(config)
-    print(f"dmv config: {key} enabled")
+def coerce(value_str, default):
+    """Coerce a string value to match the type of the default."""
+    if isinstance(default, bool):
+        return value_str.lower() in ("true", "yes", "1")
+    return value_str
 
 
-def disable(key):
+def set_key(key, value_str):
     if key not in DEFAULTS:
         print(f"unknown key: {key}")
+        print(f"keys: {', '.join(DEFAULTS.keys())}")
         sys.exit(1)
     config = load()
-    config[key] = False
+    config[key] = coerce(value_str, DEFAULTS[key])
     save(config)
-    print(f"dmv config: {key} disabled")
+    print(f"dmv config: {key} = {config[key]}")
 
 
 args = sys.argv[1:]
 
 if not args or args[0] == "show":
     show()
-elif args[0] == "enable" and len(args) > 1:
-    enable(args[1])
-elif args[0] == "disable" and len(args) > 1:
-    disable(args[1])
+elif args[0] == "set" and len(args) > 2:
+    set_key(args[1], args[2])
+elif len(args) == 2 and args[0] in DEFAULTS:
+    set_key(args[0], args[1])
 else:
-    print("usage: dmv-config show | enable <key> | disable <key>")
+    print("usage: dmv-config show | set <key> <value>")
     print(f"keys: {', '.join(DEFAULTS.keys())}")
