@@ -34,8 +34,14 @@ def _is_enabled(cwd: str) -> bool:
 
 
 def output_warning(message: str) -> None:
-    """Output non-blocking warning visible directly to user."""
-    output = {"systemMessage": message}
+    """Output non-blocking warning visible to both user and Claude."""
+    output = {
+        "systemMessage": message,
+        "hookSpecificOutput": {
+            "hookEventName": "PostToolUse",
+            "additionalContext": message,
+        },
+    }
     print(json.dumps(output), flush=True)
 
 
