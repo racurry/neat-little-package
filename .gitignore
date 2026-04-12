@@ -25,3 +25,5 @@ node_modules/
 # Editors
 .idea/
 .vscode/
+.claude/*local*
+.claude/*.config.local.yml
