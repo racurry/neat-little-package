@@ -1,6 +1,6 @@
 #!/usr/bin/env -S uv run --quiet --script
 # /// script
-# dependencies = []
+# dependencies = ["pyyaml"]
 # ///
 """
 PostToolUse hook to validate git commit messages against user preferences.
@@ -16,23 +16,18 @@ import sys
 from pathlib import Path
 from typing import List, Optional
 
+import yaml
+
 
 def _is_enabled(cwd: str) -> bool:
-    """Check if validate_commit_message is enabled via .claude/dmv.local.md."""
-    settings_file = Path(cwd) / ".claude" / "dmv.local.md"
-    if not settings_file.is_file():
+    """Check if validate_commit_message is enabled via .claude/dmv.config.local.yml."""
+    config_file = Path(cwd) / ".claude" / "dmv.config.local.yml"
+    if not config_file.is_file():
         return True  # enabled by default
 
     try:
-        text = settings_file.read_text()
-        parts = text.split("---", 2)
-        if len(parts) < 3:
-            return True
-        frontmatter = parts[1]
-        for line in frontmatter.strip().splitlines():
-            if line.strip().startswith("validate_commit_message:"):
-                value = line.split(":", 1)[1].strip().lower()
-                return value not in ("false", "no", "0")
+        config = yaml.safe_load(config_file.read_text()) or {}
+        return config.get("validate_commit_message", True) is not False
     except Exception:
         pass
     return True
@@ -74,14 +69,7 @@ def validate_commit_message(message: str) -> List[str]:
 
     # Check for emojis
     emoji_pattern = re.compile(
-        "["
-        "\U0001f600-\U0001f64f"
-        "\U0001f300-\U0001f5ff"
-        "\U0001f680-\U0001f6ff"
-        "\U0001f1e0-\U0001f1ff"
-        "\U00002702-\U000027b0"
-        "\U000024c2-\U0001f251"
-        "]+",
+        "[\U0001f600-\U0001f64f\U0001f300-\U0001f5ff\U0001f680-\U0001f6ff\U0001f1e0-\U0001f1ff\U00002702-\U000027b0\U000024c2-\U0001f251]+",
         flags=re.UNICODE,
     )
     if emoji_pattern.search(message):

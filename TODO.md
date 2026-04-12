@@ -6,3 +6,4 @@
 - [ ] frinkiac
 - [ ] Use a script for the config reading & setting - it's very slow right now
 - [ ] Should mr-sparkle use .local.yml files? Either only those or in addition, merged?
+- [ ] codex has plugin/marketplace now
