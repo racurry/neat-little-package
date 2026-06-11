@@ -8,7 +8,7 @@ Doing git stuff in the way I prefer.
 
 - Terse commits with no type prefixes, no emojis, no attribution
 - PRs in Problem/Solution format, ignoring repo templates
-- Prefers gh CLI over GitHub MCP server
+- Uses gh CLI for GitHub interactions
 - Auto-retries pre-commit hook formatting failures once
 
 ## Skills
@@ -16,7 +16,7 @@ Doing git stuff in the way I prefer.
 Setup
 
 ```
-/dmv:github                                          # set up gh cli and github mcp
+/dmv:github                                          # set up gh cli
 /dmv:config                                          # show per-project hook settings
 /dmv:config disable validate_commit_message          # disable a hook for this directory
 ```

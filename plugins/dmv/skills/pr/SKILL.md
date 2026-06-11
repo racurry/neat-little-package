@@ -44,7 +44,7 @@ argument-hint: [optional problem context]
 
    - Short, descriptive, lowercase, no type prefixes, no emojis
 
-5. **Create PR** (prefer gh CLI, fall back to GitHub MCP server):
+5. **Create PR** with gh CLI:
 
    - Write body to `.tmp/pr-body.md`, then `gh pr create --title "title" --body-file .tmp/pr-body.md`
    - If branch not pushed: `git pub` first

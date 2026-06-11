@@ -11,6 +11,6 @@ paths:
 
 **Pre-commit Hook Retry:** When hooks modify files (auto-formatting), stage changes and retry ONCE with `git commit --amend --no-edit`. Never retry validation failures. Never retry more than once.
 
-**Tool Hierarchy:** Prefer `gh` CLI over GitHub MCP server. Only fall back to MCP when gh isn't installed or doesn't support the operation.
+**GitHub Tooling:** Use the `gh` CLI for all GitHub interactions.
 
 **No `$()` Substitution:** Per global rules, `$()` command substitution triggers permission prompts. Use temp files, pipes, or alternatives like `git push -u origin HEAD` instead of `git push -u origin $(git branch --show-current)`.
