@@ -1,9 +1,10 @@
 - [ ] Add a skill or agent for a bunch of boilerplate github actions for claude
 - [ ] Not sure which plugin. Make a hook that just outputs the location of any relevant tests to claude after a file changed. Eg, claude updates admin.py - automatically dump into session message "tests for admin.py are in test_admin.py". Do tools exist that support this? Could we generate a map on the fly on session start with another hook?
 - [ ] Mr sparkle - update the config/settings to enable/disable/override linting per file type & linter
-- [ ] box-factory - update auditor to move ./CLAUDE.md instead of ./.claude/CLAUDE.md. Make it prefer agents + cross-ecosystem compatibility
+- [ ] box-factory - make auditor prefer agents + cross-ecosystem compatibility (auditor's existing ./.claude/CLAUDE.md preference is correct — keep it)
 - [ ] Mr sparkle - add a skill that will let it discover the current ecosystem in a project, and recommend mr sparkle setting
 - [ ] frinkiac
 - [ ] Use a script for the config reading & setting - it's very slow right now
 - [ ] Should mr-sparkle use .local.yml files? Either only those or in addition, merged?
 - [ ] codex has plugin/marketplace now
+- [ ] Investigate a single source-of-truth repo that serves these skills to all agents (Claude, Codex, Gemini, …) across all my machines with minimal friction — see docs/cross-ecosystem.md (symlink farm / install.sh into `.agents/skills/` + `.claude/skills/`)

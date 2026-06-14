@@ -85,7 +85,7 @@ When an agent loads a skill, Claude tends to write the agent's prompt with direc
 
 The `color` field sets visual distinction in the status line. Claude often guesses colors that don't render.
 
-**Only these 7 colors are supported:** `red`, `green`, `blue`, `yellow`, `cyan`, `purple`, `orange`
+**Only these 8 colors are supported:** `red`, `green`, `blue`, `yellow`, `cyan`, `purple`, `orange`, `pink`
 
 **Semantic mapping:**
 
@@ -98,6 +98,7 @@ The `color` field sets visual distinction in the status line. Claude often guess
 | `cyan`   | Research — exploration, documentation      |
 | `red`    | Safety — security checks, destructive ops  |
 | `orange` | Other — doesn't fit established categories |
+| `pink`   | Other — alternative when orange is taken   |
 
 ## Plugin Settings Pattern
 

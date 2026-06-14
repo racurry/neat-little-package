@@ -68,7 +68,7 @@ Validate against official specs (fetched in Step 3) and loaded skills' gotchas. 
 - **Portability** — skills should use universal AgentSkills frontmatter unless Claude-specific features are needed
 - **No user interaction language** — agent prompts must not contain "ask the user", "confirm with user", etc.
 - **No file paths to skill internals** — reference skills by name/topic, not internal paths
-- **Valid colors** — agents must use one of the 7 supported colors (red, green, blue, yellow, cyan, purple, orange)
+- **Valid colors** — agents must use one of the 8 supported colors (red, green, blue, yellow, cyan, purple, orange, pink)
 
 ### Step 5: Flag Legacy Patterns
 

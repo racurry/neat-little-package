@@ -83,7 +83,7 @@ When a skill is loaded, it may be the only guidance the agent has. If the skill 
 
 ## Cross-Client Skill Discovery
 
-The AgentSkills spec establishes `.agents/skills/` as the cross-client skill discovery path. Skills placed there are discoverable by all supporting agents without client-specific directories:
+`.agents/skills/` is the adopted cross-client skill discovery path. Codex and Gemini CLI read it natively; **Claude Code does not — skills there must be symlinked or copied into `.claude/skills/`.** Skills placed there are discoverable by other supporting agents without client-specific directories:
 
 | Scope   | Path                            | Purpose                       |
 | ------- | ------------------------------- | ----------------------------- |
