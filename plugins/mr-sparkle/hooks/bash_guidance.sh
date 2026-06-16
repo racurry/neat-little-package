@@ -9,7 +9,8 @@
 # update the guidance here too.
 
 cat <<'GUIDANCE'
-Avoid command substitution in Bash commands — Claude Code can't statically analyze it, so it always triggers a permission prompt:
+Avoid Bash patterns Claude Code can't statically analyze — each one always triggers a permission prompt:
 - No `$(...)` command substitution — use pipes, temp variables, or separate commands
 - No backtick command substitution — same
+- No `for`/`while`/`until` loops — the loop construct can't reduce to a static prefix, so any `$var` in the body prompts. Use the Grep/Glob/Read tools (they iterate natively), or run separate commands. Bare `$var` in a single command is fine; only the loop is the problem.
 GUIDANCE

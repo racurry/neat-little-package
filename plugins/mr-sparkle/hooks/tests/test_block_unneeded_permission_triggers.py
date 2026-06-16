@@ -45,40 +45,35 @@ class TestCommandSubstitution:
         assert_allowed('echo "${HOME}/foo"')
 
     def test_blocks_nested_subshell(self):
+        """A loop with $() hits the substitution check first."""
         assert_blocked('for dir in plugins/*/; do echo "$(basename $dir)"; done', "substitution")
 
 
-class TestDashStrings:
-    def test_blocks_echo_triple_dash(self):
-        assert_blocked('echo "---UNSTAGED---"', "---")
+class TestLoops:
+    """for/while/until loops always prompt (reported as simple_expansion). See hook header."""
 
-    def test_blocks_echo_single_quote_dashes(self):
-        assert_blocked("echo '---STAGED---'", "---")
+    def test_blocks_for_loop(self):
+        assert_blocked('for f in a b; do echo "$f"; done', "loop")
 
-    def test_allows_echo_normal_string(self):
-        assert_allowed('echo "hello world"')
+    def test_blocks_for_glob(self):
+        assert_blocked('for d in plugins/*/; do echo "$d"; done', "loop")
 
-    def test_allows_flags(self):
-        """Actual --flags should not be blocked."""
-        assert_allowed("git diff --staged --stat")
+    def test_blocks_while_loop(self):
+        assert_blocked('while read -r l; do echo "$l"; done < file', "loop")
 
+    def test_blocks_loop_after_and(self):
+        assert_blocked('cd /tmp && for f in a; do echo "$f"; done', "loop")
 
-class TestOutputRedirection:
-    def test_blocks_stderr_to_stdout(self):
-        assert_blocked("some_cmd 2>&1", "redirection")
+    def test_blocks_loop_no_space_before_do(self):
+        assert_blocked('for f in a;do echo "$f";done', "loop")
 
-    def test_blocks_stderr_to_devnull(self):
-        assert_blocked("some_cmd 2>/dev/null", "redirection")
+    def test_allows_bare_var_outside_loop(self):
+        """Bare $var in a single command runs clean — only the loop construct prompts."""
+        assert_allowed('echo "home is $HOME"')
 
-    def test_blocks_stdout_redirect(self):
-        assert_blocked("echo hello > output.txt", "redirection")
-
-    def test_allows_grep_with_angle_bracket_in_quotes(self):
-        """grep '>' pattern should not be blocked."""
-        assert_allowed("grep '>' file.txt")
-
-    def test_allows_pipe(self):
-        assert_allowed("cmd1 | cmd2")
+    def test_allows_for_word_in_string(self):
+        """`for` and `; do` inside a quoted arg, not at statement position — not a loop."""
+        assert_allowed('git commit -m "refactor for loop; do it later"')
 
 
 class TestPassthrough:
@@ -87,6 +82,20 @@ class TestPassthrough:
 
     def test_allows_pipes(self):
         assert_allowed("git log --oneline | head -5")
+
+    def test_allows_pipe(self):
+        assert_allowed("cmd1 | cmd2")
+
+    def test_allows_flags(self):
+        """Actual --flags should not be blocked."""
+        assert_allowed("git diff --staged --stat")
+
+    def test_allows_grep_with_angle_bracket_in_quotes(self):
+        assert_allowed("grep '>' file.txt")
+
+    def test_allows_redirection(self):
+        """Output redirection no longer triggers a prompt — not blocked."""
+        assert_allowed("echo hello > output.txt")
 
     def test_ignores_non_bash(self):
         payload = json.dumps({"tool_name": "Read", "tool_input": {"path": "foo.txt"}})
