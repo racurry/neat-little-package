@@ -9,7 +9,7 @@ User preferences and corrections for writing READMEs. Claude knows how to write 
 
 ## Core Philosophy
 
-**Ultra-terse:** ~20-50 lines is ideal.  Never more than 100
+**Ultra-terse:** ~20-50 lines is ideal. Never more than 100
 **Action-focused:** Show commands with inline comments, minimal prose
 **No fluff:** Skip troubleshooting, file structure, version history
 
@@ -147,7 +147,7 @@ Git and GitHub workflow preferences for Claude.
 
 Setup
 ```
-/dmv:setup # walks through git and GitHub configuration
+/mr-sparkle:github # walks through git and GitHub configuration
 ```
 
 Main Actions

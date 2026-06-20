@@ -20,8 +20,8 @@ import yaml
 
 
 def _is_enabled(cwd: str) -> bool:
-    """Check if validate_commit_message is enabled via .claude/dmv.config.local.yml."""
-    config_file = Path(cwd) / ".claude" / "dmv.config.local.yml"
+    """Check if validate_commit_message is enabled via .claude/mr-sparkle.config.yml."""
+    config_file = Path(cwd) / ".claude" / "mr-sparkle.config.yml"
     if not config_file.is_file():
         return True  # enabled by default
 

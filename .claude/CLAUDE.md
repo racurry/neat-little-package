@@ -4,11 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is **neat-little-package**, a Claude Code plugin marketplace containing 5 specialized plugins:
+This is **neat-little-package**, a Claude Code plugin marketplace containing 4 specialized plugins:
 
 - **box-factory**: Meta-plugin for creating Claude Code components (plugins, agents, skills, hooks)
-- **dmv**: Git and GitHub workflow automation with user-specific preferences
-- **mr-sparkle**: Code quality enforcement (linting, formatting)
+- **mr-sparkle**: All the things about how to do code — linting, formatting, git and GitHub workflows, docs and scripting conventions
 - **spirograph**: 3D-printed home organization (Gridfinity, OpenGrid, etc.)
 - **ultrahouse3000**: Home Assistant smart home integration
 

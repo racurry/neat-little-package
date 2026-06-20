@@ -1,9 +1,11 @@
 ---
 paths:
-  - plugins/dmv/**
+  - plugins/mr-sparkle/**
 ---
 
-# DMV Development Guidelines
+# Mr. Sparkle Development Guidelines
+
+These git/GitHub conventions are what the `commit`, `pr`, `github`, and `merge-conflicts` skills encode.
 
 **No Type Prefixes:** This user never uses conventional commit prefixes (`fix:`, `feat:`, etc.). Just describe the change directly.
 

@@ -1,4 +1,4 @@
-"""Tests for dmv hook scripts with per-project config support."""
+"""Tests for the validate_commit_message hook with per-project config support."""
 
 import json
 import os
@@ -6,7 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-VALIDATE_COMMIT = Path(__file__).parent.parent / "hooks" / "validate_commit_message.py"
+VALIDATE_COMMIT = Path(__file__).parent.parent / "validate_commit_message.py"
 
 
 def run_hook(hook_path, hook_input: dict, env_override: dict = None) -> subprocess.CompletedProcess:
@@ -78,7 +78,7 @@ class TestValidateCommitMessageConfig:
         project_dir.mkdir()
         claude_dir = project_dir / ".claude"
         claude_dir.mkdir()
-        (claude_dir / "dmv.local.md").write_text("---\nvalidate_commit_message: false\n---\n")
+        (claude_dir / "mr-sparkle.config.yml").write_text("validate_commit_message: false\n")
 
         result = run_hook(
             VALIDATE_COMMIT,
@@ -99,7 +99,6 @@ class TestValidateCommitMessageConfig:
                 "tool_input": {"command": 'git commit -m "Fix: bad message \U0001f680."'},
                 "cwd": "/some/project",
             },
-            env_override={"NLP_CONFIG_DIR": "/nonexistent/path"},
         )
         assert result.returncode == 0
         if result.stdout:

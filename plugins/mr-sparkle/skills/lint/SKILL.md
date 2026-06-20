@@ -226,6 +226,11 @@ lint_on_write:
 block_direct: []
 ```
 
+```yaml
+# Disable commit-message preference checking (enabled by default)
+validate_commit_message: false
+```
+
 **Key behaviors:**
 
 - No config file = autodetection (same as `tools: [default]`)
@@ -247,6 +252,9 @@ block_direct: []
 - `config set output.claude true`
 - `config set tools default`
 - `config set tools none`
+- `config set validate_commit_message false`
+
+`output.*` and `tools` live under the `lint_on_write:` section. `block_direct` and `validate_commit_message` are **top-level** keys — the commit-message hook reads `validate_commit_message` at the root of the file, not nested under `lint_on_write:`.
 
 When creating or modifying the config file:
 
