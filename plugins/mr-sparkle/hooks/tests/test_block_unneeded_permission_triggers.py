@@ -40,13 +40,24 @@ class TestCommandSubstitution:
     def test_blocks_backticks(self):
         assert_blocked("echo `whoami`", "backtick")
 
-    def test_allows_dollar_brace(self):
-        """${VAR} is not command substitution — should be allowed."""
-        assert_allowed('echo "${HOME}/foo"')
-
     def test_blocks_nested_subshell(self):
         """A loop with $() hits the substitution check first."""
         assert_blocked('for dir in plugins/*/; do echo "$(basename $dir)"; done', "substitution")
+
+
+class TestBracedExpansion:
+    """${...} reports as "Contains expansion" and only offers Allow-once. See hook header
+    (verified 2026-06-20, apples-to-apples: `cat ${HOME}/x` prompts, `cat $HOME/x` does not)."""
+
+    def test_blocks_dollar_brace(self):
+        assert_blocked('cat "${HOME}/.config/foo"', "expansion")
+
+    def test_blocks_brace_operator(self):
+        assert_blocked('echo "${VAR:-default}"', "expansion")
+
+    def test_allows_bare_var(self):
+        """Bare $var runs clean — only braces trigger the expansion prompt."""
+        assert_allowed('cat "$HOME/.config/foo"')
 
 
 class TestLoops:

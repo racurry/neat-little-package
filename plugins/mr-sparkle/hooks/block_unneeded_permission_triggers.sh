@@ -7,10 +7,12 @@
 # (the prompt only offers "Allow once"). Blocking these here gets Claude to rewrite
 # (pipes, temp vars, separate commands) instead of interrupting me.
 #
-# Scope note (verified 2026-06-15, desktop app + TUI): $() substitution, backtick substitution,
-# and for/while/until loops force a prompt. Loops report as "simple_expansion" because the loop
-# construct can't reduce to a static prefix — but bare $var outside a loop is fine (`echo "$HOME"`
-# runs clean), so we match the loop, not the variable. The patterns this hook used to also block —
+# Scope note (verified 2026-06-15/2026-06-20, desktop app + TUI): $() substitution, backtick
+# substitution, ${...} braced parameter expansion, and for/while/until loops force a prompt.
+# ${...} reports as "Contains expansion" and only offers Allow-once (un-allowlistable); bare $var
+# is fine — `echo "$HOME"` runs clean, and `cat $HOME/x` only prompts for the out-of-project read
+# (an allowlistable "allow reading from …" prompt), never for expansion. So we match braces and the
+# loop construct, not the bare variable. The patterns this hook used to also block —
 # "---" strings, git -C, fully-qualified paths, {"json"}, and output redirection — no longer
 # trigger prompts under current Claude Code + my allowlist, even in their real compound/redirect
 # forms. They were removed because they only blocked harmless commands. Re-test with the
@@ -36,6 +38,14 @@ fi
 # Backtick command substitution — same
 if [[ "$command" == *'`'* ]]; then
     block 'Command contains backtick substitution, which always triggers a permission prompt (cannot be statically analyzed). Rewrite using pipes, temporary variables, or separate commands instead.'
+fi
+
+# ${...} braced parameter expansion — reports as "Contains expansion" and only offers Allow-once,
+# so it can't be allowlisted (verified 2026-06-20, apples-to-apples: `cat ${HOME}/x` prompts
+# "Contains expansion"; `cat $HOME/x` only prompts for the out-of-project read). Bare $var runs
+# clean — so match the braces, not the variable. e.g. cat "${HOME}/.config/foo"
+if [[ "$command" == *'${'* ]]; then
+    block 'Command contains ${...} braced parameter expansion, which always triggers a permission prompt ("Contains expansion" — only offers Allow-once, cannot be allowlisted). Use bare $VAR instead ($HOME, not ${HOME}). If braces are unavoidable (${VAR:-default}, ${VAR/a/b}, ${VAR}suffix), assign to a plain variable on a separate line or restructure the command.'
 fi
 
 # for/while/until loops — the loop construct can't reduce to a static command prefix, so
